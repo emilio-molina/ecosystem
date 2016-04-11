@@ -46,30 +46,35 @@ class Ecosystem(object):
         num_plants = self.organisms_settings['num_plants']
         num_herbivores = self.organisms_settings['num_herbivores']
         num_carnivores = self.organisms_settings['num_carnivores']
+        id = 0
 
         # Create plants
         for i in range(0, num_plants):
+            id += 1
             random_location = self.seek_free_location()
             self.add_organism(Organism(type=PLANT, parent_ecosystem=self,
-                                       location=random_location))
+                                       location=random_location, id=id))
 
         # Create hervibores
         for i in range(0, num_herbivores):
+            id += 1
             random_location = self.seek_free_location()
             self.add_organism(Organism(type=HERBIVORE, parent_ecosystem=self,
-                                       location=random_location))
+                                       location=random_location, id=id))
 
         # Create carnivores
         for i in range(0, num_carnivores):
+            id += 1
             random_location = self.seek_free_location()
             self.add_organism(Organism(type=CARNIVORE, parent_ecosystem=self,
-                                       location=random_location))
+                                       location=random_location, id=id))
 
     def add_organism(self, organism):
         """ Add organism to ecosytem
 
         Args:
             organism (Organism): Organism objects to be added to ecosystem
+            id (int): Id assigned to organism
         """
         self.organisms[organism.id] = organism
         (x, y) = organism.location
@@ -112,9 +117,8 @@ class Ecosystem(object):
                     d = abs(ref_x - x) + abs(ref_y - y)  # Manhattan distance
                 if self.biotope[x][y] is None:
                     free_locations.append((x, y, d))
-
         # Then shuffle or order list of free locations
-        free_locations = random.shuffle(free_locations)
+        random.shuffle(free_locations)
         if reference_location is None:
             free_location = free_locations[0]
             return (free_location[0], free_location[1])  # (x, y)
