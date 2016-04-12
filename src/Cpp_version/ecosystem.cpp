@@ -2,6 +2,8 @@
 #include <vector>
 #include <tuple>
 #include <map>
+#include <set>
+#include <time.h>
 
 using namespace std;
 
@@ -18,28 +20,48 @@ public:
   int num_carnivores;
   int biotope_size_x;
   int biotope_size_y;
-  map<tuple<int, int>, *Organism> biotope;
-
+  map<tuple<int, int>, Organism*> biotope;
+  set<tuple<int, int>> biotope_free_locs;
 
   /** @brief Constructor
   */
   Ecosystem() {
-    this.num_plants = 40;
-    this.num_herbivores = 40;
-    this.num_carnivores = 40;
-    this.biotope_size_x = 200;
-    this.biotope_size_y = 200;
+    this->num_plants = 40;
+    this->num_herbivores = 40;
+    this->num_carnivores = 40;
+    this->biotope_size_x = 200;
+    this->biotope_size_y = 200;
   }
 
   /** @brief Initialize biotope
   */
   void initializeBiotope() {
+    for (int x; x < size_x; x++) {
+      for (int y; y < size_y; y++) {
+        this->biotope_free_locs.insert(make_tuple(x, y));
+      }
+    }
+  }
 
+
+  /** @brief Returns a random free location
+  *
+  * @returns Tuple <int, int> with random free location in ecosystem
+  */
+  tuple<int, int> getRandomFreeLocation() {
+    auto it = this->biotope_free_locs.begin();
+    r = rand() % this->biotope_free_locs.size();
+    advance(it, r);
+    return *it;
   }
 
   /** @brief Initialize organisms
   */
   void initializeOrganisms() {
+    // Create plants
+    for (int i; i < num_plants; i++) {
+      tuple<int, int> rand_location = this->getRandomFreeLocation();
+    }
 
   }
 
