@@ -204,12 +204,9 @@ class Organism(object):
 
     def do_move(self):
         """ Move organism to a free location in ecosystem
-
-        Returns:
-            (x, y): New location
         """
         if self.type == PLANT:  # Plants don't move
-            return self.location
+            return
 
         free_locs = self.parent_ecosystem.get_surrounding_free_locations(
             self.location)
@@ -217,7 +214,6 @@ class Organism(object):
             new_location = random.sample(free_locs, 1)[0]
             self.location = new_location
         self.parent_ecosystem.update_organism_location(self)
-        return new_location
 
     def do_die(self):
         """ Make organism dissapear from ecosystem
