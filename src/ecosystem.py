@@ -85,7 +85,7 @@ class Ecosystem(object):
         self.biotope[(x, y)] = organism
         self.biotope_free_locs.remove((x, y))
 
-    def delete_organism(self, organism):
+    def remove_organism(self, organism):
         """ Remove organism from ecosysem
 
         Note: Organisms objects are not deleted manually. We rely on
@@ -223,7 +223,7 @@ class Organism(object):
         """ Make organism dissapear from ecosystem
         """
         self.is_alive = False
-        self.parent_ecosystem.delete_organism(self)
+        self.parent_ecosystem.remove_organism(self)
 
     def is_eatable(self, pray):
         """ True if pray can be eaten by self
