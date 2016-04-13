@@ -1,0 +1,9 @@
+PROJECT_NAME       = Ecosystem
+PROJECT_NUMBER     = 0.1
+OUTPUT_DIRECTORY   = doxygen
+EXTRACT_ALL        = YES
+EXTRACT_PRIVATE    = YES
+INPUT              = ../
+FILE_PATTERNS      = *.cpp
+RECURSIVE          = YES
+
