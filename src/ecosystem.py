@@ -5,9 +5,44 @@ import random
 import sys
 import os
 
-PLANT = 'plant'
-HERBIVORE = 'herbivore'
-CARNIVORE = 'carnivore'
+"""
+Species IDs:
+"""
+PLANT = 1
+HERBIVORE = 2
+CARNIVORE = 3
+"""
+Other IDs:
+"""
+_help = 'help'  # documentation
+
+initial_num_of_organisms = {
+    _help: """
+    The number of organisms of each species that are created before
+    the experiment starts
+    """,
+    PLANT: 100,
+    HERBIVORE: 100,
+    CARNIVORE: 100
+}
+
+max_lifespan = {
+    _help: """
+    The maximum age an organism of each species can reach
+    """,
+    PLANT: 40,
+    HERBIVORE: 30,
+    CARNIVORE: 100
+}
+
+procreation_probability = {
+    _help: """
+    The probability that an organism procreate each time it acts
+    """,
+    PLANT: 0.50,
+    HERBIVORE: 0.10,
+    CARNIVORE: 0.02
+}
 
 
 class Ecosystem(object):
@@ -21,11 +56,6 @@ class Ecosystem(object):
 
     def __init__(self):
         self.time = 0
-        self.organisms_settings = {
-            'num_plants': 40,
-            'num_herbivores': 20,
-            'num_carnivores': 10
-        }
         self.biotope_settings = {
             'size_x': 300,
             'size_y': 300
@@ -49,32 +79,32 @@ class Ecosystem(object):
 
         It uses the settings stored in self.organisms_settings
         """
-        num_plants = self.organisms_settings['num_plants']
-        num_herbivores = self.organisms_settings['num_herbivores']
-        num_carnivores = self.organisms_settings['num_carnivores']
+        num_plants = initial_num_of_organisms[PLANT]
+        num_herbivores = initial_num_of_organisms[HERBIVORE]
+        num_carnivores = initial_num_of_organisms[CARNIVORE]
         id = 0
         print "Creating plants..."
         # Create plants
-        for i in range(0, num_plants):
+        locations_list = random.sample(self.biotope_free_locs, num_plants)
+        for random_location in locations_list:
             id += 1
-            random_location = random.sample(self.biotope_free_locs, 1)[0]
-            self.add_organism(Organism(type=PLANT, parent_ecosystem=self,
+            self.add_organism(Organism(species=PLANT, parent_ecosystem=self,
                                        location=random_location))
 
         print "Creating hervibores..."
         # Create hervibores
-        for i in range(0, num_herbivores):
+        locations_list = random.sample(self.biotope_free_locs, num_herbivores)
+        for random_location in locations_list:
             id += 1
-            random_location = random.sample(self.biotope_free_locs, 1)[0]
-            self.add_organism(Organism(type=HERBIVORE, parent_ecosystem=self,
+            self.add_organism(Organism(species=HERBIVORE, parent_ecosystem=self,
                                        location=random_location))
 
         print "Creating carnivores..."
         # Create carnivores
-        for i in range(0, num_carnivores):
+        locations_list = random.sample(self.biotope_free_locs, num_carnivores)
+        for random_location in locations_list:
             id += 1
-            random_location = random.sample(self.biotope_free_locs, 1)[0]
-            self.add_organism(Organism(type=CARNIVORE, parent_ecosystem=self,
+            self.add_organism(Organism(species=CARNIVORE, parent_ecosystem=self,
                                        location=random_location))
 
     def add_organism(self, organism):
@@ -175,11 +205,11 @@ class Organism(object):
     """ Organism: agent of ecosystem
     """
 
-    def __init__(self, type, parent_ecosystem, location):
+    def __init__(self, species, parent_ecosystem, location):
         """ Initialize organism
 
         Args:
-            type (str): Type of organism
+            species (str): Species of the organism
             parent_ecosystem (Ecosystem): Parent ecosystem
             location (tuple): (x, y) coordinates of organism
         """
@@ -188,14 +218,8 @@ class Organism(object):
         self.location = location
         self.old_location = location  # useful for parent_ecosystem to track it
         # Genes and state
-        self.type = type
-        self.death_age = random.randint(0, 500)  # TODO: Parametrize
-        if type == PLANT:
-            self.procreation_prob = 0.98
-        elif type == HERBIVORE:
-            self.procreation_prob = 0.99
-        elif type == CARNIVORE:
-            self.procreation_prob = 0.995
+        self.species = species
+        self.death_age = random.randint(0, max_lifespan[species])
         self.age = 0
         self.is_alive = True
 
@@ -203,13 +227,13 @@ class Organism(object):
         """ Increase self.age and die if reach self.death_age
         """
         self.age += 1
-        if self.age == self.death_age:
+        if self.age > self.death_age:
             self.do_die()
 
     def do_move(self):
         """ Move organism to a free location in ecosystem
         """
-        if self.type == PLANT:  # Plants don't move
+        if self.species == PLANT:  # Plants don't move
             return
 
         free_locs = self.parent_ecosystem.get_surrounding_free_locations(
@@ -234,9 +258,9 @@ class Organism(object):
             (bool): True if pray can be eaten
         """
         eatable = False
-        if self.type == CARNIVORE and pray.type == HERBIVORE:
+        if self.species == CARNIVORE and pray.species == HERBIVORE:
             eatable = True
-        if self.type == HERBIVORE and pray.type == PLANT:
+        if self.species == HERBIVORE and pray.species == PLANT:
             eatable = True
         return eatable
 
@@ -263,7 +287,7 @@ class Organism(object):
 
         # Procreate if desired
         if random.random() > self.procreation_prob:
-            baby = Organism(self.type, self.parent_ecosystem, baby_location)
+            baby = Organism(self.species, self.parent_ecosystem, baby_location)
             self.parent_ecosystem.add_organism(baby)
 
 
@@ -295,14 +319,9 @@ class Exporter(object):
                                      file_name)
         if not os.path.isdir(os.path.dirname(dst_file_path)):
             os.makedirs(os.path.dirname(dst_file_path))
-        type_mapping = {
-            PLANT: 1,
-            HERBIVORE: 2,
-            CARNIVORE: 3
-        }
         dict_organisms = {}
         for location, organism in self.parent_ecosystem.biotope.iteritems():
-            dict_organisms[str(location)] = type_mapping[organism.type]
+            dict_organisms[str(location)] = organism.species
         with open(dst_file_path, 'w') as f:
             json.dump(dict_organisms, f)
 
