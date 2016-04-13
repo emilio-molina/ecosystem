@@ -284,14 +284,12 @@ class Organism(object):
     def do_procreate_if_possible(self):
         """ Procreate if possible
         """
-        free_locs = self.parent_ecosystem.get_surrounding_free_locations(
-            self.location)
-        if len(free_locs) == 0:
-            return  # no empty space for procreation!
-        baby_location = random.sample(free_locs, 1)[0]
-
-        # Procreate if desired
         if random.random() < procreation_probability[self.species]:
+            free_locs = self.parent_ecosystem.get_surrounding_free_locations(
+                self.location)
+            if len(free_locs) == 0:
+                return  # no empty space for procreation!
+            baby_location = random.sample(free_locs, 1)[0]
             baby = Organism(self.species, self.parent_ecosystem, baby_location)
             self.parent_ecosystem.add_organism(baby)
 
