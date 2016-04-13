@@ -134,7 +134,8 @@ class GUI(object):
 
 
 if __name__ == '__main__':
-    print "\nUse keys to control the view:"
+    print "\nFirst click on GUI to give it focus."
+    print "\nThen use keys to control the view:"
     print "    right: time + 1"
     print "    up: time + 10"
     print "    left: time - 1"
