@@ -31,8 +31,8 @@ max_lifespan = {
     The maximum age an organism of each species can reach
     """,
     PLANT: 40,
-    HERBIVORE: 30,
-    CARNIVORE: 100
+    HERBIVORE: 40,
+    CARNIVORE: 40
 }
 
 procreation_probability = {
@@ -41,7 +41,7 @@ procreation_probability = {
     """,
     PLANT: 0.50,
     HERBIVORE: 0.10,
-    CARNIVORE: 0.02
+    CARNIVORE: 0.051
 }
 
 
@@ -88,7 +88,8 @@ class Ecosystem(object):
         locations_list = random.sample(self.biotope_free_locs, num_plants)
         for random_location in locations_list:
             id += 1
-            self.add_organism(Organism(species=PLANT, parent_ecosystem=self,
+            self.add_organism(Organism(species=PLANT,
+                                       parent_ecosystem=self,
                                        location=random_location))
 
         print "Creating hervibores..."
@@ -96,7 +97,8 @@ class Ecosystem(object):
         locations_list = random.sample(self.biotope_free_locs, num_herbivores)
         for random_location in locations_list:
             id += 1
-            self.add_organism(Organism(species=HERBIVORE, parent_ecosystem=self,
+            self.add_organism(Organism(species=HERBIVORE,
+                                       parent_ecosystem=self,
                                        location=random_location))
 
         print "Creating carnivores..."
@@ -104,7 +106,8 @@ class Ecosystem(object):
         locations_list = random.sample(self.biotope_free_locs, num_carnivores)
         for random_location in locations_list:
             id += 1
-            self.add_organism(Organism(species=CARNIVORE, parent_ecosystem=self,
+            self.add_organism(Organism(species=CARNIVORE,
+                                       parent_ecosystem=self,
                                        location=random_location))
 
     def add_organism(self, organism):
@@ -286,7 +289,7 @@ class Organism(object):
         baby_location = random.sample(free_locs, 1)[0]
 
         # Procreate if desired
-        if random.random() > self.procreation_prob:
+        if random.random() > procreation_probability[self.species]:
             baby = Organism(self.species, self.parent_ecosystem, baby_location)
             self.parent_ecosystem.add_organism(baby)
 
