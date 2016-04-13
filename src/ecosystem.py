@@ -291,7 +291,7 @@ class Organism(object):
         baby_location = random.sample(free_locs, 1)[0]
 
         # Procreate if desired
-        if random.random() > procreation_probability[self.species]:
+        if random.random() < procreation_probability[self.species]:
             baby = Organism(self.species, self.parent_ecosystem, baby_location)
             self.parent_ecosystem.add_organism(baby)
 
