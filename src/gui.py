@@ -6,6 +6,26 @@ import json
 import os
 import sys
 
+"""
+Species IDs:  # TO DO: Read this from a file
+"""
+PLANT = 1
+HERBIVORE = 2
+CARNIVORE = 3
+
+size_x = 300  # TO DO: Read this from a file
+size_y = 300
+
+"""
+Colors RGB:
+"""
+BGCOLOR = (0, 0, 0)
+color_mapping = {
+    PLANT: (0, 0.75, 0),
+    HERBIVORE: (0.5, 0.5, 0.5),
+    CARNIVORE: (0.75, 0, 0)
+}
+
 
 class GUI(object):
     """ Class for reading an ecosystem from a folder drawing it
@@ -96,17 +116,6 @@ class GUI(object):
         biotope = self.process_json(json_dict)
 
         # Create pixel map
-        BGCOLOR = (0, 0, 0)
-        PLANT = 1
-        HERBIVORE = 2
-        CARNIVORE = 3
-        color_mapping = {
-            PLANT: (0, 0.75, 0),
-            HERBIVORE: (0.5, 0.5, 0.5),
-            CARNIVORE: (0.75, 0, 0)
-        }
-        size_x = 300
-        size_y = 300
         pixels_map = [[BGCOLOR for i in range(size_x)]
                       for j in range(size_y)]
 
