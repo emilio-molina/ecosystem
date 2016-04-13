@@ -27,8 +27,8 @@ class Ecosystem(object):
             'num_carnivores': 10
         }
         self.biotope_settings = {
-            'size_x': 200,
-            'size_y': 200
+            'size_x': 300,
+            'size_y': 300
         }
         self.initialize_biotope()
         self.initialize_organisms()

@@ -105,8 +105,8 @@ class GUI(object):
             HERBIVORE: (0.5, 0.5, 0.5),
             CARNIVORE: (0.75, 0, 0)
         }
-        size_x = 200
-        size_y = 200
+        size_x = 300
+        size_y = 300
         pixels_map = [[BGCOLOR for i in range(size_x)]
                       for j in range(size_y)]
 
