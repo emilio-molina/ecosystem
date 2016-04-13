@@ -2,6 +2,8 @@
 Multi-agent system emulating an ecosystem of virtual bugs eating each other
 """
 import random
+import sys
+import os
 
 PLANT = 'plant'
 HERBIVORE = 'herbivore'
@@ -18,6 +20,7 @@ class Ecosystem(object):
     """
 
     def __init__(self):
+        self.time = 0
         self.organisms_settings = {
             'num_plants': 40,
             'num_herbivores': 20,
@@ -165,6 +168,7 @@ class Ecosystem(object):
                 organism.do_hunt()
                 organism.do_procreate_if_possible()
                 organism.do_age()
+        self.time += 1
 
 
 class Organism(object):
@@ -263,51 +267,58 @@ class Organism(object):
             self.parent_ecosystem.add_organism(baby)
 
 
-class GUI(object):
-    """ Class for drawing an ecosystem
+class Exporter(object):
+    """ Class to export ecosystem history to a folder.
+
+    It exports a .json file for time slice containing all the organisms.
     """
+    def __init__(self, parent_ecosystem, dst_folder):
+        """ Initialize Exporter
 
-    def __init__(self, parent_ecosystem):
-        """ Initializes GUI
+        Args:
+            parent_ecosystem (Ecosystem): Ecosystem to be exported
+            dst_folder (str): Destination folder
         """
-        import matplotlib.pyplot as plt
+        self.dst_folder = dst_folder
         self.parent_ecosystem = parent_ecosystem
-        self.img = plt.imshow([[0.0]], interpolation='nearest')
-        plt.ion()
-        plt.show()
 
-    def draw_ecosystem(self):
-        """ Draw ecosystem using Matplotlib
+    def export_time_slice(self):
+        """ Export data for current time slice of parent_ecosystem
         """
-        import matplotlib.pyplot as plt
-        BGCOLOR = (0, 0, 0)
-        color_mapping = {
-            PLANT: (0, 0.75, 0),
-            HERBIVORE: (0.5, 0.5, 0.5),
-            CARNIVORE: (0.75, 0, 0)
+        import json
+        curr_time = self.parent_ecosystem.time
+        file_name = str(curr_time) + '.json'
+        thousands = int(curr_time / 1000) * 1000
+        thousands_folder = '{0}_to_{1}'.format(str(thousands),
+                                               str(thousands + 999))
+        dst_file_path = os.path.join(self.dst_folder, thousands_folder,
+                                     file_name)
+        if not os.path.isdir(os.path.dirname(dst_file_path)):
+            os.makedirs(os.path.dirname(dst_file_path))
+        type_mapping = {
+            PLANT: 1,
+            HERBIVORE: 2,
+            CARNIVORE: 3
         }
-        size_x = self.parent_ecosystem.biotope_settings['size_x']
-        size_y = self.parent_ecosystem.biotope_settings['size_y']
-        pixels_map = [[BGCOLOR for i in range(size_x)]
-                      for j in range(size_y)]
-
+        dict_organisms = {}
         for location, organism in self.parent_ecosystem.biotope.iteritems():
-            (x, y) = location
-            pixels_map[x][y] = color_mapping[organism.type]
-
-        self.img.set_data(pixels_map)
-        plt.pause(0.01)  # needed to avoid overloading of GUI
+            dict_organisms[str(location)] = type_mapping[organism.type]
+        with open(dst_file_path, 'w') as f:
+            json.dump(dict_organisms, f)
 
 
 def main():
     """ Main function of ecosystem
     """
     ecosystem = Ecosystem()
-    gui = GUI(ecosystem)
+    exporter = Exporter(ecosystem, sys.argv[1])
 
     while True:
-        gui.draw_ecosystem()
+        exporter.export_time_slice()
         ecosystem.evolve()
 
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print "Usage: python ecosystem.py dst_folder"
+        sys.exit(1)
     main()
