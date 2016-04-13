@@ -271,7 +271,7 @@ class Organism(object):
         """ Find food nearby and eat it
         """
         if self.species == PLANT:
-            break   # plants don't eat. This save computing time
+            return   # plants don't eat. This save computing time
         surr_organisms = self.parent_ecosystem.get_surrounding_organisms(
             self.location)
         for surr_organism in surr_organisms:
