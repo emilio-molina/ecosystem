@@ -119,9 +119,9 @@ class GUI(object):
         pixels_map = [[BGCOLOR for i in range(size_x)]
                       for j in range(size_y)]
 
-        for location, specie in biotope.iteritems():
+        for location, species in biotope.iteritems():
             (x, y) = location
-            pixels_map[x][y] = color_mapping[specie]
+            pixels_map[x][y] = color_mapping[species]
 
         # Draw ecosystem by replacing the data of current image
         self.img.set_data(pixels_map)
