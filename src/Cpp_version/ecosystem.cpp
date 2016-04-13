@@ -1,3 +1,21 @@
+/** @mainpage
+* Esta es la main page
+*
+* Donde podemos tener un readme sencillote
+*/
+
+
+/** @file ecosystem.cpp
+* @brief Todo esta aqui
+*
+* Contiene todo todito
+* Contiene todo todito
+*
+* @author Emilio Molina
+* @bug Hay un bug!
+*
+*/
+
 #include <algorithm>
 #include <vector>
 #include <tuple>
@@ -46,7 +64,7 @@ public:
 
   /** @brief Returns a random free location
   *
-  * @returns Tuple <int, int> with random free location in ecosystem
+  * @return Tuple <int, int> with random free location in ecosystem
   */
   tuple<int, int> getRandomFreeLocation() {
     auto it = this->biotope_free_locs.begin();
@@ -68,6 +86,25 @@ public:
   /** @brief Add organism to ecosystem
   *
   * Note: organism is supposed to be already initialized.
+  * First Header  | Second Header
+  * ------------- | -------------
+  * Content Cell  | Content Cell 
+  * Content Cell  | Content Cell 
+  *
+  * ~~~~~~~~~~~~~~~{.c}
+  * int func(int a,int b) { return a*b; }
+  * ~~~~~~~~~~~~~~~
+  * # Header 1
+  * - list 1
+  * - list 2
+  *
+  * @deprecated Esto es antiguo
+  *
+  * @todo Esto es un todo
+  *
+  * Esto es una ```prueba```
+  *
+  * A `cool' word in a `nice' sentence.
   *
   * @param[in] organism Organism object to be added to ecosystem
   */
