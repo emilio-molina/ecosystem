@@ -13,8 +13,8 @@ PLANT = 1
 HERBIVORE = 2
 CARNIVORE = 3
 
-size_x = 300  # TO DO: Read this from a file
-size_y = 300
+size_x = 100  # TO DO: Read this from a file
+size_y = 100
 
 """
 Colors RGB:
@@ -81,6 +81,7 @@ class GUI(object):
         if event.key == ' ':
             self.playing = not self.playing
             self.timer_update_data(time_interval=1)
+        self.time = max(0, self.time)
         self.draw_ecosystem()
 
     def process_json(self, json_dict):
@@ -109,6 +110,8 @@ class GUI(object):
         dst_file_path = os.path.join(self.history_folder,
                                      thousands_folder,
                                      file_name)
+
+        # TO DO: Check if the time has reach its upper limit
 
         # Process data
         with open(dst_file_path, 'r') as f:
