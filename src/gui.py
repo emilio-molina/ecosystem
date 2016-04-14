@@ -13,8 +13,8 @@ PLANT = 1
 HERBIVORE = 2
 CARNIVORE = 3
 
-size_x = 100  # TO DO: Read this from a file
-size_y = 100
+size_x = 200  # TO DO: Read this from a file
+size_y = 200
 
 """
 Colors RGB:
