@@ -7,24 +7,18 @@ import os
 import sys
 
 """
-Species IDs:  # TO DO: Read this from a file
+Species IDs:
 """
-PLANT = 1
-HERBIVORE = 2
-CARNIVORE = 3
+PLANT = None  # Loaded from experiment
+HERBIVORE = None  # Loaded from experiment
+CARNIVORE = None  # Loaded from experiment
 
-size_x = 200  # TO DO: Read this from a file
-size_y = 200
 
 """
 Colors RGB:
 """
 BGCOLOR = (0, 0, 0)
-color_mapping = {
-    PLANT: (0, 0.75, 0),
-    HERBIVORE: (0.5, 0.5, 0.5),
-    CARNIVORE: (0.75, 0, 0)
-}
+color_mapping = {}  # Loaded from experiment
 
 
 class GUI(object):
@@ -38,6 +32,9 @@ class GUI(object):
             history_folder (str): Path of folder with experiment history
         """
         self.history_folder = history_folder
+        self.load_experiment_module()
+        self.read_species_ids()
+        self.read_biotope_size()
 
         # Initialize Tk
         self.root = Tk.Tk()
@@ -65,6 +62,36 @@ class GUI(object):
         self.time = 0
         self.draw_ecosystem()
         self.playing = False
+
+    def load_experiment_module(self):
+        """ Load experiment as a python module
+        """
+        experiment_name = os.path.split(self.history_folder)[1]
+        settings_folder = os.path.join(self.history_folder, 'settings')
+        sys.path.append(settings_folder)
+        self.experiment = __import__(experiment_name)
+
+    def read_species_ids(self):
+        """ Read species ids from experiment script
+        """
+        global PLANT
+        global HERBIVORE
+        global CARNIVORE
+        global color_mapping
+        PLANT = self.experiment.PLANT
+        HERBIVORE = self.experiment.HERBIVORE
+        CARNIVORE = self.experiment.CARNIVORE
+        color_mapping = {
+            PLANT: (0, 0.75, 0),
+            HERBIVORE: (0.5, 0.5, 0.5),
+            CARNIVORE: (0.75, 0, 0)
+        }
+
+    def read_biotope_size(self):
+        """ Read biotope size from experiment script
+        """
+        self.size_x = self.experiment.biotope_settings['size_x']
+        self.size_y = self.experiment.biotope_settings['size_y']
 
     # Handle key events
     def callback_key_event(self, event):
@@ -119,12 +146,12 @@ class GUI(object):
         biotope = self.process_json(json_dict)
 
         # Create pixel map
-        pixels_map = [[BGCOLOR for i in range(size_x)]
-                      for j in range(size_y)]
+        pixels_map = [[BGCOLOR for i in range(self.size_x)]
+                      for j in range(self.size_y)]
 
         for location, species in biotope.iteritems():
             (x, y) = location
-            pixels_map[x][y] = color_mapping[species]
+            pixels_map[y][x] = color_mapping[species]
 
         # Draw ecosystem by replacing the data of current image
         self.img.set_data(pixels_map)
@@ -153,5 +180,5 @@ if __name__ == '__main__':
     print "    left: time - 1"
     print "    down: time - 10"
     print "    space: toogle playing"
-    gui = GUI(sys.argv[1])
+    gui = GUI(sys.argv[1].strip('/'))
     gui.root.mainloop()
