@@ -2,52 +2,16 @@
 Multi-agent system emulating an ecosystem of virtual bugs eating each other
 """
 import random
-import sys
-import os
 
-"""
-Species IDs:
-"""
-PLANT = 1
-HERBIVORE = 2
-CARNIVORE = 3
-"""
-Other IDs:
-"""
-_help = 'help'  # documentation
 
-initial_num_of_organisms = {
-    _help: """
-    The number of organisms of each species that are created before
-    the experiment starts
-    """,
-    PLANT: 1000,
-    HERBIVORE: 300,
-    CARNIVORE: 100
-}
 
-max_lifespan = {
-    _help: """
-    The maximum age an organism of each species can reach
-    """,
-    PLANT: 40,
-    HERBIVORE: 25,
-    CARNIVORE: 100
-}
-
-procreation_probability = {
-    _help: """
-    The probability that an organism procreate each time it acts
-    """,
-    PLANT: 0.50,
-    HERBIVORE: 0.06,
-    CARNIVORE: 0.02
-}
+PLANT = 'plant'
+HERBIVORE = 'herbivore'
+CARNIVORE = 'carnivore'
 
 
 class Ecosystem(object):
     """ Environment of the ecosystem where organisms can live and evolve
-
     Role:
         - create and initialize organisms
         - handle adding of new organisms to ecosystem
@@ -55,13 +19,15 @@ class Ecosystem(object):
     """
 
     def __init__(self):
-        self.time = 0
+        self.organisms_settings = {
+            'num_plants': 100,
+            'num_herbivores': 100,
+            'num_carnivores': 100
+        }
         self.biotope_settings = {
             'size_x': 200,
             'size_y': 200
         }
-        self.size_x = self.biotope_settings['size_x']
-        self.size_y = self.biotope_settings['size_y']
         self.initialize_biotope()
         self.initialize_organisms()
 
@@ -78,43 +44,34 @@ class Ecosystem(object):
 
     def initialize_organisms(self):
         """ Method to initialize a set of organisms
-
         It uses the settings stored in self.organisms_settings
         """
-        num_plants = initial_num_of_organisms[PLANT]
-        num_herbivores = initial_num_of_organisms[HERBIVORE]
-        num_carnivores = initial_num_of_organisms[CARNIVORE]
-        id = 0
+        num_plants = self.organisms_settings['num_plants']
+        num_herbivores = self.organisms_settings['num_herbivores']
+        num_carnivores = self.organisms_settings['num_carnivores']
         print "Creating plants..."
         # Create plants
         locations_list = random.sample(self.biotope_free_locs, num_plants)
         for random_location in locations_list:
-            id += 1
-            self.add_organism(Organism(species=PLANT,
-                                       parent_ecosystem=self,
+            self.add_organism(Organism(type=PLANT, parent_ecosystem=self,
                                        location=random_location))
 
         print "Creating hervibores..."
         # Create hervibores
         locations_list = random.sample(self.biotope_free_locs, num_herbivores)
         for random_location in locations_list:
-            id += 1
-            self.add_organism(Organism(species=HERBIVORE,
-                                       parent_ecosystem=self,
+            self.add_organism(Organism(type=HERBIVORE, parent_ecosystem=self,
                                        location=random_location))
 
         print "Creating carnivores..."
         # Create carnivores
         locations_list = random.sample(self.biotope_free_locs, num_carnivores)
         for random_location in locations_list:
-            id += 1
-            self.add_organism(Organism(species=CARNIVORE,
-                                       parent_ecosystem=self,
+            self.add_organism(Organism(type=CARNIVORE, parent_ecosystem=self,
                                        location=random_location))
 
     def add_organism(self, organism):
         """ Add organism to ecosytem
-
         Args:
             organism (Organism): Organism objects to be added to ecosystem
             id (int): Id assigned to organism
@@ -125,10 +82,8 @@ class Ecosystem(object):
 
     def remove_organism(self, organism):
         """ Remove organism from ecosysem
-
         Note: Organisms objects are not deleted manually. We rely on
               Python garbage collector.
-
         Args:
             organism (Organism): Organism to be removed from ecosystem
         """
@@ -138,7 +93,6 @@ class Ecosystem(object):
 
     def update_organism_location(self, organism):
         """ Update interval variables related to a given organism
-
         Args:
             organism (Organism): Organism to be removed from ecosystem
         """
@@ -154,7 +108,6 @@ class Ecosystem(object):
 
     def get_surrounding_free_locations(self, center):
         """ Get a list of free locations around a given center
-
         Args:
             center (tuple): (x, y) coordinates of center
         Returns:
@@ -166,15 +119,14 @@ class Ecosystem(object):
             for dy in [-1, 0, 1]:
                 if (dx == 0) and (dy == 0):
                     break  # avoid checking center itself
-                x = (center_x + dx) % self.size_x
-                y = (center_y + dy) % self.size_y
+                x = center_x + dx
+                y = center_y + dy
                 if (x, y) in self.biotope_free_locs:
                     surrounding_free_locs.add((x, y))
         return surrounding_free_locs
 
     def get_surrounding_organisms(self, center):
         """ Get a list of organisms around a given center
-
         Args:
             center (tuple): (x, y) coordinates of center
         Returns:
@@ -186,8 +138,8 @@ class Ecosystem(object):
             for dy in [-1, 0, 1]:
                 if (dx == 0) and (dy == 0):
                     break  # avoid checking center itself
-                x = (center_x + dx) % self.size_x
-                y = (center_y + dy) % self.size_y
+                x = center_x + dx
+                y = center_y + dy
                 if (x, y) in self.biotope.keys():
                     organism = self.biotope[(x, y)]
                     surrounding_organisms.add(organism)
@@ -203,18 +155,16 @@ class Ecosystem(object):
                 organism.do_hunt()
                 organism.do_procreate_if_possible()
                 organism.do_age()
-        self.time += 1
 
 
 class Organism(object):
     """ Organism: agent of ecosystem
     """
 
-    def __init__(self, species, parent_ecosystem, location):
+    def __init__(self, type, parent_ecosystem, location):
         """ Initialize organism
-
         Args:
-            species (str): Species of the organism
+            type (str): Type of organism
             parent_ecosystem (Ecosystem): Parent ecosystem
             location (tuple): (x, y) coordinates of organism
         """
@@ -223,8 +173,14 @@ class Organism(object):
         self.location = location
         self.old_location = location  # useful for parent_ecosystem to track it
         # Genes and state
-        self.species = species
-        self.death_age = random.randint(0, max_lifespan[species])
+        self.type = type
+        self.death_age = random.randint(0, 40)  # TODO: Parametrize
+        if type == PLANT:
+            self.procreation_prob = 0.5
+        elif type == HERBIVORE:
+            self.procreation_prob = 0.10
+        elif type == CARNIVORE:
+            self.procreation_prob = 0.051
         self.age = 0
         self.is_alive = True
 
@@ -238,7 +194,7 @@ class Organism(object):
     def do_move(self):
         """ Move organism to a free location in ecosystem
         """
-        if self.species == PLANT:  # Plants don't move
+        if self.type == PLANT:  # Plants don't move
             return
 
         free_locs = self.parent_ecosystem.get_surrounding_free_locations(
@@ -256,24 +212,21 @@ class Organism(object):
 
     def is_eatable(self, pray):
         """ True if pray can be eaten by self
-
         Args:
             pray (Organism): Organism to be eaten
         Returns:
             (bool): True if pray can be eaten
         """
         eatable = False
-        if self.species == CARNIVORE and pray.species == HERBIVORE:
+        if self.type == CARNIVORE and pray.type == HERBIVORE:
             eatable = True
-        if self.species == HERBIVORE and pray.species == PLANT:
+        if self.type == HERBIVORE and pray.type == PLANT:
             eatable = True
         return eatable
 
     def do_hunt(self):
         """ Find food nearby and eat it
         """
-        if self.species == PLANT:
-            return   # plants don't eat. This save computing time
         surr_organisms = self.parent_ecosystem.get_surrounding_organisms(
             self.location)
         for surr_organism in surr_organisms:
@@ -286,64 +239,63 @@ class Organism(object):
     def do_procreate_if_possible(self):
         """ Procreate if possible
         """
-        if random.random() < procreation_probability[self.species]:
-            free_locs = self.parent_ecosystem.get_surrounding_free_locations(
-                self.location)
-            if len(free_locs) == 0:
-                return  # no empty space for procreation!
+        free_locs = self.parent_ecosystem.get_surrounding_free_locations(
+            self.location)
+        if len(free_locs) == 0:
+            return  # no empty space for procreation!
+
+        # Procreate if desired
+        if random.random() < self.procreation_prob:
             baby_location = random.sample(free_locs, 1)[0]
-            baby = Organism(self.species, self.parent_ecosystem, baby_location)
+            baby = Organism(self.type, self.parent_ecosystem, baby_location)
             self.parent_ecosystem.add_organism(baby)
 
 
-class Exporter(object):
-    """ Class to export ecosystem history to a folder.
-
-    It exports a .json file for time slice containing all the organisms.
+class GUI(object):
+    """ Class for drawing an ecosystem
     """
-    def __init__(self, parent_ecosystem, dst_folder):
-        """ Initialize Exporter
 
-        Args:
-            parent_ecosystem (Ecosystem): Ecosystem to be exported
-            dst_folder (str): Destination folder
+    def __init__(self, parent_ecosystem):
+        """ Initializes GUI
         """
-        self.dst_folder = dst_folder
+        import matplotlib.pyplot as plt
         self.parent_ecosystem = parent_ecosystem
+        self.img = plt.imshow([[0.0]], interpolation='nearest')
+        plt.ion()
+        plt.show()
 
-    def export_time_slice(self):
-        """ Export data for current time slice of parent_ecosystem
+    def draw_ecosystem(self):
+        """ Draw ecosystem using Matplotlib
         """
-        import json
-        curr_time = self.parent_ecosystem.time
-        file_name = str(curr_time) + '.json'
-        thousands = int(curr_time / 1000) * 1000
-        thousands_folder = '{0}_to_{1}'.format(str(thousands),
-                                               str(thousands + 999))
-        dst_file_path = os.path.join(self.dst_folder, thousands_folder,
-                                     file_name)
-        if not os.path.isdir(os.path.dirname(dst_file_path)):
-            os.makedirs(os.path.dirname(dst_file_path))
-        dict_organisms = {}
+        import matplotlib.pyplot as plt
+        BGCOLOR = (0, 0, 0)
+        color_mapping = {
+            PLANT: (0, 0.75, 0),
+            HERBIVORE: (0.5, 0.5, 0.5),
+            CARNIVORE: (0.75, 0, 0)
+        }
+        size_x = self.parent_ecosystem.biotope_settings['size_x']
+        size_y = self.parent_ecosystem.biotope_settings['size_y']
+        pixels_map = [[BGCOLOR for i in range(size_x)]
+                      for j in range(size_y)]
+
         for location, organism in self.parent_ecosystem.biotope.iteritems():
-            dict_organisms[str(location)] = organism.species
-        with open(dst_file_path, 'w') as f:
-            json.dump(dict_organisms, f)
+            (x, y) = location
+            pixels_map[x][y] = color_mapping[organism.type]
+
+        self.img.set_data(pixels_map)
+        plt.pause(0.01)  # needed to avoid overloading of GUI
 
 
 def main():
     """ Main function of ecosystem
     """
     ecosystem = Ecosystem()
-    exporter = Exporter(ecosystem, sys.argv[1])
+    gui = GUI(ecosystem)
 
     while True:
-        exporter.export_time_slice()
+        gui.draw_ecosystem()
         ecosystem.evolve()
-        print "Time:", ecosystem.time
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print "Usage: python ecosystem.py dst_folder"
-        sys.exit(1)
     main()
