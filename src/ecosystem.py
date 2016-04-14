@@ -21,8 +21,8 @@ initial_num_of_organisms = {
     The number of organisms of each species that are created before
     the experiment starts
     """,
-    PLANT: 100,
-    HERBIVORE: 100,
+    PLANT: 1000,
+    HERBIVORE: 300,
     CARNIVORE: 100
 }
 
@@ -31,8 +31,8 @@ max_lifespan = {
     The maximum age an organism of each species can reach
     """,
     PLANT: 40,
-    HERBIVORE: 40,
-    CARNIVORE: 40
+    HERBIVORE: 25,
+    CARNIVORE: 100
 }
 
 procreation_probability = {
@@ -40,8 +40,8 @@ procreation_probability = {
     The probability that an organism procreate each time it acts
     """,
     PLANT: 0.50,
-    HERBIVORE: 0.10,
-    CARNIVORE: 0.051
+    HERBIVORE: 0.06,
+    CARNIVORE: 0.02
 }
 
 
@@ -57,9 +57,11 @@ class Ecosystem(object):
     def __init__(self):
         self.time = 0
         self.biotope_settings = {
-            'size_x': 300,
-            'size_y': 300
+            'size_x': 200,
+            'size_y': 200
         }
+        self.size_x = self.biotope_settings['size_x']
+        self.size_y = self.biotope_settings['size_y']
         self.initialize_biotope()
         self.initialize_organisms()
 
@@ -164,8 +166,8 @@ class Ecosystem(object):
             for dy in [-1, 0, 1]:
                 if (dx == 0) and (dy == 0):
                     break  # avoid checking center itself
-                x = center_x + dx
-                y = center_y + dy
+                x = (center_x + dx) % self.size_x
+                y = (center_y + dy) % self.size_y
                 if (x, y) in self.biotope_free_locs:
                     surrounding_free_locs.add((x, y))
         return surrounding_free_locs
@@ -184,8 +186,8 @@ class Ecosystem(object):
             for dy in [-1, 0, 1]:
                 if (dx == 0) and (dy == 0):
                     break  # avoid checking center itself
-                x = center_x + dx
-                y = center_y + dy
+                x = (center_x + dx) % self.size_x
+                y = (center_y + dy) % self.size_y
                 if (x, y) in self.biotope.keys():
                     organism = self.biotope[(x, y)]
                     surrounding_organisms.add(organism)
@@ -338,6 +340,7 @@ def main():
     while True:
         exporter.export_time_slice()
         ecosystem.evolve()
+        print "Time:", ecosystem.time
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
