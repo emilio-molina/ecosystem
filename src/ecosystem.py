@@ -181,7 +181,7 @@ class Ecosystem(object):
             (set): Set of organisms
         """
         (center_x, center_y) = center
-        surrounding_organisms = set()
+        surrounding_organisms = []
         for dx in [-1, 0, 1]:
             for dy in [-1, 0, 1]:
                 if (dx == 0) and (dy == 0):
@@ -190,7 +190,7 @@ class Ecosystem(object):
                 y = (center_y + dy) % self.size_y
                 if (x, y) in self.biotope.keys():
                     organism = self.biotope[(x, y)]
-                    surrounding_organisms.add(organism)
+                    surrounding_organisms.append(organism)
         return surrounding_organisms
 
     def evolve(self):
@@ -276,6 +276,7 @@ class Organism(object):
             return   # plants don't eat. This save computing time
         surr_organisms = self.parent_ecosystem.get_surrounding_organisms(
             self.location)
+        random.shuffle(surr_organisms)
         for surr_organism in surr_organisms:
             if self.is_eatable(surr_organism):
                 pray = surr_organism
