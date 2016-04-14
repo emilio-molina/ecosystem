@@ -24,7 +24,7 @@ biotope_settings = {
     _help: """
     Settings of biotope. In this version, only biotope size is specified
     """,
-    'size_x': 200,
+    'size_x': 300,
     'size_y': 200
 }
 
@@ -327,11 +327,14 @@ class Exporter(object):
 
         All settings are accessible to ecosystem.py
         """
+        experiment_name = os.path.split(self.dst_folder.strip('/'))[1]
         settings_folder = os.path.join(self.dst_folder, 'settings')
         if not os.path.isdir(settings_folder):
             os.makedirs(settings_folder)
         # Copy script to folder experiment
-        shutil.copy(os.path.realpath(__file__), settings_folder)
+        dst_experiment_script_path = os.path.join(settings_folder,
+                                                  experiment_name + '.py')
+        shutil.copy(os.path.realpath(__file__), dst_experiment_script_path)
 
     def export_time_slice(self):
         """ Export data for current time slice of parent_ecosystem
