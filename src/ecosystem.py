@@ -4,18 +4,31 @@ Multi-agent system emulating an ecosystem of virtual bugs eating each other
 import random
 import sys
 import os
+import json
+import shutil
 
-"""
-Species IDs:
-"""
+
+# Species IDs:
 PLANT = 1
 HERBIVORE = 2
 CARNIVORE = 3
-"""
-Other IDs:
-"""
+
+
+# Other IDs:
 _help = 'help'  # documentation
 
+# ***** EXPERIMENT PARAMETERS
+
+# Biotope settings
+biotope_settings = {
+    _help: """
+    Settings of biotope. In this version, only biotope size is specified
+    """,
+    'size_x': 200,
+    'size_y': 200
+}
+
+# Organisms settings
 initial_num_of_organisms = {
     _help: """
     The number of organisms of each species that are created before
@@ -44,6 +57,8 @@ procreation_probability = {
     CARNIVORE: 0.02
 }
 
+# ***************************
+
 
 class Ecosystem(object):
     """ Environment of the ecosystem where organisms can live and evolve
@@ -56,24 +71,18 @@ class Ecosystem(object):
 
     def __init__(self):
         self.time = 0
-        self.biotope_settings = {
-            'size_x': 200,
-            'size_y': 200
-        }
-        self.size_x = self.biotope_settings['size_x']
-        self.size_y = self.biotope_settings['size_y']
+        self.size_x = biotope_settings['size_x']
+        self.size_y = biotope_settings['size_y']
         self.initialize_biotope()
         self.initialize_organisms()
 
     def initialize_biotope(self):
         """ Initialize biotope
         """
-        size_x = self.biotope_settings['size_x']
-        size_y = self.biotope_settings['size_y']
         self.biotope = {}
         self.biotope_free_locs = set()
-        for x in range(0, size_x):
-            for y in range(0, size_y):
+        for x in range(0, self.size_x):
+            for y in range(0, self.size_y):
                 self.biotope_free_locs.add((x, y))
 
     def initialize_organisms(self):
@@ -310,11 +319,22 @@ class Exporter(object):
         """
         self.dst_folder = dst_folder
         self.parent_ecosystem = parent_ecosystem
+        self.export_initial_settings()
+
+    def export_initial_settings(self):
+        """ Export ecosystem.py to experiment folder
+
+        All settings are accessible to ecosystem.py
+        """
+        settings_folder = os.path.join(self.dst_folder, 'settings')
+        if not os.path.isdir(settings_folder):
+            os.makedirs(settings_folder)
+        # Copy script to folder experiment
+        shutil.copy(os.path.realpath(__file__), settings_folder)
 
     def export_time_slice(self):
         """ Export data for current time slice of parent_ecosystem
         """
-        import json
         curr_time = self.parent_ecosystem.time
         file_name = str(curr_time) + '.json'
         thousands = int(curr_time / 1000) * 1000
