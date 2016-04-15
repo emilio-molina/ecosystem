@@ -288,9 +288,9 @@ class Organism(object):
         random.shuffle(surr_organisms)
         for surr_organism in surr_organisms:
             if self.is_eatable(surr_organism):
-                pray = surr_organism
+                prey = surr_organism
                 self.age = 0  # The benefit of eating is getting younger
-                pray.do_die()
+                prey.do_die()
                 break
 
     def do_procreate_if_possible(self):
