@@ -1,3 +1,21 @@
+/** @mainpage
+ * Esta es la main page
+ *
+ * Donde podemos tener un readme sencillote
+ */
+
+
+/** @file ecosystem.cpp
+ * @brief Todo esta aqui
+ *
+ * Contiene todo todito
+ * Contiene todo todito
+ *
+ * @author Emilio Molina
+ * @bug Hay un bug!
+ *
+ */
+
 #include <algorithm>
 #include <vector>
 #include <tuple>
@@ -10,6 +28,8 @@ using namespace std;
 
 enum species_t {PLANT, HERBIVORE, CARNIVORE};
 
+const float INITIAL_ENERGY_RESERVE = 100;
+
 class Ecosystem; // just to indicate it will be defined later
 
 class Organism {
@@ -17,10 +37,12 @@ public:
     species_t species;
     Ecosystem* parent_ecosystem;
     tuple<int, int> location;
-    Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, species_t species) {
+    float energy_reserve;
+    Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, species_t species, float energy_reserve) {
         this->location = location;
         this->parent_ecosystem = parent_ecosystem;
         this->species = species;
+        this->energy_reserve = energy_reserve;
     }
 };
 
@@ -78,19 +100,19 @@ public:
         // Create plants
         for (int i; i < this->num_plants; i++) {
             tuple<int, int> rand_location = this->getRandomFreeLocation();
-            this->addOrganism(new Organism(rand_location, this, PLANT));
+            this->addOrganism(new Organism(rand_location, this, PLANT, INITIAL_ENERGY_RESERVE));
         }
 
         // Create herbivores
         for (int i; i < this->num_herbivores; i++) {
             tuple<int, int> rand_location = this->getRandomFreeLocation();
-            this->addOrganism(new Organism(rand_location, this, HERBIVORE));
+            this->addOrganism(new Organism(rand_location, this, HERBIVORE, INITIAL_ENERGY_RESERVE));
         }
 
         // Create carnivores
         for (int i; i < this->num_carnivores; i++) {
             tuple<int, int> rand_location = this->getRandomFreeLocation();
-            this->addOrganism(new Organism(rand_location, this, CARNIVORE));
+            this->addOrganism(new Organism(rand_location, this, CARNIVORE, INITIAL_ENERGY_RESERVE));
         }
 
     }
