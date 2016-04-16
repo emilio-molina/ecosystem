@@ -19,7 +19,7 @@ _help = 'help'  # documentation
 
 # ***** EXPERIMENT PARAMETERS
 
-# Biotope settings:
+# Biotope settings
 biotope_settings = {
     _help: """
     Settings of biotope. In this version, only biotope size is specified
@@ -28,26 +28,7 @@ biotope_settings = {
     'size_y': 200
 }
 
-# Organisms settings:
-cost = {
-    _help: """
-    Each activity or capacity of an organism may cost it energy. This is
-    the amount of energy that cost each of them:
-    """,
-    'to have the capacity of moving': 2,
-    'to move': 5,
-    'to have the capacity of hunting': 4,
-    'to hunt': 10,
-    'to have the capacity of procreating': 0,
-    'to procreate': 15
-}
-minimum_energy_required_to = {
-    'move': 30,
-    'hunt': 30,
-    'procreate': 100
-}
-photosynthesis_capacity = 5
-
+# Organisms settings
 initial_num_of_organisms = {
     _help: """
     The number of organisms of each species that are created before
@@ -58,14 +39,12 @@ initial_num_of_organisms = {
     CARNIVORE: 100
 }
 
-initial_energy_reserve = 10000
-
 max_lifespan = {
     _help: """
     The maximum age an organism of each species can reach
     """,
     PLANT: 40,
-    HERBIVORE: 35,
+    HERBIVORE: 25,
     CARNIVORE: 100
 }
 
@@ -74,7 +53,7 @@ procreation_probability = {
     The probability that an organism procreate each time it acts
     """,
     PLANT: 0.50,
-    HERBIVORE: 0.10,
+    HERBIVORE: 0.06,
     CARNIVORE: 0.02
 }
 
@@ -122,8 +101,7 @@ class Ecosystem(object):
             id += 1
             self.add_organism(Organism(species=PLANT,
                                        parent_ecosystem=self,
-                                       location=random_location,
-                                       energy_reserve=initial_energy_reserve))
+                                       location=random_location))
 
         print "Creating hervibores..."
         # Create hervibores
@@ -132,8 +110,7 @@ class Ecosystem(object):
             id += 1
             self.add_organism(Organism(species=HERBIVORE,
                                        parent_ecosystem=self,
-                                       location=random_location,
-                                       energy_reserve=initial_energy_reserve))
+                                       location=random_location))
 
         print "Creating carnivores..."
         # Create carnivores
@@ -142,8 +119,7 @@ class Ecosystem(object):
             id += 1
             self.add_organism(Organism(species=CARNIVORE,
                                        parent_ecosystem=self,
-                                       location=random_location,
-                                       energy_reserve=initial_energy_reserve))
+                                       location=random_location))
 
     def add_organism(self, organism):
         """ Add organism to ecosytem
@@ -166,11 +142,6 @@ class Ecosystem(object):
             organism (Organism): Organism to be removed from ecosystem
         """
         (x, y) = organism.location
-        """
-        if not (x, y) in self.biotope.keys():
-            print "Fatal error!!"
-            return
-        """
         del self.biotope[(x, y)]  # delete reference from dict
         self.biotope_free_locs.add((x, y))
 
@@ -237,7 +208,10 @@ class Ecosystem(object):
         curr_organisms = self.biotope.values()
         for organism in curr_organisms:
             if organism.is_alive:  # still alive
-                organism.act()
+                organism.do_move()
+                organism.do_hunt()
+                organism.do_procreate_if_possible()
+                organism.do_age()
         self.time += 1
 
 
@@ -245,7 +219,7 @@ class Organism(object):
     """ Organism: agent of ecosystem
     """
 
-    def __init__(self, species, parent_ecosystem, location, energy_reserve):
+    def __init__(self, species, parent_ecosystem, location):
         """ Initialize organism
 
         Args:
@@ -257,87 +231,37 @@ class Organism(object):
         self.parent_ecosystem = parent_ecosystem
         self.location = location
         self.old_location = location  # useful for parent_ecosystem to track it
-        # Genes:
+        # Genes and state
         self.species = species
         self.death_age = random.randint(0, max_lifespan[species])
-        # State:
         self.age = 0
-        self.energy_reserve = energy_reserve
         self.is_alive = True
-        self.number_of_deaths = 0
-
-    def act(self):
-        if not self.is_alive:
-            print "Error"
-            return
-        if self.species == PLANT:
-            self.do_photosynthesis()
-        self.do_move()
-        if not self.is_alive:
-            return
-        self.do_hunt()
-        if not self.is_alive:
-            return
-        self.do_procreate_if_possible()
-        if not self.is_alive:
-            return
-        self.do_age()
 
     def do_age(self):
         """ Increase self.age and die if reach self.death_age
         """
         self.age += 1
         if self.age > self.death_age:
-            self.do_die(cause_of_death='age')
-
-    def do_spend_energy(self, amount_of_energy):
-        self.energy_reserve -= amount_of_energy
-        if self.energy_reserve <= 0:
-            self.do_die(cause_of_death='starvation')
-
-    def has_enough_energy_to(self, action):
-        if self.energy_reserve > minimum_energy_required_to[action]:
-            return True
-        else:
-            return False
+            self.do_die()
 
     def do_move(self):
         """ Move organism to a free location in ecosystem
-            If the organism has the attribute "energy_reserve", then
-            it has to spend energy in order to move
         """
         if self.species == PLANT:  # Plants don't move
             return
 
-        # Having the capacity of moving requires energy spending:
-        if hasattr(self, "energy_reserve"):
-            if self.has_enough_energy_to('move'):
-                self.do_spend_energy(amount_of_energy=cost[
-                    'to have the capacity of moving'])
-            if not self.is_alive:
-                # It may have died of starvation because of the energy spending
-                return
-
         free_locs = self.parent_ecosystem.get_surrounding_free_locations(
             self.location)
         if len(free_locs) > 0:
-            if hasattr(self, "energy_reserve"):
-                self.do_spend_energy(amount_of_energy=cost[
-                    'to move'])
-            if not self.is_alive:
-                # It may have died of starvation because of the energy spending
-                return
             new_location = random.sample(free_locs, 1)[0]
             self.location = new_location
-            # Moving requires energy spending:
-            self.parent_ecosystem.update_organism_location(self)
+        self.parent_ecosystem.update_organism_location(self)
 
-    def do_die(self, cause_of_death=None):
+    def do_die(self):
         """ Make organism dissapear from ecosystem
         """
-        if self.is_alive:
-            self.is_alive = False
-            self.parent_ecosystem.remove_organism(self)
+        self.is_alive = False
+        self.parent_ecosystem.remove_organism(self)
 
     def is_eatable(self, pray):
         """ True if pray can be eaten by self
@@ -356,83 +280,40 @@ class Organism(object):
 
     def do_hunt(self):
         """ Find food nearby and eat it
-            If the organism has the attribute "energy_reserve", then
-            it has to spend energy in order to hunt
         """
         if self.species == PLANT:
             return   # plants don't eat. This save computing time
-
-        # Having the capacity of hunting requires energy spending:
-        if hasattr(self, "energy_reserve"):
-            if self.has_enough_energy_to("hunt"):
-                self.do_spend_energy(amount_of_energy=cost[
-                    'to have the capacity of hunting'])
-            if not self.is_alive:
-                # It may have died of starvation because of the energy spending
-                return
-
         surr_organisms = self.parent_ecosystem.get_surrounding_organisms(
             self.location)
         random.shuffle(surr_organisms)
         for surr_organism in surr_organisms:
             if self.is_eatable(surr_organism):
-                prey = surr_organism
-                """ OTHER POSIBILITY:
+                pray = surr_organism
                 self.age = 0  # The benefit of eating is getting younger
-                """
-                self.energy_reserve += prey.energy_reserve
-                prey.do_die(cause_of_death='hunted')
-                # Eating requires energy spending:
-                if hasattr(self, "energy_reserve"):
-                    self.do_spend_energy(amount_of_energy=cost[
-                        'to hunt'])
+                pray.do_die()
                 break
-
-    def do_photosynthesis(self):
-        if hasattr(self, "energy_reserve"):
-            self.energy_reserve += photosynthesis_capacity
 
     def do_procreate_if_possible(self):
         """ Procreate if possible
-            If the organism has the attribute "energy_reserve", then
-            it has to spend energy in order to procreate
         """
-        # Having the capacity of procreating requires energy spending:
-        if hasattr(self, "energy_reserve"):
-            if self.has_enough_energy_to("procreate"):
-                self.do_spend_energy(amount_of_energy=cost[
-                    'to have the capacity of procreating'])
-            if not self.is_alive:
-                # It may have died of starvation because of the energy spending
-                return
-
         if random.random() < procreation_probability[self.species]:
             free_locs = self.parent_ecosystem.get_surrounding_free_locations(
                 self.location)
             if len(free_locs) == 0:
                 return  # no empty space for procreation!
             baby_location = random.sample(free_locs, 1)[0]
-            # The organism share its energy reserve with its baby:
-            baby_energy_reserve = self.energy_reserve / 2
-            self.energy_reserve /= 2
-            baby = Organism(
-                self.species,
-                self.parent_ecosystem,
-                baby_location,
-                baby_energy_reserve)
+            baby = Organism(self.species, self.parent_ecosystem, baby_location)
             self.parent_ecosystem.add_organism(baby)
-            # Procreating requires energy spending:
-            if hasattr(self, "energy_reserve"):
-                self.do_spend_energy(amount_of_energy=cost[
-                    'to procreate'])
 
 
 class Exporter(object):
     """ Class to export ecosystem history to a folder.
+
     It exports a .json file for time slice containing all the organisms.
     """
     def __init__(self, parent_ecosystem, dst_folder):
         """ Initialize Exporter
+
         Args:
             parent_ecosystem (Ecosystem): Ecosystem to be exported
             dst_folder (str): Destination folder
@@ -443,6 +324,7 @@ class Exporter(object):
 
     def export_initial_settings(self):
         """ Export ecosystem.py to experiment folder
+
         All settings are accessible to ecosystem.py
         """
         experiment_name = os.path.split(self.dst_folder.strip('/'))[1]
