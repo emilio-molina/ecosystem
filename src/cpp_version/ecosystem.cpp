@@ -1,19 +1,5 @@
-/** @mainpage
- * Esta es la main page
- *
- * Donde podemos tener un readme sencillote
- */
-
-
 /** @file ecosystem.cpp
- * @brief Todo esta aqui
- *
- * Contiene todo todito
- * Contiene todo todito
- *
- * @author Emilio Molina
- * @todo Try unordered_map and unordered_set: might be faster.
- * @bug Hay un bug!
+ * @brief Everything is in this file
  *
  */
 
