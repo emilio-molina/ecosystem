@@ -436,7 +436,7 @@ void Ecosystem::evolve() {
     this->time += 1;
 }
 
-
+/*
 int main(int argc, char* argv[]) {
     srand( static_cast<unsigned int>(time(NULL)));
     Ecosystem ecosystem = Ecosystem();
@@ -450,4 +450,4 @@ int main(int argc, char* argv[]) {
         cout << "    sum previous numbers: " << num_organisms + num_free_locs << endl;
     }
     return 0;
-}
+}*/
