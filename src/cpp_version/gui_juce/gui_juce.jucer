@@ -5,6 +5,7 @@
               jucerVersion="4.2.1">
   <MAINGROUP id="g4NTly" name="gui_juce">
     <GROUP id="{E5B8CE86-4278-2FD0-C4D2-5EF0BCDE89FB}" name="Source">
+      <FILE id="stsESx" name="ecosystem.h" compile="0" resource="0" file="../ecosystem.h"/>
       <FILE id="GjDAY9" name="ecosystem.cpp" compile="1" resource="0" file="../ecosystem.cpp"/>
       <FILE id="C564tz" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
@@ -74,4 +75,7 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS/>
+  <LIVE_SETTINGS>
+    <OSX headerPath="../"/>
+  </LIVE_SETTINGS>
 </JUCERPROJECT>

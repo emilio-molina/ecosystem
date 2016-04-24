@@ -1,6 +1,5 @@
 #include "MainComponent.h"
 
-
 //=============================================================================
 // class storing the information about a single vertex
 struct Vertex
@@ -400,6 +399,8 @@ MainContentComponent::MainContentComponent()
     _tabbedComponent->addTab("Map", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), new mapComponent(), true);
     _tabbedComponent->addTab("Controls", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new SlidersPage(), true);
     addAndMakeVisible(_tabbedComponent);
+    Ecosystem ecosystem = Ecosystem();
+    startTimer(100);
 }
 
 MainContentComponent::~MainContentComponent()
@@ -418,4 +419,14 @@ void MainContentComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
+}
+
+void MainContentComponent::timerCallback() {
+    ecosystem.evolve();
+    auto num_organisms = ecosystem.biotope.size();
+    auto num_free_locs = ecosystem.biotope_free_locs.size();
+    cout << "Time: " << ecosystem.time << endl;
+    cout << "    num organism: " << num_organisms << endl;
+    cout << "    num free locs: " << num_free_locs << endl;
+    cout << "    sum previous numbers: " << num_organisms + num_free_locs << endl;
 }
