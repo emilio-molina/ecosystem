@@ -9,22 +9,22 @@ using namespace std;
 default_random_engine eng((random_device())());
 
 Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, species_t species, float energy_reserve) {
-    this->ENERGY_COST["to have the capacity of moving"] = 2.0f;
+    this->ENERGY_COST["to have the capacity of moving"] = 0.0f;
     this->ENERGY_COST["to move"] = 5.0f;
-    this->ENERGY_COST["to have the capacity of hunting"] = 4.0f;
+    this->ENERGY_COST["to have the capacity of hunting"] = 0.0f;
     this->ENERGY_COST["to hunt"] = 10.0f;
     this->ENERGY_COST["to have the capacity of procreating"] = 0.0f;
-    this->ENERGY_COST["to procreate"] = 15.0f;
-    this->MINIMUM_ENERGY_REQUIRED_TO["move"] = 30.0f;
-    this->MINIMUM_ENERGY_REQUIRED_TO["hunt"] = 30.0f;
-    this->MINIMUM_ENERGY_REQUIRED_TO["procreate"] = 100.0f;
-    this->MAX_LIFESPAN[PLANT] = 40;
-    this->MAX_LIFESPAN[HERBIVORE] = 35;
-    this->MAX_LIFESPAN[CARNIVORE] = 35;
-    this->PROCREATION_PROBABILITY[PLANT] = 0.075f;
-    this->PROCREATION_PROBABILITY[HERBIVORE] = 0.05f;
-    this->PROCREATION_PROBABILITY[CARNIVORE] = 0.05f;
-    this->PHOTOSYNTHESIS_CAPACITY = 5.0f;
+    this->ENERGY_COST["to procreate"] = 1000.0f;
+    this->MINIMUM_ENERGY_REQUIRED_TO["move"] = 100.0f;
+    this->MINIMUM_ENERGY_REQUIRED_TO["hunt"] = 100.0f;
+    this->MINIMUM_ENERGY_REQUIRED_TO["procreate"] = 1000.0f;
+    this->MAX_LIFESPAN[PLANT] = 50;
+    this->MAX_LIFESPAN[HERBIVORE] = 200;
+    this->MAX_LIFESPAN[CARNIVORE] = 100;
+    this->PROCREATION_PROBABILITY[PLANT] = 0.15f;
+    this->PROCREATION_PROBABILITY[HERBIVORE] = 0.08f;
+    this->PROCREATION_PROBABILITY[CARNIVORE] = 0.08f;
+    this->PHOTOSYNTHESIS_CAPACITY = 5000.0f;
 
     // Relative to parent_ecosystem:
     this->parent_ecosystem = parent_ecosystem;
@@ -165,8 +165,8 @@ void Organism::do_procreate() {
         return;
 
     tuple<int, int> baby_location = free_locs[0];
-    float baby_energy_reserve = this->energy_reserve / 2.0f;
-    this->energy_reserve = this->energy_reserve / 2.0f;
+    float baby_energy_reserve = 1*this->energy_reserve / 2.0f;
+    this->energy_reserve = 3* this->energy_reserve / 4.0f;
     Organism* baby = new Organism(baby_location, this->parent_ecosystem, this->species, baby_energy_reserve);
     this->parent_ecosystem->addOrganism(baby);
     if (this->is_energy_dependent)
@@ -193,7 +193,7 @@ Ecosystem::Ecosystem() {
     this->INITIAL_NUM_OF_ORGANISMS[PLANT] = 100;
     this->INITIAL_NUM_OF_ORGANISMS[HERBIVORE] = 100;
     this->INITIAL_NUM_OF_ORGANISMS[CARNIVORE] = 100;
-    this->INITIAL_ENERGY_RESERVE = 10000.0f;
+    this->INITIAL_ENERGY_RESERVE = 30000.0f;
 
     this->num_plants = INITIAL_NUM_OF_ORGANISMS[PLANT];
     this->num_herbivores = INITIAL_NUM_OF_ORGANISMS[HERBIVORE];
@@ -269,8 +269,8 @@ void Ecosystem::getSurroundingFreeLocations(tuple<int, int> center, vector<tuple
         for (int dy = -1; dy <= 1; dy++) {
             if ((dx == 0) && (dy == 0))
                 break;
-            int x = (center_x + dx) % this->biotope_size_x;
-            int y = (center_y + dy) % this->biotope_size_y;
+            int x = (center_x + dx + this->biotope_size_x) % this->biotope_size_x;
+            int y = (center_y + dy + this->biotope_size_y) % this->biotope_size_y;
             tuple<int, int> candidate_location = make_tuple(x, y);
             bool candidate_location_in_biotope_free_locs = (this->biotope_free_locs.find(candidate_location) != this->biotope_free_locs.end());
             if (candidate_location_in_biotope_free_locs) {
@@ -288,8 +288,8 @@ void Ecosystem::getSurroundingOrganisms(tuple<int, int> center, vector<Organism*
         for (int dy = -1; dy <= 1; dy++) {
             if ((dx == 0) && (dy == 0))
                 break;
-            int x = (center_x + dx) % this->biotope_size_x;
-            int y = (center_y + dy) % this->biotope_size_y;
+            int x = (center_x + dx + this->biotope_size_x) % this->biotope_size_x;
+            int y = (center_y + dy + this->biotope_size_y) % this->biotope_size_y;
             tuple<int, int> candidate_location = make_tuple(x, y);
             bool organism_is_in_biotope = (this->biotope.find(candidate_location) != this->biotope.end());
             if (organism_is_in_biotope) {
