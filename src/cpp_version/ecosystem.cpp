@@ -22,8 +22,8 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, specie
     this->MAX_LIFESPAN[HERBIVORE] = 35;
     this->MAX_LIFESPAN[CARNIVORE] = 100;
     this->PROCREATION_PROBABILITY[PLANT] = 0.5f;
-    this->PROCREATION_PROBABILITY[HERBIVORE] = 0.1f;
-    this->PROCREATION_PROBABILITY[CARNIVORE] = 0.02f;
+    this->PROCREATION_PROBABILITY[HERBIVORE] = 0.2f;
+    this->PROCREATION_PROBABILITY[CARNIVORE] = 0.1f;
     this->PHOTOSYNTHESIS_CAPACITY = 5.0f;
 
     // Relative to parent_ecosystem:
@@ -189,9 +189,9 @@ void Organism::do_die(const string &cause_of_death) {
 Ecosystem::Ecosystem() {
     this->BIOTOPE_SETTINGS["size_x"] = 200;
     this->BIOTOPE_SETTINGS["size_y"] = 200;
-    this->INITIAL_NUM_OF_ORGANISMS[PLANT] = 3;
-    this->INITIAL_NUM_OF_ORGANISMS[HERBIVORE] = 3;
-    this->INITIAL_NUM_OF_ORGANISMS[CARNIVORE] = 3;
+    this->INITIAL_NUM_OF_ORGANISMS[PLANT] = 300;
+    this->INITIAL_NUM_OF_ORGANISMS[HERBIVORE] = 300;
+    this->INITIAL_NUM_OF_ORGANISMS[CARNIVORE] = 300;
     this->INITIAL_ENERGY_RESERVE = 100.0f;
 
     this->num_plants = INITIAL_NUM_OF_ORGANISMS[PLANT];
@@ -307,6 +307,7 @@ void Ecosystem::deleteDeadOrganisms() {
 }
     
 void Ecosystem::evolve() {
+    _mutex.lock();
     // Create a vector of current organisms
     vector<Organism*> organisms_to_act(this->biotope.size(), nullptr);
     int i = 0;
@@ -322,6 +323,7 @@ void Ecosystem::evolve() {
     }
     this->deleteDeadOrganisms();
     this->time += 1;
+    _mutex.unlock();
 }
 
 /*

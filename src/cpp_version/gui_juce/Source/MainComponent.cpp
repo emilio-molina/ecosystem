@@ -13,20 +13,19 @@ struct Vertex
 //=============================================================================
 // Map component
 
-class mapComponent   : public OpenGLAppComponent,
-                       private Timer
+class mapComponent   : public OpenGLAppComponent
 {
 public:
+    Ecosystem* ecosystem;
     //==============================================================================
-    mapComponent()
+    mapComponent(Ecosystem& ecosystem)
     {
-        startTimerHz(1000);
-        x = 0;
-        y = 0;
+        this->time = -1;
         position = nullptr;
         normal = nullptr;
         textureCoordIn = nullptr;
         sourceColour = nullptr;
+        this->ecosystem = &ecosystem;
     }
     
     ~mapComponent()
@@ -64,46 +63,66 @@ public:
         
         // ************************** TRIANGLES DEFINITION
         // Here you can draw whatever you want
-        
-        Array<Vertex> vertices;
-        Vertex v1 =
-        {
-            { -0.25f + x, -0.25f + y, 1.0f},
-            { 0.5f, 0.5f, 0.5f},
-            { 1.0f, 0.0f, 0.0f, 0.5f },
-            { 0.5f, 0.5f,}
-        };
-        vertices.add (v1);
-        Vertex v2 =
-        {
-            { 0.0f + x, 0.25f + y, 0.0f},
-            { 0.5f, 0.5f, 0.5f},
-            { 1.0f, 0.0f, 1.0f, 0.5f },
-            { 0.5f, 0.5f}
-        };
-        vertices.add (v2);
-        Vertex v3 =
-        {
-            { 0.25f + x, -0.25f + y, 0.0f},
-            { 0.5f, 0.5f, 0.5f},
-            { 1.0f, 1.0f, 0.0f, 0.5f },
-            { 0.5f, 0.5f,}
-        };
-        vertices.add (v3);
-        int indices[] = {0, 1, 2};
-        numIndices = 3;
+        int numIndices = 0;
+        if ((time != ecosystem->time) && (ecosystem->_mutex.try_lock())) {
+            vertices.clear();
+            indices.clear();
+            Vertex v1;
+            for (auto o:ecosystem->biotope) {
+                int x_size = ecosystem->biotope_size_x;
+                int y_size = ecosystem->biotope_size_y;
+                tuple<int, int> position = o.first;
+                species_t ORGANISM_TYPE = o.second->species;
+                float x = 2 * (float)get<0>(position) / (float)x_size - 1.0f;
+                float y = 2 * (float)get<1>(position) / (float)y_size - 1.0f;
+                if (ORGANISM_TYPE == PLANT) {
+                    Vertex v2 =
+                    {
+                        {x, y, 1.0f},
+                        { 0.5f, 0.5f, 0.5f},
+                        { 0.0f, 1.0f, 0.0f, 0.75f },  // green
+                        { 0.5f, 0.5f,}
+                    };
+                    v1 = v2;
+                }
+                if (ORGANISM_TYPE == HERBIVORE) {
+                    Vertex v2 =
+                    {
+                        {x, y, 1.0f},
+                        { 0.5f, 0.5f, 0.5f},
+                        { 0.5f, 0.5f, 0.5f, 0.75f },  // grey
+                        { 0.5f, 0.5f,}
+                    };
+                    v1 = v2;
+                }
+                if (ORGANISM_TYPE == CARNIVORE) {
+                    Vertex v2 =
+                    {
+                        {x, y, 1.0f},
+                        { 0.5f, 0.5f, 0.5f},
+                        { 1.0f, 0.0f, 0.0f, 0.75f },  // red
+                        { 0.5f, 0.5f,}
+                    };
+                    v1 = v2;
+                }
+                indices.add(numIndices);
+                vertices.add(v1);
+                numIndices += 1;
+                time = ecosystem->time;
+            }
+        }
         // ************************************************
         
         // Now prepare this information to be drawn
         openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER,
                                                static_cast<GLsizeiptr> (static_cast<size_t> (vertices.size()) * sizeof (Vertex)),
-                                               vertices.getRawDataPointer(), GL_STATIC_DRAW);
+                                               vertices.getRawDataPointer(), GL_DYNAMIC_DRAW);
         
         openGLContext.extensions.glGenBuffers (1, &indexBuffer);
         openGLContext.extensions.glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
         openGLContext.extensions.glBufferData (GL_ELEMENT_ARRAY_BUFFER,
-                                               static_cast<GLsizeiptr> (static_cast<size_t> (numIndices) * sizeof (juce::uint32)),
-                                               indices, GL_STATIC_DRAW);
+                                               static_cast<GLsizeiptr> (static_cast<size_t> (indices.size()) * sizeof (juce::uint32)),
+                                               indices.getRawDataPointer(), GL_DYNAMIC_DRAW);
         openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
         openGLContext.extensions.glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
         
@@ -131,9 +150,9 @@ public:
             openGLContext.extensions.glEnableVertexAttribArray (textureCoordIn->attributeID);
         }
         
-        //glPointSize(20.0);
-        //glDrawElements (GL_POINTS, numIndices, GL_UNSIGNED_INT, 0);  // Draw triangles!
-        glDrawElements (GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);  // Draw triangles!
+        glPointSize(10.0);
+        glDrawElements (GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles!
+        //glDrawElements (GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles!
         
         if (position != nullptr)       openGLContext.extensions.glDisableVertexAttribArray (position->attributeID);
         if (normal != nullptr)         openGLContext.extensions.glDisableVertexAttribArray (normal->attributeID);
@@ -241,11 +260,11 @@ public:
     
     
 private:
+    int time;
+    Array<Vertex> vertices;
+    Array<int> indices;
     GLuint vertexBuffer, indexBuffer;
     int numIndices;
-    
-    float x;
-    float y;
     
     const char* vertexShader;
     const char* fragmentShader;
@@ -254,17 +273,6 @@ private:
     ScopedPointer<OpenGLShaderProgram::Attribute> position, normal, sourceColour, textureCoordIn;
     
     String newVertexShader, newFragmentShader;
-    
-    
-    void timerCallback() override {
-        // Here you move your triangles
-        x = x + 0.001;
-        y = y + 0.001;
-        if (x > 1)
-            x -= 2;
-        if (y > 1)
-            y -= 2;
-    }
 };
 //==============================================================================
 //==============================================================================
@@ -396,11 +404,12 @@ MainContentComponent::MainContentComponent()
 {
     setSize (800, 600);
     _tabbedComponent = new TabbedComponent(TabbedButtonBar::TabsAtTop);
-    _tabbedComponent->addTab("Map", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), new mapComponent(), true);
+    _tabbedComponent->addTab("Map", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), new mapComponent(ecosystem), true);
     _tabbedComponent->addTab("Controls", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new SlidersPage(), true);
     addAndMakeVisible(_tabbedComponent);
     Ecosystem ecosystem = Ecosystem();
     startTimer(100);
+    busy_ecosystem = false;
 }
 
 MainContentComponent::~MainContentComponent()
