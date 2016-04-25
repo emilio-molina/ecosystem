@@ -16,8 +16,10 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="gui_juce"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="gui_juce"/>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="gui_juce"
+                       headerPath="../"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="gui_juce"
+                       headerPath="../"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../../JUCE/modules"/>
@@ -35,12 +37,12 @@
         <MODULEPATH id="juce_audio_processors" path="../../../../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraLinkerFlags="" cppLanguageStandard="-std=c++11">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
-                       targetName="gui_juce"/>
+                       targetName="gui_juce" headerPath="../../.."/>
         <CONFIGURATION name="Release" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="3"
-                       targetName="gui_juce"/>
+                       targetName="gui_juce" headerPath="../../.."/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../../JUCE/modules"/>
@@ -77,5 +79,6 @@
   <JUCEOPTIONS/>
   <LIVE_SETTINGS>
     <OSX headerPath="../"/>
+    <LINUX headerPath=""/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>

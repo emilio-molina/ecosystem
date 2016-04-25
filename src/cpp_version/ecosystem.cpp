@@ -307,7 +307,6 @@ void Ecosystem::deleteDeadOrganisms() {
 }
     
 void Ecosystem::evolve() {
-    _mutex.lock();
     // Create a vector of current organisms
     vector<Organism*> organisms_to_act(this->biotope.size(), nullptr);
     int i = 0;
@@ -323,7 +322,6 @@ void Ecosystem::evolve() {
     }
     this->deleteDeadOrganisms();
     this->time += 1;
-    _mutex.unlock();
 }
 
 /*

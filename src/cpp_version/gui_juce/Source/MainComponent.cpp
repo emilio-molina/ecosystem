@@ -1,5 +1,7 @@
 #include "MainComponent.h"
 
+
+CriticalSection mtx;
 //=============================================================================
 // class storing the information about a single vertex
 struct Vertex
@@ -64,7 +66,7 @@ public:
         // ************************** TRIANGLES DEFINITION
         // Here you can draw whatever you want
         int numIndices = 0;
-        if ((time != ecosystem->time) && (ecosystem->_mutex.try_lock())) {
+        if ((time != ecosystem->time) && (mtx.tryEnter())) {
             vertices.clear();
             indices.clear();
             Vertex v1;
@@ -110,6 +112,7 @@ public:
                 numIndices += 1;
                 time = ecosystem->time;
             }
+        mtx.exit();
         }
         // ************************************************
         
@@ -431,7 +434,9 @@ void MainContentComponent::resized()
 }
 
 void MainContentComponent::timerCallback() {
+    mtx.enter();
     ecosystem.evolve();
+    mtx.exit();
     auto num_organisms = ecosystem.biotope.size();
     auto num_free_locs = ecosystem.biotope_free_locs.size();
     cout << "Time: " << ecosystem.time << endl;

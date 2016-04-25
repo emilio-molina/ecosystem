@@ -21,7 +21,6 @@
 #include <time.h>
 #include <unordered_set>
 #include <unordered_map>
-#include <mutex>
 
 using namespace std;
 
@@ -45,7 +44,6 @@ public:
     map<string, int> BIOTOPE_SETTINGS;
     map<species_t, int> INITIAL_NUM_OF_ORGANISMS;
     float INITIAL_ENERGY_RESERVE;
-    mutex _mutex;
     
     Ecosystem();
     void initializeBiotope();
