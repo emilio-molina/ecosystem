@@ -20,10 +20,10 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, specie
     this->MINIMUM_ENERGY_REQUIRED_TO["procreate"] = 100.0f;
     this->MAX_LIFESPAN[PLANT] = 40;
     this->MAX_LIFESPAN[HERBIVORE] = 35;
-    this->MAX_LIFESPAN[CARNIVORE] = 100;
-    this->PROCREATION_PROBABILITY[PLANT] = 0.5f;
-    this->PROCREATION_PROBABILITY[HERBIVORE] = 0.2f;
-    this->PROCREATION_PROBABILITY[CARNIVORE] = 0.1f;
+    this->MAX_LIFESPAN[CARNIVORE] = 35;
+    this->PROCREATION_PROBABILITY[PLANT] = 0.075f;
+    this->PROCREATION_PROBABILITY[HERBIVORE] = 0.05f;
+    this->PROCREATION_PROBABILITY[CARNIVORE] = 0.05f;
     this->PHOTOSYNTHESIS_CAPACITY = 5.0f;
 
     // Relative to parent_ecosystem:
@@ -40,7 +40,7 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, specie
     this->energy_reserve = energy_reserve;
     this->is_alive = true;
     this->cause_of_death = "";
-    this->is_energy_dependent = true;
+    this->is_energy_dependent = false;//true;
 }
 
 void Organism::act() {
@@ -155,7 +155,7 @@ void Organism::do_procreate() {
     }
     uniform_real_distribution<float> fdis(0, 1.0);
     float random_value = fdis(eng);
-    
+
     if (random_value >= PROCREATION_PROBABILITY[this->species])  // do not procreate
         return;
 
@@ -187,12 +187,13 @@ void Organism::do_die(const string &cause_of_death) {
 
 
 Ecosystem::Ecosystem() {
+    this->rendered = false;
     this->BIOTOPE_SETTINGS["size_x"] = 200;
     this->BIOTOPE_SETTINGS["size_y"] = 200;
-    this->INITIAL_NUM_OF_ORGANISMS[PLANT] = 300;
-    this->INITIAL_NUM_OF_ORGANISMS[HERBIVORE] = 300;
-    this->INITIAL_NUM_OF_ORGANISMS[CARNIVORE] = 300;
-    this->INITIAL_ENERGY_RESERVE = 100.0f;
+    this->INITIAL_NUM_OF_ORGANISMS[PLANT] = 100;
+    this->INITIAL_NUM_OF_ORGANISMS[HERBIVORE] = 100;
+    this->INITIAL_NUM_OF_ORGANISMS[CARNIVORE] = 100;
+    this->INITIAL_ENERGY_RESERVE = 10000.0f;
 
     this->num_plants = INITIAL_NUM_OF_ORGANISMS[PLANT];
     this->num_herbivores = INITIAL_NUM_OF_ORGANISMS[HERBIVORE];

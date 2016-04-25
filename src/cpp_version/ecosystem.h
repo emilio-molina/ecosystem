@@ -33,6 +33,7 @@ class Organism;
 class Ecosystem {
     
 public:
+    bool rendered;
     int num_plants;
     int num_herbivores;
     int num_carnivores;

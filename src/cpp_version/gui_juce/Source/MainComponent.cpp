@@ -112,6 +112,7 @@ public:
                 numIndices += 1;
                 time = ecosystem->time;
             }
+        ecosystem->rendered = true;
         mtx.exit();
         }
         // ************************************************
@@ -153,7 +154,7 @@ public:
             openGLContext.extensions.glEnableVertexAttribArray (textureCoordIn->attributeID);
         }
         
-        glPointSize(10.0);
+        glPointSize(4.0);
         glDrawElements (GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles!
         //glDrawElements (GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles!
         
@@ -434,8 +435,10 @@ void MainContentComponent::resized()
 }
 
 void MainContentComponent::timerCallback() {
+if (ecosystem.rendered) {
     mtx.enter();
     ecosystem.evolve();
+    ecosystem.rendered = false;
     mtx.exit();
     auto num_organisms = ecosystem.biotope.size();
     auto num_free_locs = ecosystem.biotope_free_locs.size();
@@ -443,4 +446,5 @@ void MainContentComponent::timerCallback() {
     cout << "    num organism: " << num_organisms << endl;
     cout << "    num free locs: " << num_free_locs << endl;
     cout << "    sum previous numbers: " << num_organisms + num_free_locs << endl;
+    }
 }
