@@ -26,6 +26,53 @@ using namespace std;
 
 enum species_t {PLANT, HERBIVORE, CARNIVORE};
 
+
+// Ecosystem constraints
+const map<string, int> BIOTOPE_SETTINGS = {
+    {"size_x", 200},
+    {"size_y", 200}
+};
+
+const map<string, float> ENERGY_COST = {
+    {"to have the capacity of moving", 0.0f},
+    {"to move", 5.0f},
+    {"to have the capacity of hunting", 0.0f},
+    {"to hunt", 10.0f},
+    {"to have the capacity of procreating", 0.0f},
+    {"to procreate", 1000.0f},
+};
+
+const map<string, float> MINIMUM_ENERGY_REQUIRED_TO = {
+    {"move", 100.0f},
+    {"hunt", 100.0f},
+    {"procreate", 100.0f},
+};
+
+const float PHOTOSYNTHESIS_CAPACITY = 5.0f;
+
+// Definition of gens grouped by species
+const map<species_t, int> INITIAL_NUM_OF_ORGANISMS = {
+    {PLANT, 100},
+    {HERBIVORE, 100},
+    {CARNIVORE, 100}
+};
+
+const map<species_t, int> MAX_LIFESPAN = {
+    {PLANT, 50},
+    {HERBIVORE, 200},
+    {CARNIVORE, 100}
+};
+
+const map<species_t, float> PROCREATION_PROBABILITY = {
+    {PLANT, 0.15f},
+    {HERBIVORE, 0.08f},
+    {CARNIVORE, 0.08f}
+};
+
+const float INITIAL_ENERGY_RESERVE = 30000.0f;
+
+
+
 //************ HEADERS
 
 class Organism;
@@ -42,9 +89,6 @@ public:
     map<tuple<int, int>, Organism*> biotope;
     set<tuple<int, int>> biotope_free_locs;
     int time;
-    map<string, int> BIOTOPE_SETTINGS;
-    map<species_t, int> INITIAL_NUM_OF_ORGANISMS;
-    float INITIAL_ENERGY_RESERVE;
     
     Ecosystem();
     void initializeBiotope();
@@ -68,11 +112,6 @@ public:
     Ecosystem* parent_ecosystem;
     tuple<int, int> location;
     tuple<int, int> old_location;
-    map<string, float> ENERGY_COST;
-    map<string, float> MINIMUM_ENERGY_REQUIRED_TO;
-    map<species_t, int> MAX_LIFESPAN;
-    map<species_t, float> PROCREATION_PROBABILITY;
-    float PHOTOSYNTHESIS_CAPACITY;
 
     species_t species;
     int death_age;

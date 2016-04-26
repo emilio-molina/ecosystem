@@ -9,22 +9,6 @@ using namespace std;
 default_random_engine eng((random_device())());
 
 Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, species_t species, float energy_reserve) {
-    this->ENERGY_COST["to have the capacity of moving"] = 0.0f;
-    this->ENERGY_COST["to move"] = 5.0f;
-    this->ENERGY_COST["to have the capacity of hunting"] = 0.0f;
-    this->ENERGY_COST["to hunt"] = 10.0f;
-    this->ENERGY_COST["to have the capacity of procreating"] = 0.0f;
-    this->ENERGY_COST["to procreate"] = 1000.0f;
-    this->MINIMUM_ENERGY_REQUIRED_TO["move"] = 100.0f;
-    this->MINIMUM_ENERGY_REQUIRED_TO["hunt"] = 100.0f;
-    this->MINIMUM_ENERGY_REQUIRED_TO["procreate"] = 1000.0f;
-    this->MAX_LIFESPAN[PLANT] = 50;
-    this->MAX_LIFESPAN[HERBIVORE] = 200;
-    this->MAX_LIFESPAN[CARNIVORE] = 100;
-    this->PROCREATION_PROBABILITY[PLANT] = 0.15f;
-    this->PROCREATION_PROBABILITY[HERBIVORE] = 0.08f;
-    this->PROCREATION_PROBABILITY[CARNIVORE] = 0.08f;
-    this->PHOTOSYNTHESIS_CAPACITY = 5000.0f;
 
     // Relative to parent_ecosystem:
     this->parent_ecosystem = parent_ecosystem;
@@ -33,7 +17,7 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, specie
 
     // Genes:
     this->species = species;
-    this->death_age = rand() % MAX_LIFESPAN[this->species];
+    this->death_age = rand() % MAX_LIFESPAN.at(this->species);
 
     // State:
     this->age = 0;
@@ -75,7 +59,7 @@ void Organism::do_photosynthesis() {
 }
     
 bool Organism::has_enough_energy_to(const string &action) {
-    return (this->energy_reserve > MINIMUM_ENERGY_REQUIRED_TO[action]);
+    return (this->energy_reserve > MINIMUM_ENERGY_REQUIRED_TO.at(action));
 }
 
 void Organism::do_spend_energy(float amount_of_energy) {
@@ -92,7 +76,7 @@ void Organism::do_move() {
     // If it is energy dependent
     if (is_energy_dependent) {
         if (this->has_enough_energy_to("move")) {
-            this->do_spend_energy(ENERGY_COST["to have the capacity of moving"]);
+            this->do_spend_energy(ENERGY_COST.at("to have the capacity of moving"));
         }
         if (!this->is_alive)
             return;
@@ -102,7 +86,7 @@ void Organism::do_move() {
     this->parent_ecosystem->getSurroundingFreeLocations(this->location, surrounding_free_locations);
     if (surrounding_free_locations.size() > 0) {
         if (this->is_energy_dependent) {
-            this->do_spend_energy(ENERGY_COST["to move"]);
+            this->do_spend_energy(ENERGY_COST.at("to move"));
             if (!this->is_alive)
                 return;
         }
@@ -129,7 +113,7 @@ void Organism::do_hunt() {
     
     if (this->is_energy_dependent) {
         if (this->has_enough_energy_to("hunt"))
-            this->do_spend_energy(ENERGY_COST["to have the capability of hunting"]);
+            this->do_spend_energy(ENERGY_COST.at("to have the capability of hunting"));
         if (!this->is_alive)
             return;
     }
@@ -149,14 +133,14 @@ void Organism::do_hunt() {
 void Organism::do_procreate() {
     if (this->is_energy_dependent) {
         if (this->has_enough_energy_to("procreate"))
-            this->do_spend_energy(ENERGY_COST["to have the capability of procreating"]);
+            this->do_spend_energy(ENERGY_COST.at("to have the capability of procreating"));
         if (!this->is_alive)
             return;  // may have died because of starvation
     }
     uniform_real_distribution<float> fdis(0, 1.0);
     float random_value = fdis(eng);
 
-    if (random_value >= PROCREATION_PROBABILITY[this->species])  // do not procreate
+    if (random_value >= PROCREATION_PROBABILITY.at(this->species))  // do not procreate
         return;
 
     vector<tuple<int, int>> free_locs;
@@ -170,7 +154,7 @@ void Organism::do_procreate() {
     Organism* baby = new Organism(baby_location, this->parent_ecosystem, this->species, baby_energy_reserve);
     this->parent_ecosystem->addOrganism(baby);
     if (this->is_energy_dependent)
-        this->do_spend_energy(ENERGY_COST["to procreate"]);
+        this->do_spend_energy(ENERGY_COST.at("to procreate"));
 }
 
 void Organism::do_age() {
@@ -188,18 +172,11 @@ void Organism::do_die(const string &cause_of_death) {
 
 Ecosystem::Ecosystem() {
     this->rendered = false;
-    this->BIOTOPE_SETTINGS["size_x"] = 200;
-    this->BIOTOPE_SETTINGS["size_y"] = 200;
-    this->INITIAL_NUM_OF_ORGANISMS[PLANT] = 100;
-    this->INITIAL_NUM_OF_ORGANISMS[HERBIVORE] = 100;
-    this->INITIAL_NUM_OF_ORGANISMS[CARNIVORE] = 100;
-    this->INITIAL_ENERGY_RESERVE = 30000.0f;
-
-    this->num_plants = INITIAL_NUM_OF_ORGANISMS[PLANT];
-    this->num_herbivores = INITIAL_NUM_OF_ORGANISMS[HERBIVORE];
-    this->num_carnivores = INITIAL_NUM_OF_ORGANISMS[CARNIVORE];
-    this->biotope_size_x = BIOTOPE_SETTINGS["size_x"];
-    this->biotope_size_y = BIOTOPE_SETTINGS["size_y"];
+    this->num_plants = INITIAL_NUM_OF_ORGANISMS.at(PLANT);
+    this->num_herbivores = INITIAL_NUM_OF_ORGANISMS.at(HERBIVORE);
+    this->num_carnivores = INITIAL_NUM_OF_ORGANISMS.at(CARNIVORE);
+    this->biotope_size_x = BIOTOPE_SETTINGS.at("size_x");
+    this->biotope_size_y = BIOTOPE_SETTINGS.at("size_y");
     this->initializeBiotope();
     this->initializeOrganisms();
     this->time = 0;
