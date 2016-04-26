@@ -8,6 +8,10 @@ using namespace std;
 
 default_random_engine eng((random_device())());
 
+/*********************************************************
+* Organism implementation
+*/
+
 Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, species_t species, float energy_reserve) {
 
     // Relative to parent_ecosystem:
@@ -26,6 +30,7 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, specie
     this->cause_of_death = "";
     this->is_energy_dependent = false;//true;
 }
+
 
 void Organism::act() {
 
@@ -53,14 +58,17 @@ void Organism::act() {
     this->do_age();
 }
     
+
 void Organism::do_photosynthesis() {
     if (this->is_energy_dependent)
         this->energy_reserve = this->energy_reserve + PHOTOSYNTHESIS_CAPACITY;
 }
     
+
 bool Organism::has_enough_energy_to(const string &action) {
     return (this->energy_reserve > MINIMUM_ENERGY_REQUIRED_TO.at(action));
 }
+
 
 void Organism::do_spend_energy(float amount_of_energy) {
     this->energy_reserve = this->energy_reserve - amount_of_energy;
@@ -68,6 +76,7 @@ void Organism::do_spend_energy(float amount_of_energy) {
         this->do_die("starvation");
     }
 }
+
 
 void Organism::do_move() {
     if (this->species==PLANT)
@@ -130,6 +139,7 @@ void Organism::do_hunt() {
     }
 }
 
+
 void Organism::do_procreate() {
     if (this->is_energy_dependent) {
         if (this->has_enough_energy_to("procreate"))
@@ -157,6 +167,7 @@ void Organism::do_procreate() {
         this->do_spend_energy(ENERGY_COST.at("to procreate"));
 }
 
+
 void Organism::do_age() {
     this->age += 1;
     if (this->age > this->death_age)
@@ -170,6 +181,10 @@ void Organism::do_die(const string &cause_of_death) {
 }
 
 
+/*********************************************************
+ * Ecosystem implementation
+ */
+
 Ecosystem::Ecosystem() {
     this->rendered = false;
     this->num_plants = INITIAL_NUM_OF_ORGANISMS.at(PLANT);
@@ -182,6 +197,7 @@ Ecosystem::Ecosystem() {
     this->time = 0;
 }
     
+
 void Ecosystem::initializeBiotope() {
     for (int x = 0; x < this->biotope_size_x; x++) {
         for (int y = 0; y < this->biotope_size_y; y++) {
@@ -198,6 +214,7 @@ tuple<int, int> Ecosystem::getRandomFreeLocation() {
     return *it;
 }
     
+
 void Ecosystem::initializeOrganisms() {
     // Create plants
     for (int i = 0; i < this->num_plants; i++) {
@@ -218,11 +235,13 @@ void Ecosystem::initializeOrganisms() {
     }
 }
     
+
 void Ecosystem::addOrganism(Organism* organism) {
     this->biotope[organism->location] = organism;
     this->biotope_free_locs.erase(organism->location);
 }
     
+
 void Ecosystem::removeOrganism(Organism* organism) {
     this->biotope.erase(organism->location);
     this->biotope_free_locs.insert(organism->location);
@@ -230,7 +249,6 @@ void Ecosystem::removeOrganism(Organism* organism) {
 }
 
 
-    
 void Ecosystem::updateOrganismLocation(Organism* organism){
     this->biotope.erase(organism->old_location);
     this->biotope_free_locs.insert(organism->old_location);
@@ -239,6 +257,7 @@ void Ecosystem::updateOrganismLocation(Organism* organism){
     organism->old_location = organism->location;
 }
     
+
 void Ecosystem::getSurroundingFreeLocations(tuple<int, int> center, vector<tuple<int, int>> &surrounding_free_locations) {
     int center_x = get<0>(center);
     int center_y = get<1>(center);
@@ -258,6 +277,7 @@ void Ecosystem::getSurroundingFreeLocations(tuple<int, int> center, vector<tuple
     random_shuffle(surrounding_free_locations.begin(), surrounding_free_locations.end());
 }
     
+
 void Ecosystem::getSurroundingOrganisms(tuple<int, int> center, vector<Organism*> &surrounding_organisms) {
     int center_x = get<0>(center);
     int center_y = get<1>(center);
@@ -277,6 +297,7 @@ void Ecosystem::getSurroundingOrganisms(tuple<int, int> center, vector<Organism*
     random_shuffle(surrounding_organisms.begin(), surrounding_organisms.end());
 }
     
+
 void Ecosystem::deleteDeadOrganisms() {
     for (auto dead_organism:this->dead_organisms) {
         delete dead_organism;
@@ -284,6 +305,7 @@ void Ecosystem::deleteDeadOrganisms() {
     this->dead_organisms.clear();
 }
     
+
 void Ecosystem::evolve() {
     // Create a vector of current organisms
     vector<Organism*> organisms_to_act(this->biotope.size(), nullptr);
