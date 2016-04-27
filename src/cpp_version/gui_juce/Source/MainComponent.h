@@ -33,7 +33,6 @@ private:
     void timerCallback();
     //==============================================================================
     Ecosystem ecosystem;
-    bool busy_ecosystem;
     ScopedPointer<TabbedComponent> _tabbedComponent;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

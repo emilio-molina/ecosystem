@@ -2,8 +2,10 @@
 
 
 CriticalSection mtx;
-//=============================================================================
-// class storing the information about a single vertex
+
+
+/** @brief Struct storing information about one OpenGL vertex
+*/
 struct Vertex
 {
     float position[3];
@@ -12,9 +14,11 @@ struct Vertex
     float texCoord[2];
 };
 
-//=============================================================================
-// Map component
 
+/** @brief Component able to render ecosystem using OpenGL
+*
+* It is a simplified version of OpenGL example provided with JUCE
+*/
 class mapComponent   : public OpenGLAppComponent
 {
 public:
@@ -22,50 +26,51 @@ public:
     //==============================================================================
     mapComponent(Ecosystem& ecosystem)
     {
-        this->time = -1;
+        this->time = -1; 
         position = nullptr;
         normal = nullptr;
         textureCoordIn = nullptr;
         sourceColour = nullptr;
         this->ecosystem = &ecosystem;
     }
-    
+
     ~mapComponent()
     {
         shutdownOpenGL();
     }
-    
+
+    /** @brief OpenGL initialization function called only once
+    */
     void initialise() override
     {
         createShaders();
     }
-    
+
     void shutdown() override
     {
         shader = nullptr;
     }
-    
+
+    /** @brief OpenGL render function continuously called (25 fps)
+    */
     void render() override
     {
         // Stuff to be done before defining your triangles
         jassert (OpenGLHelpers::isContextActive());
-        
         const float desktopScale = (float) openGLContext.getRenderingScale();
         OpenGLHelpers::clear (Colour::greyLevel (0.05f));
-        
         glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glViewport (0, 0, roundToInt (desktopScale * getWidth()), roundToInt (desktopScale * getHeight()));
-        
         shader->use();
-        
         openGLContext.extensions.glGenBuffers (1, &vertexBuffer);
         openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
-        
-        
+
         // ************************** TRIANGLES DEFINITION
         // Here you can draw whatever you want
-        int numIndices = 0;
+        int vertex_counter = 0;
+
+        // if ecosystem->time has changed, and mutex is not locked
         if ((time != ecosystem->time) && (mtx.tryEnter())) {
             vertices.clear();
             indices.clear();
@@ -107,9 +112,9 @@ public:
                     };
                     v1 = v2;
                 }
-                indices.add(numIndices);
+                indices.add(vertex_counter);
                 vertices.add(v1);
-                numIndices += 1;
+                vertex_counter += 1;
                 time = ecosystem->time;
             }
         ecosystem->rendered = true;
@@ -155,7 +160,7 @@ public:
         }
         
         glPointSize(4.0);
-        glDrawElements (GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles!
+        glDrawElements (GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);  // Draw points!
         //glDrawElements (GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles!
         
         if (position != nullptr)       openGLContext.extensions.glDisableVertexAttribArray (position->attributeID);
@@ -171,7 +176,9 @@ public:
         openGLContext.extensions.glDeleteBuffers (1, &indexBuffer);
         
     }
-    
+
+    /** @brief Paint function continuously called to fraw non-OpenGL graphics
+    */
     void paint (Graphics& g) override
     {
         // You can add your component specific drawing code here!
@@ -179,9 +186,7 @@ public:
         
         g.setColour(Colours::white);
         g.setFont (20);
-        g.drawText ("OpenGL example", 25, 20, 300, 30, Justification::left);
-        g.drawLine (20, 20, 170, 20);
-        g.drawLine (20, 50, 170, 50);
+        g.drawText ("Ecosystem map", 25, 20, 300, 30, Justification::left);
     }
     
     void resized() override
@@ -189,9 +194,16 @@ public:
         // This is called when the MainContentComponent is resized.
         // If you add any child components, this is where you should
         // update their positions.
-        
     }
-    
+
+    /** @brief Create OpenGL shaders
+    *
+    * Vertex shader: Graphic-card routine determining how vertices modify their
+    *                coordinates, as a function of camera position, etc.
+    *
+    * Fragment shader: Graphic-card routine determining how pixels are colored
+    *                  depending on their position, colors, texture, light, etc.
+    */
     void createShaders()
     {
         // Here we define the shaders use to draw our triangle. They are very simple.
@@ -268,7 +280,6 @@ private:
     Array<Vertex> vertices;
     Array<int> indices;
     GLuint vertexBuffer, indexBuffer;
-    int numIndices;
     
     const char* vertexShader;
     const char* fragmentShader;
@@ -278,8 +289,10 @@ private:
     
     String newVertexShader, newFragmentShader;
 };
-//==============================================================================
-//==============================================================================
+
+
+/** @brief Component of dummy sliders taken from JUCE Demo
+*/
 struct SlidersPage  : public Component
 {
     SlidersPage()
@@ -407,13 +420,13 @@ private:
 MainContentComponent::MainContentComponent()
 {
     setSize (800, 600);
+    // Create tabs and add components to each tab
     _tabbedComponent = new TabbedComponent(TabbedButtonBar::TabsAtTop);
     _tabbedComponent->addTab("Map", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), new mapComponent(ecosystem), true);
     _tabbedComponent->addTab("Controls", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new SlidersPage(), true);
     addAndMakeVisible(_tabbedComponent);
     Ecosystem ecosystem = Ecosystem();
-    startTimer(100);
-    busy_ecosystem = false;
+    startTimer(100);  // call timer callback every 100ms
 }
 
 MainContentComponent::~MainContentComponent()
