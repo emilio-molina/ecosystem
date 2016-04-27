@@ -1,9 +1,8 @@
 # How to compile command-line version of ecosystem?
 
-Just run:
-`g++ main.cpp ecosystem.cpp --std=c++11 -o ecosystem`
+The only dependency used in `boost` (http://www.boost.org/). In Mac OSx it can be installed with brew: `brew install boost`, which install the library in `/usr/local/Cellar/boost/1.57.0`. Therefore, to compile the program run:
 
-It does not have dependencies, so it should compile very easily.
+`g++ main.cpp ecosystem.cpp --std=c++11 -I/usr/local/Cellar/boost/1.57.0/include -L/usr/local/Cellar/boost/1.57.0/lib -lboost_system -lboost_filesystem -o ecosystem`
 
 # How to run the GUI?
 
