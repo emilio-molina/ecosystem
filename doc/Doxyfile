@@ -4,6 +4,6 @@ OUTPUT_DIRECTORY   = doxygen
 EXTRACT_ALL        = YES
 EXTRACT_PRIVATE    = YES
 INPUT              = ../
-FILE_PATTERNS      = *.cpp
+FILE_PATTERNS      = *.cpp *.h
 RECURSIVE          = YES
 
