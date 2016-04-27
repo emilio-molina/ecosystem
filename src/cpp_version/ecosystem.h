@@ -15,12 +15,14 @@
 #include <tuple>
 #include <map>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <set>
 #include <random>
 #include <time.h>
 #include <unordered_set>
 #include <unordered_map>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 
@@ -220,5 +222,18 @@ private:
 };
 
 
+
+/** @brief Class to export ecosystem to files
+*/
+class Exporter {
+public:
+    Exporter(Ecosystem* ecosystem, const string& dst_path);
+    void exportInitialSettings();
+    void exportTimeSlice();
+private:
+    Ecosystem* ecosystem;
+    string dst_path;
+    void organismToString(Organism* organism);
+};
 
 #endif  // ECOSYSTEM_H_INCLUDED

@@ -451,3 +451,33 @@ void Organism::_do_die(const string &cause_of_death) {
     this->_cause_of_death = cause_of_death;
     this->_parent_ecosystem->removeOrganism(this);
 }
+
+
+/*********************************************************
+ * Exporter implementation
+ */
+
+/** @brief Exporter constructor
+*
+* @param[in] ecosystem Pointer to ecosystem to be exported
+* @param[in] dst_path Path of destination folder
+*/
+Exporter::Exporter(Ecosystem* ecosystem, const string& dst_path) {
+    this->ecosystem = ecosystem;
+}
+
+
+/** @brief Export initial settings of experiment
+*
+* For compatibility issues, it exports them as a python module (by now)
+*/
+void Exporter::exportInitialSettings() {
+    ofstream f_settings;
+}
+
+/** @brief Export biotope of current time slice as a JSON
+*
+*/
+void Exporter::exportTimeSlice() {
+    
+}

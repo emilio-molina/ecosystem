@@ -14,12 +14,12 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX">
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraLinkerFlags="" externalLibraries="boost_filesystem&#10;boost_system">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="gui_juce"
-                       headerPath="../"/>
+                       headerPath="../&#10;/usr/local/Cellar/boost/1.57.0/include" libraryPath="/usr/local/Cellar/boost/1.57.0/lib/"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="gui_juce"
-                       headerPath="../"/>
+                       headerPath="../&#10;/usr/local/Cellar/boost/1.57.0/include" libraryPath="/usr/local/Cellar/boost/1.57.0/lib/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../../JUCE/modules"/>
@@ -78,7 +78,7 @@
   </MODULES>
   <JUCEOPTIONS/>
   <LIVE_SETTINGS>
-    <OSX headerPath="../"/>
+    <OSX headerPath="" systemHeaderPath="" extraDLLs=""/>
     <LINUX headerPath=""/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>

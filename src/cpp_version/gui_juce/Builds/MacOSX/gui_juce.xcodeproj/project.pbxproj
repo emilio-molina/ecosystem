@@ -1343,7 +1343,7 @@
 					DA498C87E7B94000E5D592BC,
 					D1F9A477B21E5FB7123445A3,
 					DA498C87E7B94000E5D592BC, ); name = "juce_audio_devices"; sourceTree = "<group>"; };
-		335E3FE3DA8C2FDA2CDB9EA5 = {isa = PBXGroup; children = (
+		DDF10EB9917F2AB6C3536547 = {isa = PBXGroup; children = (
 					ACABB6B3ADD73807201D41FC,
 					A2B722112AA0D2D53E4F7507,
 					409D37C20D5B55FE0A438345,
@@ -1360,15 +1360,15 @@
 					1EE86DE9DB30C722D4C31515,
 					0E37253ECAA9A6F02AB2CA13,
 					972A5B687AFB6DB782927B5D, ); name = private; sourceTree = "<group>"; };
-		069D927DE2D063FDF1A1FED5 = {isa = PBXGroup; children = (
+		FA6377CE9115EA81B3CA2B92 = {isa = PBXGroup; children = (
 					25AF211C78731CCFC9971F66,
 					659D44FA4997575B53322584,
 					9899A10D2549095B184160A4, ); name = protected; sourceTree = "<group>"; };
-		6CE58C2ED8C1AF4178E36E01 = {isa = PBXGroup; children = (
-					335E3FE3DA8C2FDA2CDB9EA5,
-					069D927DE2D063FDF1A1FED5, ); name = include; sourceTree = "<group>"; };
-		B12728FD57EFAC188FE2C256 = {isa = PBXGroup; children = (
-					6CE58C2ED8C1AF4178E36E01,
+		49A2C03F95B82967F002A564 = {isa = PBXGroup; children = (
+					DDF10EB9917F2AB6C3536547,
+					FA6377CE9115EA81B3CA2B92, ); name = include; sourceTree = "<group>"; };
+		029F3E497F8DC109C8A66CE1 = {isa = PBXGroup; children = (
+					49A2C03F95B82967F002A564,
 					8033F2C6BB8F2345DD89581B,
 					716C9E76383529DD4FF52561,
 					36471B2C904AE2A16ED9BD10,
@@ -1385,7 +1385,7 @@
 					061DE63C6026F13984912074,
 					5AA843B45DBF09E49650E4A4, ); name = libFLAC; sourceTree = "<group>"; };
 		9007E6E21570F0D2B9B42221 = {isa = PBXGroup; children = (
-					B12728FD57EFAC188FE2C256,
+					029F3E497F8DC109C8A66CE1,
 					B42CFD337FC72373F2DC1B5A,
 					0EC06CA1EF5E221B3BD8F64E,
 					7BBF7FAEFD60728A343B476F,
@@ -2634,10 +2634,12 @@
 					"JUCE_APP_VERSION=1.0.0",
 					"JUCE_APP_VERSION_HEX=0x10000", );
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = ("../../JuceLibraryCode", "../../../../../../../JUCE/modules", "../", "$(inherited)");
+				HEADER_SEARCH_PATHS = ("../../JuceLibraryCode", "../../../../../../../JUCE/modules", "../", "/usr/local/Cellar/boost/1.57.0/include", "$(inherited)");
 				INFOPLIST_FILE = Info-App.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = ("$(inherited)", "\"/usr/local/Cellar/boost/1.57.0/lib/\"");
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
+				OTHER_LDFLAGS = "-lboost_filesystem -lboost_system";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.gui_juce;
 				SDKROOT_ppc = macosx10.5; }; name = Debug; };
 		B4D315231E72A18E7D0EDB99 = {isa = XCBuildConfiguration; buildSettings = {
@@ -2656,10 +2658,12 @@
 					"JUCE_APP_VERSION_HEX=0x10000", );
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = ("../../JuceLibraryCode", "../../../../../../../JUCE/modules", "../", "$(inherited)");
+				HEADER_SEARCH_PATHS = ("../../JuceLibraryCode", "../../../../../../../JUCE/modules", "../", "/usr/local/Cellar/boost/1.57.0/include", "$(inherited)");
 				INFOPLIST_FILE = Info-App.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = ("$(inherited)", "\"/usr/local/Cellar/boost/1.57.0/lib/\"");
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
+				OTHER_LDFLAGS = "-lboost_filesystem -lboost_system";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.gui_juce;
 				SDKROOT_ppc = macosx10.5; }; name = Release; };
 		A878EB4E07F603D0EA5B4750 = {isa = XCBuildConfiguration; buildSettings = {
