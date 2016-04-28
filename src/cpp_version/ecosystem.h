@@ -235,6 +235,7 @@ public:
 private:
     Ecosystem* ecosystem;
     fs::path dst_path;
+    string experiment_name;
     void organismToString(Organism* organism);
 };
 
