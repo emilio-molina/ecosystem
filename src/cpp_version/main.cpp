@@ -6,7 +6,10 @@ using namespace std;
 int main(int argc, char* argv[]) {
     srand( static_cast<unsigned int>(time(NULL)));
     Ecosystem ecosystem = Ecosystem();
+    Exporter exporter = Exporter(&ecosystem, argv[1]);
+    exporter.exportInitialSettings();
     while (true) {
+        exporter.exportTimeSlice();
         ecosystem.evolve();
         auto num_organisms = ecosystem.biotope.size();
         auto num_free_locs = ecosystem.biotope_free_locs.size();
