@@ -464,6 +464,9 @@ void Organism::_do_die(const string &cause_of_death) {
 */
 Exporter::Exporter(Ecosystem* ecosystem, const string& dst_path) {
     this->ecosystem = ecosystem;
+    this->dst_path = fs::path(dst_path);
+    if (!fs::is_directory(dst_path))
+        fs::create_directory(dst_path);
 }
 
 
@@ -473,11 +476,24 @@ Exporter::Exporter(Ecosystem* ecosystem, const string& dst_path) {
 */
 void Exporter::exportInitialSettings() {
     ofstream f_settings;
+    fs::path dst_file = this->dst_path / fs::path("0_999") / fs::path("0.json");
+    cout << "writing to " << dst_file.string() << endl;
 }
 
 /** @brief Export biotope of current time slice as a JSON
 *
 */
 void Exporter::exportTimeSlice() {
-    
+    int curr_time = this->ecosystem->time;
+    int thousands = (curr_time / 1000) * 1000;
+    ostringstream intermediate_folder;
+    intermediate_folder << thousands << "_" << thousands + 999;
+    ostringstream dst_file_name;
+    dst_file_name << curr_time << ".json";
+    fs::path dst_file = this->dst_path /
+                        fs::path(intermediate_folder.str()) /
+                        fs::path(dst_file_name.str());
+    if (!fs::is_directory(this->dst_path / fs::path(intermediate_folder.str())))
+        fs:create_directory(this->dst_path / fs::path(intermediate_folder.str()));
+    cout << "writing to " << dst_file.string() << endl;
 }

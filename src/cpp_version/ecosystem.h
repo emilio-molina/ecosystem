@@ -22,9 +22,11 @@
 #include <time.h>
 #include <unordered_set>
 #include <unordered_map>
+#include <sstream>
 #include <boost/filesystem.hpp>
 
 using namespace std;
+namespace fs = boost::filesystem;
 
 enum species_t {PLANT, HERBIVORE, CARNIVORE};
 
@@ -232,7 +234,7 @@ public:
     void exportTimeSlice();
 private:
     Ecosystem* ecosystem;
-    string dst_path;
+    fs::path dst_path;
     void organismToString(Organism* organism);
 };
 
