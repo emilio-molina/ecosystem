@@ -24,9 +24,11 @@
 #include <unordered_map>
 #include <sstream>
 #include <boost/filesystem.hpp>
+#include "json.hpp"
 
-using namespace std;
 namespace fs = boost::filesystem;
+using namespace std;
+using json = nlohmann::json;
 
 enum species_t {PLANT, HERBIVORE, CARNIVORE};
 
@@ -127,7 +129,7 @@ public:
     void getSurroundingFreeLocations(tuple<int, int> center, vector<tuple<int, int>> &surrounding_free_locations);
     void getSurroundingOrganisms(tuple<int, int> center, vector<Organism*> &surrounding_organisms);
     void evolve();
-    
+    void serialize(json& data_json);
 private:
     // Private attributes
     /** @brief Vector of dead organisms to be freed
@@ -184,6 +186,22 @@ public:
     */
     float energy_reserve;
 
+    /** @brief Age of organism
+    */
+    int age;
+
+    /** @brief Death age
+    */
+    int death_age;
+
+    /** @brief Cause of death (in case it is dead)
+    */
+    string cause_of_death;
+
+    /** @brief true if energy matters (typically YES)
+    */
+    bool is_energy_dependent;
+
     // Public methods (documentation in ecosystem.cpp)
     Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, species_t species, float energy_reserve);
     void act();
@@ -194,22 +212,6 @@ private:
     */
     Ecosystem* _parent_ecosystem;
 
-    /** @brief Age of organism
-    */
-    int _age;
-
-    /** @brief Death age
-    */
-    int _death_age;
-
-    /** @brief Cause of death (in case it is dead)
-    */
-    string _cause_of_death;
-
-    /** @brief true if energy matters (typically YES)
-    */
-    bool _is_energy_dependent;
-
     // Private methods (documentation in ecosystem.cpp)
     void _do_photosynthesis();
     bool _has_enough_energy_to(const string &action);
@@ -218,9 +220,8 @@ private:
     bool _is_eatable(Organism* prey);
     void _do_hunt();
     void _do_procreate();
-    void _do_age();
+    void _doage();
     void _do_die(const string &cause_of_death);
-
 };
 
 
