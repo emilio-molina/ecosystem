@@ -37,9 +37,9 @@ Ecosystem::Ecosystem() {
 * @param[in] data_json JSON object to create ecosystem
 */
 Ecosystem::Ecosystem(json& data_json) {
-    if ((data_json["constants"]["PLANT"] != (int)PLANT) ||
-            (data_json["constants"]["HERBIVORE"] != (int)HERBIVORE) ||
-            (data_json["constants"]["CARNIVORE"] != (int)CARNIVORE)) {
+    if (((int)data_json["constants"]["PLANT"] != (int)PLANT) ||
+            ((int)data_json["constants"]["HERBIVORE"] != (int)HERBIVORE) ||
+            ((int)data_json["constants"]["CARNIVORE"] != (int)CARNIVORE)) {
         cout << "Ups! constant are different" << endl;
         exit(1);
     }
@@ -227,11 +227,11 @@ void Ecosystem::_initializeOrganisms(json& data_json) {
         int species = data_json["organisms"]["species"][i];
         float energy_reserve = data_json["organisms"]["energy_reserve"][i];
         Organism* o = new Organism(location, this, (species_t)species, energy_reserve);
-
         // Set genes and state
         o->age = data_json["organisms"]["age"][i];
         o->death_age = data_json["organisms"]["death_age"][i];
         o->is_energy_dependent = data_json["organisms"]["is_energy_dependent"][i];
+        this->addOrganism(o);
     }
 }
 
@@ -263,9 +263,9 @@ void Ecosystem::_deleteDeadOrganisms() {
 */
 void Ecosystem::serialize(json& data_json) {
     // ecosystem data
-    data_json["constants"]["PLANT"] = PLANT;
-    data_json["constants"]["HERBIVORE"] = HERBIVORE;
-    data_json["constants"]["CARNIVORE"] = CARNIVORE;
+    data_json["constants"]["PLANT"] = (int)PLANT;
+    data_json["constants"]["HERBIVORE"] = (int)HERBIVORE;
+    data_json["constants"]["CARNIVORE"] = (int)CARNIVORE;
     data_json["settings"]["initial_num_plants"] = this->_initial_num_plants;
     data_json["settings"]["initial_num_herbivores"] = this->_initial_num_herbivores;
     data_json["settings"]["initial_num_carnivores"] = this->_initial_num_carnivores;
@@ -281,6 +281,7 @@ void Ecosystem::serialize(json& data_json) {
         data_json["organisms"]["species"].push_back(organism->species);
         data_json["organisms"]["age"].push_back(organism->age);
         data_json["organisms"]["death_age"].push_back(organism->death_age);
+        data_json["organisms"]["energy_reserve"].push_back(organism->energy_reserve);
         data_json["organisms"]["is_energy_dependent"].push_back(organism->is_energy_dependent);
     }
     // dead organisms data
@@ -291,6 +292,7 @@ void Ecosystem::serialize(json& data_json) {
         data_json["dead_organisms"]["age"].push_back(organism->age);
         data_json["dead_organisms"]["death_age"].push_back(organism->death_age);
         data_json["dead_organisms"]["cause_of_death"].push_back(organism->cause_of_death);
+        data_json["organisms"]["energy_reserve"].push_back(organism->energy_reserve);
         data_json["dead_organisms"]["is_energy_dependent"].push_back(organism->is_energy_dependent);
     }
 }

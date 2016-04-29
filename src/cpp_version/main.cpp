@@ -2,9 +2,21 @@
 #include "ecosystem.h"
 
 using namespace std;
+using json = nlohmann::json;
+
 
 int main(int argc, char* argv[]) {
+    /*
+    Hack to read json:
     srand( static_cast<unsigned int>(time(NULL)));
+    ifstream f_data_json;
+    f_data_json.open("histories/try2/0_to_999/101.json");
+    json data_json;
+    f_data_json >> data_json;
+    f_data_json.close();
+    Ecosystem ecosystem = Ecosystem(data_json);
+    */
+
     Ecosystem ecosystem = Ecosystem();
     Exporter exporter = Exporter(&ecosystem, argv[1]);
     exporter.exportInitialSettings();
