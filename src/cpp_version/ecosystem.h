@@ -123,6 +123,7 @@ public:
 
     // Public methods (documentation in ecosystem.cpp)
     Ecosystem();
+    Ecosystem(json& data_json);
     void addOrganism(Organism* organism);
     void removeOrganism(Organism* organism);
     void updateOrganismLocation(Organism* organism);
@@ -151,6 +152,7 @@ private:
     // Public methods (documentation in ecosystem.cpp)
     void _initializeBiotope();
     void _initializeOrganisms();
+    void _initializeOrganisms(json& data_json);
     tuple<int, int> _getRandomFreeLocation();
     void _deleteDeadOrganisms();
 };

@@ -30,6 +30,29 @@ Ecosystem::Ecosystem() {
     this->rendered = false;
 }
 
+/** @brief Ecosystem constructor using a JSON
+*
+* @TODO: Deal with constants
+*
+* @param[in] data_json JSON object to create ecosystem
+*/
+Ecosystem::Ecosystem(json& data_json) {
+    if ((data_json["constants"]["PLANT"] != PLANT) ||
+            (data_json["constants"]["HERBIVORE"] != HERBIVORE) ||
+            (data_json["constants"]["CARNIVORE"] != CARNIVORE)) {
+        cout << "Ups! constant are different" << endl;
+        exit(1);
+    }
+    this->_initial_num_plants = data_json["settings"]["initial_num_plants"];
+    this->_initial_num_herbivores = data_json["settings"]["initial_num_herbivores"];
+    this->_initial_num_carnivores = data_json["settings"]["initial_num_carnivores"];
+    this->biotope_size_x = data_json["settings"]["biotope_size_x"];
+    this->biotope_size_y = data_json["settings"]["biotope_size_y"];
+    this->_initializeBiotope();
+    this->_initializeOrganisms(data_json);
+    this->time = data_json["state"]["time"];
+    this->rendered = false;
+}
 
 /** @brief Add organism to ecosystem
 *
@@ -190,6 +213,25 @@ void Ecosystem::_initializeOrganisms() {
     for (int i = 0; i < this->_initial_num_carnivores; i++) {
         tuple<int, int> rand_location = this->_getRandomFreeLocation();
         this->addOrganism(new Organism(rand_location, this, CARNIVORE, INITIAL_ENERGY_RESERVE));
+    }
+}
+
+/** @brief Create organisms from a JSON and add them to ecosystem
+*
+*/
+void Ecosystem::_initializeOrganisms(json& data_json) {
+    int num_organisms = data_json["organisms"]["locations"].size();
+    for (int i=0; i < num_organisms; i++) {
+        tuple<int, int> location = make_tuple(data_json["organisms"]["locations"][i][0],
+                                              data_json["organisms"]["locations"][i][1]);
+        species_t species = (spcies_t)data_json["organisms"]["species"][i];
+        float energy_reserve = data_json["organisms"]["energy_reserve"][i];
+        Organism* o = new Organism(location, this, species, energy_reserve);
+
+        // Set genes and state
+        o->age = data_json["organisms"]["age"][i];
+        o->death_age = data_json["organisms"]["death_age"][i];
+        o->is_energy_dependent = data_json["organisms"]["is_energy_dependent"][i];
     }
 }
 
