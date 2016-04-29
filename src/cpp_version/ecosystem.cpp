@@ -37,9 +37,9 @@ Ecosystem::Ecosystem() {
 * @param[in] data_json JSON object to create ecosystem
 */
 Ecosystem::Ecosystem(json& data_json) {
-    if ((data_json["constants"]["PLANT"] != PLANT) ||
-            (data_json["constants"]["HERBIVORE"] != HERBIVORE) ||
-            (data_json["constants"]["CARNIVORE"] != CARNIVORE)) {
+    if ((data_json["constants"]["PLANT"] != (int)PLANT) ||
+            (data_json["constants"]["HERBIVORE"] != (int)HERBIVORE) ||
+            (data_json["constants"]["CARNIVORE"] != (int)CARNIVORE)) {
         cout << "Ups! constant are different" << endl;
         exit(1);
     }
@@ -224,9 +224,9 @@ void Ecosystem::_initializeOrganisms(json& data_json) {
     for (int i=0; i < num_organisms; i++) {
         tuple<int, int> location = make_tuple(data_json["organisms"]["locations"][i][0],
                                               data_json["organisms"]["locations"][i][1]);
-        species_t species = (spcies_t)data_json["organisms"]["species"][i];
+        int species = data_json["organisms"]["species"][i];
         float energy_reserve = data_json["organisms"]["energy_reserve"][i];
-        Organism* o = new Organism(location, this, species, energy_reserve);
+        Organism* o = new Organism(location, this, (species_t)species, energy_reserve);
 
         // Set genes and state
         o->age = data_json["organisms"]["age"][i];

@@ -222,7 +222,7 @@ private:
     bool _is_eatable(Organism* prey);
     void _do_hunt();
     void _do_procreate();
-    void _doage();
+    void _do_age();
     void _do_die(const string &cause_of_death);
 };
 
