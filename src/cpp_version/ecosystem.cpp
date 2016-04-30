@@ -34,9 +34,17 @@ Ecosystem::Ecosystem() {
 *
 * @TODO: Deal with constants
 *
-* @param[in] data_json JSON object to create ecosystem
+* @param[in] json_path Path of JSON file with ecosystem screenshot
 */
-Ecosystem::Ecosystem(json& data_json) {
+Ecosystem::Ecosystem(const string& json_path) {
+    // load json file
+    ifstream f_data_json;
+    f_data_json.open(json_path);
+    json data_json;
+    f_data_json >> data_json;
+    f_data_json.close();
+
+    // load json data
     if (((int)data_json["constants"]["PLANT"] != (int)PLANT) ||
             ((int)data_json["constants"]["HERBIVORE"] != (int)HERBIVORE) ||
             ((int)data_json["constants"]["CARNIVORE"] != (int)CARNIVORE)) {
@@ -52,6 +60,11 @@ Ecosystem::Ecosystem(json& data_json) {
     this->_initializeOrganisms(data_json);
     this->time = data_json["state"]["time"];
     this->rendered = false;
+    istringstream srandom;
+    string str_random = data_json["state"]["random_eng"];
+    cout << str_random << endl;
+    srandom.str(str_random);
+    srandom >> eng;
 }
 
 /** @brief Add organism to ecosystem
@@ -126,7 +139,7 @@ void Ecosystem::getSurroundingFreeLocations(tuple<int, int> center, vector<tuple
             }
         }
     }
-    random_shuffle(surrounding_free_locations.begin(), surrounding_free_locations.end());
+    shuffle(surrounding_free_locations.begin(), surrounding_free_locations.end(), eng);
 }
 
 /** @brief Get a vector of organisms (random order) around a given location (x, y)
@@ -152,7 +165,7 @@ void Ecosystem::getSurroundingOrganisms(tuple<int, int> center, vector<Organism*
             }
         }
     }
-    random_shuffle(surrounding_organisms.begin(), surrounding_organisms.end());
+    shuffle(surrounding_organisms.begin(), surrounding_organisms.end(), eng);
 }
 
 /** @brief Evolve one time unit in ecosystem
@@ -240,8 +253,9 @@ void Ecosystem::_initializeOrganisms(json& data_json) {
 * It just takes a random value from biotope_free_locs set.
 */
 tuple<int, int> Ecosystem::_getRandomFreeLocation() {
+    uniform_int_distribution<int> distribution(0, this->biotope_free_locs.size() - 1);
     auto it = this->biotope_free_locs.begin();
-    int r = rand() % this->biotope_free_locs.size();
+    int r = distribution(eng);
     advance(it, r);
     return *it;
 }
@@ -272,6 +286,9 @@ void Ecosystem::serialize(json& data_json) {
     data_json["settings"]["biotope_size_x"] = this->biotope_size_x;
     data_json["settings"]["biotope_size_y"] = this->biotope_size_y;
     data_json["state"]["time"] = this->time;
+    ostringstream str_random;
+    str_random << eng;
+    data_json["state"]["random_eng"] = str_random.str();
 
     // living organisms data
     for (auto x:this->biotope) {
@@ -314,7 +331,8 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, specie
 
     // Genes:
     this->species = species;
-    this->death_age = rand() % MAX_LIFESPAN.at(this->species);
+    uniform_int_distribution<int> distribution(0, MAX_LIFESPAN.at(this->species) - 1);
+    this->death_age = distribution(eng);
 
     // State:
     this->energy_reserve = energy_reserve;

@@ -19,7 +19,6 @@
 #include <string>
 #include <set>
 #include <random>
-#include <time.h>
 #include <unordered_set>
 #include <unordered_map>
 #include <sstream>
@@ -57,9 +56,9 @@ const map<string, float> MINIMUM_ENERGY_REQUIRED_TO = {
 const float PHOTOSYNTHESIS_CAPACITY = 5.0f;
 
 const map<species_t, int> INITIAL_NUM_OF_ORGANISMS = {
-    {PLANT, 100},
-    {HERBIVORE, 100},
-    {CARNIVORE, 100}
+    {PLANT, 3},
+    {HERBIVORE, 3},
+    {CARNIVORE, 3}
 };
 
 // Definition of gens grouped by species
@@ -70,9 +69,9 @@ const map<species_t, int> MAX_LIFESPAN = {
 };
 
 const map<species_t, float> PROCREATION_PROBABILITY = {
-    {PLANT, 0.15f},
-    {HERBIVORE, 0.08f},
-    {CARNIVORE, 0.08f}
+    {PLANT, 0.5f},
+    {HERBIVORE, 0.2f},
+    {CARNIVORE, 0.2f}
 };
 
 const float INITIAL_ENERGY_RESERVE = 30000.0f;
@@ -123,7 +122,7 @@ public:
 
     // Public methods (documentation in ecosystem.cpp)
     Ecosystem();
-    Ecosystem(json& data_json);
+    Ecosystem(const string& json_path);
     void addOrganism(Organism* organism);
     void removeOrganism(Organism* organism);
     void updateOrganismLocation(Organism* organism);
