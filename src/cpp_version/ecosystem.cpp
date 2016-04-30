@@ -5,6 +5,7 @@
 #include "ecosystem.h"
 
 using namespace std;
+using json = nlohmann::json;
 
 default_random_engine eng((random_device())());
 
@@ -29,6 +30,42 @@ Ecosystem::Ecosystem() {
     this->rendered = false;
 }
 
+/** @brief Ecosystem constructor using a JSON
+*
+* @TODO: Deal with constants
+*
+* @param[in] json_path Path of JSON file with ecosystem screenshot
+*/
+Ecosystem::Ecosystem(const string& json_path) {
+    // load json file
+    ifstream f_data_json;
+    f_data_json.open(json_path);
+    json data_json;
+    f_data_json >> data_json;
+    f_data_json.close();
+
+    // load json data
+    if (((int)data_json["constants"]["PLANT"] != (int)PLANT) ||
+            ((int)data_json["constants"]["HERBIVORE"] != (int)HERBIVORE) ||
+            ((int)data_json["constants"]["CARNIVORE"] != (int)CARNIVORE)) {
+        cout << "Ups! constant are different" << endl;
+        exit(1);
+    }
+    this->_initial_num_plants = data_json["settings"]["initial_num_plants"];
+    this->_initial_num_herbivores = data_json["settings"]["initial_num_herbivores"];
+    this->_initial_num_carnivores = data_json["settings"]["initial_num_carnivores"];
+    this->biotope_size_x = data_json["settings"]["biotope_size_x"];
+    this->biotope_size_y = data_json["settings"]["biotope_size_y"];
+    this->_initializeBiotope();
+    this->_initializeOrganisms(data_json);
+    this->time = data_json["state"]["time"];
+    this->rendered = false;
+    istringstream srandom;
+    string str_random = data_json["state"]["random_eng"];
+    cout << str_random << endl;
+    srandom.str(str_random);
+    srandom >> eng;
+}
 
 /** @brief Add organism to ecosystem
 *
@@ -102,7 +139,7 @@ void Ecosystem::getSurroundingFreeLocations(tuple<int, int> center, vector<tuple
             }
         }
     }
-    random_shuffle(surrounding_free_locations.begin(), surrounding_free_locations.end());
+    shuffle(surrounding_free_locations.begin(), surrounding_free_locations.end(), eng);
 }
 
 /** @brief Get a vector of organisms (random order) around a given location (x, y)
@@ -128,7 +165,7 @@ void Ecosystem::getSurroundingOrganisms(tuple<int, int> center, vector<Organism*
             }
         }
     }
-    random_shuffle(surrounding_organisms.begin(), surrounding_organisms.end());
+    shuffle(surrounding_organisms.begin(), surrounding_organisms.end(), eng);
 }
 
 /** @brief Evolve one time unit in ecosystem
@@ -138,7 +175,9 @@ void Ecosystem::getSurroundingOrganisms(tuple<int, int> center, vector<Organism*
 * 3. Increase ecosystem time in 1 unit
 */
 void Ecosystem::evolve() {
-    // Create a vector of current organisms
+    this->_deleteDeadOrganisms();
+
+    // Create a vector of current organisms (to avoid new borns acting)
     vector<Organism*> organisms_to_act(this->biotope.size(), nullptr);
     int i = 0;
     for (auto x:this->biotope) {
@@ -151,7 +190,6 @@ void Ecosystem::evolve() {
             organism->act();
         }
     }
-    this->_deleteDeadOrganisms();
     this->time += 1;
 }
 
@@ -191,13 +229,33 @@ void Ecosystem::_initializeOrganisms() {
     }
 }
 
+/** @brief Create organisms from a JSON and add them to ecosystem
+*
+*/
+void Ecosystem::_initializeOrganisms(json& data_json) {
+    int num_organisms = data_json["organisms"]["locations"].size();
+    for (int i=0; i < num_organisms; i++) {
+        tuple<int, int> location = make_tuple(data_json["organisms"]["locations"][i][0],
+                                              data_json["organisms"]["locations"][i][1]);
+        int species = data_json["organisms"]["species"][i];
+        float energy_reserve = data_json["organisms"]["energy_reserve"][i];
+        Organism* o = new Organism(location, this, (species_t)species, energy_reserve);
+        // Set genes and state
+        o->age = data_json["organisms"]["age"][i];
+        o->death_age = data_json["organisms"]["death_age"][i];
+        o->is_energy_dependent = data_json["organisms"]["is_energy_dependent"][i];
+        this->addOrganism(o);
+    }
+}
+
 /** @brief Get random free location in biotope
 * 
 * It just takes a random value from biotope_free_locs set.
 */
 tuple<int, int> Ecosystem::_getRandomFreeLocation() {
+    uniform_int_distribution<int> distribution(0, this->biotope_free_locs.size() - 1);
     auto it = this->biotope_free_locs.begin();
-    int r = rand() % this->biotope_free_locs.size();
+    int r = distribution(eng);
     advance(it, r);
     return *it;
 }
@@ -211,6 +269,49 @@ void Ecosystem::_deleteDeadOrganisms() {
         delete dead_organism;
     }
     this->_dead_organisms.clear();
+}
+
+/** @brief Serialize ecosystem to a JSON
+*
+* @param[out] data_json Variable where data will be stores as a json
+*/
+void Ecosystem::serialize(json& data_json) {
+    // ecosystem data
+    data_json["constants"]["PLANT"] = (int)PLANT;
+    data_json["constants"]["HERBIVORE"] = (int)HERBIVORE;
+    data_json["constants"]["CARNIVORE"] = (int)CARNIVORE;
+    data_json["settings"]["initial_num_plants"] = this->_initial_num_plants;
+    data_json["settings"]["initial_num_herbivores"] = this->_initial_num_herbivores;
+    data_json["settings"]["initial_num_carnivores"] = this->_initial_num_carnivores;
+    data_json["settings"]["biotope_size_x"] = this->biotope_size_x;
+    data_json["settings"]["biotope_size_y"] = this->biotope_size_y;
+    data_json["state"]["time"] = this->time;
+    ostringstream str_random;
+    str_random << eng;
+    data_json["state"]["random_eng"] = str_random.str();
+
+    // living organisms data
+    for (auto x:this->biotope) {
+        tuple<int, int> position = x.first;
+        Organism* organism = x.second;
+        data_json["organisms"]["locations"].push_back({get<0>(position), get<1>(position)});
+        data_json["organisms"]["species"].push_back(organism->species);
+        data_json["organisms"]["age"].push_back(organism->age);
+        data_json["organisms"]["death_age"].push_back(organism->death_age);
+        data_json["organisms"]["energy_reserve"].push_back(organism->energy_reserve);
+        data_json["organisms"]["is_energy_dependent"].push_back(organism->is_energy_dependent);
+    }
+    // dead organisms data
+    for (Organism* organism:this->_dead_organisms) {
+        tuple<int, int> position = organism->location;
+        data_json["dead_organisms"]["locations"].push_back({get<0>(position), get<1>(position)});
+        data_json["dead_organisms"]["species"].push_back(organism->species);
+        data_json["dead_organisms"]["age"].push_back(organism->age);
+        data_json["dead_organisms"]["death_age"].push_back(organism->death_age);
+        data_json["dead_organisms"]["cause_of_death"].push_back(organism->cause_of_death);
+        data_json["organisms"]["energy_reserve"].push_back(organism->energy_reserve);
+        data_json["dead_organisms"]["is_energy_dependent"].push_back(organism->is_energy_dependent);
+    }
 }
 
 
@@ -230,14 +331,15 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, specie
 
     // Genes:
     this->species = species;
-    this->_death_age = rand() % MAX_LIFESPAN.at(this->species);
+    uniform_int_distribution<int> distribution(0, MAX_LIFESPAN.at(this->species) - 1);
+    this->death_age = distribution(eng);
 
     // State:
     this->energy_reserve = energy_reserve;
     this->is_alive = true;
-    this->_age = 0;
-    this->_cause_of_death = "";
-    this->_is_energy_dependent = true;
+    this->age = 0;
+    this->cause_of_death = "";
+    this->is_energy_dependent = true;
 }
 
 
@@ -279,7 +381,7 @@ void Organism::act() {
 * It just increases energy_reserve a constant value equals to PHOTOSYNTHESIS_CAPACITY
 */
 void Organism::_do_photosynthesis() {
-    if (this->_is_energy_dependent)
+    if (this->is_energy_dependent)
         this->energy_reserve = this->energy_reserve + PHOTOSYNTHESIS_CAPACITY;
 }
 
@@ -322,7 +424,7 @@ void Organism::_do_move() {
         return;
 
     // If it is energy dependent
-    if (_is_energy_dependent) {
+    if (is_energy_dependent) {
         if (this->_has_enough_energy_to("move")) {
             this->_do_spend_energy(ENERGY_COST.at("to have the capability of moving"));
         }
@@ -333,7 +435,7 @@ void Organism::_do_move() {
     vector<tuple<int, int>> surrounding_free_locations;
     this->_parent_ecosystem->getSurroundingFreeLocations(this->location, surrounding_free_locations);
     if (surrounding_free_locations.size() > 0) {
-        if (this->_is_energy_dependent) {
+        if (this->is_energy_dependent) {
             this->_do_spend_energy(ENERGY_COST.at("to move"));
             if (!this->is_alive)
                 return;
@@ -373,7 +475,7 @@ void Organism::_do_hunt() {
     if (this->species == PLANT)
         return;  // plants don't hunt
     
-    if (this->_is_energy_dependent) {
+    if (this->is_energy_dependent) {
         if (this->_has_enough_energy_to("hunt")) {
             float energy_cost = ENERGY_COST.at("to have the capability of hunting");
             this->_do_spend_energy(energy_cost);
@@ -407,7 +509,7 @@ void Organism::_do_hunt() {
 * 7. spend energy for procreating
 */
 void Organism::_do_procreate() {
-    if (this->_is_energy_dependent) {
+    if (this->is_energy_dependent) {
         if (this->_has_enough_energy_to("procreate"))
             this->_do_spend_energy(ENERGY_COST.at("to have the capability of procreating"));
         if (!this->is_alive)
@@ -428,15 +530,15 @@ void Organism::_do_procreate() {
     this->energy_reserve = this->energy_reserve - baby_energy_reserve;
     Organism* baby = new Organism(baby_location, this->_parent_ecosystem, this->species, baby_energy_reserve);
     this->_parent_ecosystem->addOrganism(baby);
-    if (this->_is_energy_dependent)
+    if (this->is_energy_dependent)
         this->_do_spend_energy(ENERGY_COST.at("to procreate"));
 }
 
 /** @brief Increase age 1 unit
 */
 void Organism::_do_age() {
-    this->_age += 1;
-    if (this->_age > this->_death_age)
+    this->age += 1;
+    if (this->age > this->death_age)
         this->_do_die("age");
 }
 
@@ -448,7 +550,7 @@ void Organism::_do_age() {
 */
 void Organism::_do_die(const string &cause_of_death) {
     this->is_alive = false;
-    this->_cause_of_death = cause_of_death;
+    this->cause_of_death = cause_of_death;
     this->_parent_ecosystem->removeOrganism(this);
 }
 
@@ -520,17 +622,8 @@ void Exporter::exportTimeSlice() {
     // export data
     ofstream f_data;
     f_data.open(dst_file.string(), ios::out);
-    f_data << "{";
-    bool first_organism = true;
-    for (auto x:this->ecosystem->biotope) {
-        if (!first_organism)
-            f_data << ", ";
-        else
-            first_organism = false;
-        tuple<int, int> position = x.first;
-        Organism* organism  = x.second;
-        f_data << "\"(" << get<0>(position) << ", " << get<1>(position) << ")\": " << organism->species;
-    }
-    f_data << "}" << endl;
+    json data_json;
+    this->ecosystem->serialize(data_json);
+    f_data << data_json.dump(1);
     f_data.close();
 }

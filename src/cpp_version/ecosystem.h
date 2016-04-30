@@ -19,14 +19,15 @@
 #include <string>
 #include <set>
 #include <random>
-#include <time.h>
 #include <unordered_set>
 #include <unordered_map>
 #include <sstream>
 #include <boost/filesystem.hpp>
+#include "json.hpp"
 
-using namespace std;
 namespace fs = boost::filesystem;
+using namespace std;
+using json = nlohmann::json;
 
 enum species_t {PLANT, HERBIVORE, CARNIVORE};
 
@@ -55,9 +56,9 @@ const map<string, float> MINIMUM_ENERGY_REQUIRED_TO = {
 const float PHOTOSYNTHESIS_CAPACITY = 5.0f;
 
 const map<species_t, int> INITIAL_NUM_OF_ORGANISMS = {
-    {PLANT, 100},
-    {HERBIVORE, 100},
-    {CARNIVORE, 100}
+    {PLANT, 3},
+    {HERBIVORE, 3},
+    {CARNIVORE, 3}
 };
 
 // Definition of gens grouped by species
@@ -68,9 +69,9 @@ const map<species_t, int> MAX_LIFESPAN = {
 };
 
 const map<species_t, float> PROCREATION_PROBABILITY = {
-    {PLANT, 0.15f},
-    {HERBIVORE, 0.08f},
-    {CARNIVORE, 0.08f}
+    {PLANT, 0.5f},
+    {HERBIVORE, 0.2f},
+    {CARNIVORE, 0.2f}
 };
 
 const float INITIAL_ENERGY_RESERVE = 30000.0f;
@@ -121,13 +122,14 @@ public:
 
     // Public methods (documentation in ecosystem.cpp)
     Ecosystem();
+    Ecosystem(const string& json_path);
     void addOrganism(Organism* organism);
     void removeOrganism(Organism* organism);
     void updateOrganismLocation(Organism* organism);
     void getSurroundingFreeLocations(tuple<int, int> center, vector<tuple<int, int>> &surrounding_free_locations);
     void getSurroundingOrganisms(tuple<int, int> center, vector<Organism*> &surrounding_organisms);
     void evolve();
-    
+    void serialize(json& data_json);
 private:
     // Private attributes
     /** @brief Vector of dead organisms to be freed
@@ -149,6 +151,7 @@ private:
     // Public methods (documentation in ecosystem.cpp)
     void _initializeBiotope();
     void _initializeOrganisms();
+    void _initializeOrganisms(json& data_json);
     tuple<int, int> _getRandomFreeLocation();
     void _deleteDeadOrganisms();
 };
@@ -184,6 +187,22 @@ public:
     */
     float energy_reserve;
 
+    /** @brief Age of organism
+    */
+    int age;
+
+    /** @brief Death age
+    */
+    int death_age;
+
+    /** @brief Cause of death (in case it is dead)
+    */
+    string cause_of_death;
+
+    /** @brief true if energy matters (typically YES)
+    */
+    bool is_energy_dependent;
+
     // Public methods (documentation in ecosystem.cpp)
     Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, species_t species, float energy_reserve);
     void act();
@@ -193,22 +212,6 @@ private:
     /** @brief Pointer to parent ecosystem
     */
     Ecosystem* _parent_ecosystem;
-
-    /** @brief Age of organism
-    */
-    int _age;
-
-    /** @brief Death age
-    */
-    int _death_age;
-
-    /** @brief Cause of death (in case it is dead)
-    */
-    string _cause_of_death;
-
-    /** @brief true if energy matters (typically YES)
-    */
-    bool _is_energy_dependent;
 
     // Private methods (documentation in ecosystem.cpp)
     void _do_photosynthesis();
@@ -220,7 +223,6 @@ private:
     void _do_procreate();
     void _do_age();
     void _do_die(const string &cause_of_death);
-
 };
 
 
