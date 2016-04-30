@@ -62,7 +62,6 @@ Ecosystem::Ecosystem(const string& json_path) {
     this->rendered = false;
     istringstream srandom;
     string str_random = data_json["state"]["random_eng"];
-    cout << str_random << endl;
     srandom.str(str_random);
     srandom >> eng;
 }
@@ -624,6 +623,6 @@ void Exporter::exportTimeSlice() {
     f_data.open(dst_file.string(), ios::out);
     json data_json;
     this->ecosystem->serialize(data_json);
-    f_data << data_json.dump(1);
+    f_data << data_json;
     f_data.close();
 }
