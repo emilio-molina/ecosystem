@@ -29,7 +29,9 @@ namespace fs = boost::filesystem;
 using namespace std;
 using json = nlohmann::json;
 
-enum species_t {PLANT, HERBIVORE, CARNIVORE};
+extern string PLANT;      // typically "P"
+extern string HERBIVORE;  // typically "H"
+extern string CARNIVORE;  // typically "C"
 
 
 // Ecosystem constraints
@@ -55,23 +57,23 @@ const map<string, float> MINIMUM_ENERGY_REQUIRED_TO = {
 
 const float PHOTOSYNTHESIS_CAPACITY = 5.0f;
 
-const map<species_t, int> INITIAL_NUM_OF_ORGANISMS = {
-    {PLANT, 3},
-    {HERBIVORE, 3},
-    {CARNIVORE, 3}
+const map<string, int> INITIAL_NUM_OF_ORGANISMS = {
+    {"P", 3},  // TODO: Initialize in its right location
+    {"H", 3},  // TODO: Initialize in its right location
+    {"C", 3}  // TODO: Initialize in its right location
 };
 
 // Definition of gens grouped by species
-const map<species_t, int> MAX_LIFESPAN = {
-    {PLANT, 50},
-    {HERBIVORE, 200},
-    {CARNIVORE, 100}
+const map<string, int> MAX_LIFESPAN = {
+    {"P", 50},  // TODO: Initialize in its right location
+    {"H", 200},  // TODO: Initialize in its right location
+    {"C", 100}  // TODO: Initialize in its right location
 };
 
-const map<species_t, float> PROCREATION_PROBABILITY = {
-    {PLANT, 0.5f},
-    {HERBIVORE, 0.2f},
-    {CARNIVORE, 0.2f}
+const map<string, float> PROCREATION_PROBABILITY = {
+    {"P", 0.5f},  // TODO: Initialize in its right location
+    {"H", 0.2f},  // TODO: Initialize in its right location
+    {"C", 0.2f}  // TODO: Initialize in its right location
 };
 
 const float INITIAL_ENERGY_RESERVE = 30000.0f;
@@ -179,7 +181,7 @@ public:
 
     /** @brief Species of this organism: PLANT, HERBIVORE or CARNIVORE
     */
-    species_t species;
+    string species;
 
     /** @brief Energy reserve of the organism.
     *
@@ -204,7 +206,7 @@ public:
     bool is_energy_dependent;
 
     // Public methods (documentation in ecosystem.cpp)
-    Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, species_t species, float energy_reserve);
+    Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string& species, float energy_reserve);
     void act();
 
 private:

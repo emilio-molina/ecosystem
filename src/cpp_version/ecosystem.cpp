@@ -9,6 +9,9 @@ using json = nlohmann::json;
 
 default_random_engine eng((random_device())());
 
+string PLANT;
+string HERBIVORE;
+string CARNIVORE;
 
 /*********************************************************
  * Ecosystem implementation
@@ -19,6 +22,9 @@ default_random_engine eng((random_device())());
 * It reads experiments settings from constants, initialize biotope and create organisms.
 */
 Ecosystem::Ecosystem() {
+    PLANT = "P";
+    HERBIVORE = "H";
+    CARNIVORE = "C";
     this->_initial_num_plants = INITIAL_NUM_OF_ORGANISMS.at(PLANT);
     this->_initial_num_herbivores = INITIAL_NUM_OF_ORGANISMS.at(HERBIVORE);
     this->_initial_num_carnivores = INITIAL_NUM_OF_ORGANISMS.at(CARNIVORE);
@@ -45,12 +51,10 @@ Ecosystem::Ecosystem(const string& json_path) {
     f_data_json.close();
 
     // load json data
-    if (((int)data_json["constants"]["PLANT"] != (int)PLANT) ||
-            ((int)data_json["constants"]["HERBIVORE"] != (int)HERBIVORE) ||
-            ((int)data_json["constants"]["CARNIVORE"] != (int)CARNIVORE)) {
-        cout << "Ups! constant are different" << endl;
-        exit(1);
-    }
+    PLANT = data_json["constants"]["PLANT"];
+    HERBIVORE = data_json["constants"]["HERBIVORE"];
+    CARNIVORE = data_json["constants"]["CARNIVORE"];
+
     this->_initial_num_plants = data_json["settings"]["initial_num_plants"];
     this->_initial_num_herbivores = data_json["settings"]["initial_num_herbivores"];
     this->_initial_num_carnivores = data_json["settings"]["initial_num_carnivores"];
@@ -236,9 +240,9 @@ void Ecosystem::_initializeOrganisms(json& data_json) {
     for (int i=0; i < num_organisms; i++) {
         tuple<int, int> location = make_tuple(data_json["organisms"]["locations"][i][0],
                                               data_json["organisms"]["locations"][i][1]);
-        int species = data_json["organisms"]["species"][i];
+        string species = data_json["organisms"]["species"][i];
         float energy_reserve = data_json["organisms"]["energy_reserve"][i];
-        Organism* o = new Organism(location, this, (species_t)species, energy_reserve);
+        Organism* o = new Organism(location, this, species, energy_reserve);
         // Set genes and state
         o->age = data_json["organisms"]["age"][i];
         o->death_age = data_json["organisms"]["death_age"][i];
@@ -276,9 +280,9 @@ void Ecosystem::_deleteDeadOrganisms() {
 */
 void Ecosystem::serialize(json& data_json) {
     // ecosystem data
-    data_json["constants"]["PLANT"] = (int)PLANT;
-    data_json["constants"]["HERBIVORE"] = (int)HERBIVORE;
-    data_json["constants"]["CARNIVORE"] = (int)CARNIVORE;
+    data_json["constants"]["PLANT"] = PLANT;
+    data_json["constants"]["HERBIVORE"] = HERBIVORE;
+    data_json["constants"]["CARNIVORE"] = CARNIVORE;
     data_json["settings"]["initial_num_plants"] = this->_initial_num_plants;
     data_json["settings"]["initial_num_herbivores"] = this->_initial_num_herbivores;
     data_json["settings"]["initial_num_carnivores"] = this->_initial_num_carnivores;
@@ -321,7 +325,7 @@ void Ecosystem::serialize(json& data_json) {
 
 /** @brief Organism constructor
 */
-Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, species_t species, float energy_reserve) {
+Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string& species, float energy_reserve) {
 
     // Relative to parent_ecosystem:
     this->_parent_ecosystem = parent_ecosystem;
