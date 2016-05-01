@@ -29,52 +29,18 @@ namespace fs = boost::filesystem;
 using namespace std;
 using json = nlohmann::json;
 
-enum species_t {PLANT, HERBIVORE, CARNIVORE};
+extern string PLANT;      // typically "P"
+extern string HERBIVORE;  // typically "H"
+extern string CARNIVORE;  // typically "C"
 
-
-// Ecosystem constraints
-const map<string, int> BIOTOPE_SETTINGS = {
-    {"size_x", 200},
-    {"size_y", 200}
-};
-
-const map<string, float> ENERGY_COST = {
-    {"to have the capability of moving", 0.0f},
-    {"to move", 5.0f},
-    {"to have the capability of hunting", 0.0f},
-    {"to hunt", 10.0f},
-    {"to have the capability of procreating", 0.0f},
-    {"to procreate", 1000.0f},
-};
-
-const map<string, float> MINIMUM_ENERGY_REQUIRED_TO = {
-    {"move", 100.0f},
-    {"hunt", 100.0f},
-    {"procreate", 100.0f},
-};
-
-const float PHOTOSYNTHESIS_CAPACITY = 5.0f;
-
-const map<species_t, int> INITIAL_NUM_OF_ORGANISMS = {
-    {PLANT, 3},
-    {HERBIVORE, 3},
-    {CARNIVORE, 3}
-};
-
-// Definition of gens grouped by species
-const map<species_t, int> MAX_LIFESPAN = {
-    {PLANT, 50},
-    {HERBIVORE, 200},
-    {CARNIVORE, 100}
-};
-
-const map<species_t, float> PROCREATION_PROBABILITY = {
-    {PLANT, 0.5f},
-    {HERBIVORE, 0.2f},
-    {CARNIVORE, 0.2f}
-};
-
-const float INITIAL_ENERGY_RESERVE = 30000.0f;
+extern map<string, int> BIOTOPE_SETTINGS;
+extern map<string, float> ENERGY_COST;
+extern map<string, float> MINIMUM_ENERGY_REQUIRED_TO;
+extern map<string, float> PHOTOSYNTHESIS_CAPACITY;
+extern map<string, int> INITIAL_NUM_OF_ORGANISMS;
+extern map<string, int> MAX_LIFESPAN;
+extern map<string, float> PROCREATION_PROBABILITY;
+extern float INITIAL_ENERGY_RESERVE;
 
 
 //************ HEADERS
@@ -179,7 +145,7 @@ public:
 
     /** @brief Species of this organism: PLANT, HERBIVORE or CARNIVORE
     */
-    species_t species;
+    string species;
 
     /** @brief Energy reserve of the organism.
     *
@@ -203,8 +169,12 @@ public:
     */
     bool is_energy_dependent;
 
+    /** @brief Photosynthesis capacity
+    */
+    float photosynthesis_capacity;
+
     // Public methods (documentation in ecosystem.cpp)
-    Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, species_t species, float energy_reserve);
+    Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string& species, float energy_reserve);
     void act();
 
 private:
