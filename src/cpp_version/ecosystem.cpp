@@ -334,6 +334,7 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string
 
     // Genes:
     this->species = species;
+    this->photosynthesis_capacity = PHOTOSYNTHESIS_CAPACITY.at(species);
     uniform_int_distribution<int> distribution(0, MAX_LIFESPAN.at(this->species) - 1);
     this->death_age = distribution(eng);
 
@@ -356,11 +357,8 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string
 * 5. if still alive: age
 */
 void Organism::act() {
-    // If PLANT: _do_photosynthesis
-    if (this->species == PLANT) {
-        this->_do_photosynthesis();
-    }
-
+    // Do photosynthesis
+    this->_do_photosynthesis();
     // Move
     this->_do_move();
     // Hunt
@@ -381,11 +379,11 @@ void Organism::act() {
 
 /** @brief Do phosynthesis (only called in this organism is a plant)
 *
-* It just increases energy_reserve a constant value equals to PHOTOSYNTHESIS_CAPACITY
+* It just increases energy_reserve a constant value equals to photosynthesis_capacity
 */
 void Organism::_do_photosynthesis() {
     if (this->is_energy_dependent)
-        this->energy_reserve = this->energy_reserve + PHOTOSYNTHESIS_CAPACITY;
+        this->energy_reserve = this->energy_reserve + this->photosynthesis_capacity;
 }
 
 /** @brief true if organism has enough energy to perform a given action

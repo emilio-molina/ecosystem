@@ -51,7 +51,11 @@ const map<string, float> MINIMUM_ENERGY_REQUIRED_TO = {
     {"procreate", 100.0f},
 };
 
-const float PHOTOSYNTHESIS_CAPACITY = 5.0f;
+const map<string, float> PHOTOSYNTHESIS_CAPACITY = {
+    {"P", 5.0f},
+    {"H", 0.0f},
+    {"C", 0.0f}
+};
 
 const map<string, int> INITIAL_NUM_OF_ORGANISMS = {
     {"P", 3},  // TODO: Initialize in its right location
@@ -200,6 +204,10 @@ public:
     /** @brief true if energy matters (typically YES)
     */
     bool is_energy_dependent;
+
+    /** @brief Photosynthesis capacity
+    */
+    float photosynthesis_capacity;
 
     // Public methods (documentation in ecosystem.cpp)
     Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string& species, float energy_reserve);
