@@ -35,35 +35,11 @@ extern string CARNIVORE;  // typically "C"
 
 extern map<string, float> ENERGY_COST;
 extern map<string, float> MINIMUM_ENERGY_REQUIRED_TO;
-
-// Ecosystem constraints
-
-const map<string, float> PHOTOSYNTHESIS_CAPACITY = {
-    {"P", 5.0f},
-    {"H", 0.0f},
-    {"C", 0.0f}
-};
-
-const map<string, int> INITIAL_NUM_OF_ORGANISMS = {
-    {"P", 3},  // TODO: Initialize in its right location
-    {"H", 3},  // TODO: Initialize in its right location
-    {"C", 3}  // TODO: Initialize in its right location
-};
-
-// Definition of gens grouped by species
-const map<string, int> MAX_LIFESPAN = {
-    {"P", 50},  // TODO: Initialize in its right location
-    {"H", 200},  // TODO: Initialize in its right location
-    {"C", 100}  // TODO: Initialize in its right location
-};
-
-const map<string, float> PROCREATION_PROBABILITY = {
-    {"P", 0.5f},  // TODO: Initialize in its right location
-    {"H", 0.2f},  // TODO: Initialize in its right location
-    {"C", 0.2f}  // TODO: Initialize in its right location
-};
-
-const float INITIAL_ENERGY_RESERVE = 30000.0f;
+extern map<string, float> PHOTOSYNTHESIS_CAPACITY;
+extern map<string, int> INITIAL_NUM_OF_ORGANISMS;
+extern map<string, int> MAX_LIFESPAN;
+extern map<string, float> PROCREATION_PROBABILITY;
+extern float INITIAL_ENERGY_RESERVE;
 
 
 //************ HEADERS

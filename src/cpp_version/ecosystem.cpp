@@ -14,6 +14,11 @@ string HERBIVORE;
 string CARNIVORE;
 map<string, float> ENERGY_COST;
 map<string, float> MINIMUM_ENERGY_REQUIRED_TO;
+map<string, float> PHOTOSYNTHESIS_CAPACITY;
+map<string, int> INITIAL_NUM_OF_ORGANISMS;
+map<string, int> MAX_LIFESPAN;
+map<string, float> PROCREATION_PROBABILITY;
+float INITIAL_ENERGY_RESERVE;
 
 /*********************************************************
  * Ecosystem implementation
@@ -42,6 +47,33 @@ Ecosystem::Ecosystem() {
         {"hunt", 100.0f},
         {"procreate", 100.0f},
     };
+
+    PHOTOSYNTHESIS_CAPACITY = {
+        {PLANT, 5.0f},
+        {HERBIVORE, 0.0f},
+        {CARNIVORE, 0.0f}
+    };
+
+    INITIAL_NUM_OF_ORGANISMS = {
+        {PLANT, 3},
+        {HERBIVORE, 3},
+        {CARNIVORE, 3}
+    };
+
+    // Definition of gens grouped by species
+    MAX_LIFESPAN = {
+        {PLANT, 50},
+        {HERBIVORE, 200},
+        {CARNIVORE, 100}
+    };
+
+    PROCREATION_PROBABILITY = {
+        {PLANT, 0.5f},
+        {HERBIVORE, 0.2f},
+        {CARNIVORE, 0.2f}
+    };
+
+    INITIAL_ENERGY_RESERVE = 30000.0f;
     this->_initial_num_plants = INITIAL_NUM_OF_ORGANISMS.at(PLANT);
     this->_initial_num_herbivores = INITIAL_NUM_OF_ORGANISMS.at(HERBIVORE);
     this->_initial_num_carnivores = INITIAL_NUM_OF_ORGANISMS.at(CARNIVORE);
@@ -73,10 +105,15 @@ Ecosystem::Ecosystem(const string& json_path) {
     CARNIVORE = data_json["constants"]["CARNIVORE"];
     ENERGY_COST = data_json["constants"]["ENERGY_COST"].get<map<string, float>>();
     MINIMUM_ENERGY_REQUIRED_TO = data_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"].get<map<string, float>>();
+    PHOTOSYNTHESIS_CAPACITY = data_json["constants"]["PHOTOSYNTHESIS_CAPACITY"].get<map<string, float>>();
+    INITIAL_NUM_OF_ORGANISMS = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"].get<map<string, int>>();
+    MAX_LIFESPAN = data_json["constants"]["MAX_LIFESPAN"].get<map<string, int>>();
+    PROCREATION_PROBABILITY = data_json["constants"]["PROCREATION_PROBABILITY"].get<map<string, float>>();
+    INITIAL_ENERGY_RESERVE = data_json["constants"]["INITIAL_ENERGY_RESERVE"];
 
-    this->_initial_num_plants = data_json["settings"]["initial_num_plants"];
-    this->_initial_num_herbivores = data_json["settings"]["initial_num_herbivores"];
-    this->_initial_num_carnivores = data_json["settings"]["initial_num_carnivores"];
+    this->_initial_num_plants = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][PLANT];
+    this->_initial_num_herbivores = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][HERBIVORE];
+    this->_initial_num_carnivores = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][CARNIVORE];
     this->biotope_size_x = data_json["settings"]["biotope_size_x"];
     this->biotope_size_y = data_json["settings"]["biotope_size_y"];
     this->_initializeBiotope();
@@ -304,9 +341,11 @@ void Ecosystem::serialize(json& data_json) {
     data_json["constants"]["CARNIVORE"] = CARNIVORE;
     data_json["constants"]["ENERGY_COST"] = ENERGY_COST;
     data_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"] = MINIMUM_ENERGY_REQUIRED_TO;
-    data_json["settings"]["initial_num_plants"] = this->_initial_num_plants;
-    data_json["settings"]["initial_num_herbivores"] = this->_initial_num_herbivores;
-    data_json["settings"]["initial_num_carnivores"] = this->_initial_num_carnivores;
+    data_json["constants"]["PHOTOSYNTHESIS_CAPACITY"] = PHOTOSYNTHESIS_CAPACITY;
+    data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"] = INITIAL_NUM_OF_ORGANISMS;
+    data_json["constants"]["MAX_LIFESPAN"] = MAX_LIFESPAN;
+    data_json["constants"]["PROCREATION_PROBABILITY"] = PROCREATION_PROBABILITY;
+    data_json["constants"]["INITIAL_ENERGY_RESERVE"] = INITIAL_ENERGY_RESERVE;
     data_json["settings"]["biotope_size_x"] = this->biotope_size_x;
     data_json["settings"]["biotope_size_y"] = this->biotope_size_y;
     data_json["state"]["time"] = this->time;
