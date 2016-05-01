@@ -12,6 +12,7 @@ default_random_engine eng((random_device())());
 string PLANT;
 string HERBIVORE;
 string CARNIVORE;
+map<string, int> BIOTOPE_SETTINGS;
 map<string, float> ENERGY_COST;
 map<string, float> MINIMUM_ENERGY_REQUIRED_TO;
 map<string, float> PHOTOSYNTHESIS_CAPACITY;
@@ -73,12 +74,17 @@ Ecosystem::Ecosystem() {
         {CARNIVORE, 0.2f}
     };
 
+    BIOTOPE_SETTINGS = {
+        {"size_x", 200},
+        {"size_y", 200}
+    };
+
     INITIAL_ENERGY_RESERVE = 30000.0f;
     this->_initial_num_plants = INITIAL_NUM_OF_ORGANISMS.at(PLANT);
     this->_initial_num_herbivores = INITIAL_NUM_OF_ORGANISMS.at(HERBIVORE);
     this->_initial_num_carnivores = INITIAL_NUM_OF_ORGANISMS.at(CARNIVORE);
-    this->biotope_size_x = 200;
-    this->biotope_size_y = 200;
+    this->biotope_size_x = BIOTOPE_SETTINGS["size_x"];
+    this->biotope_size_y = BIOTOPE_SETTINGS["size_y"];
     this->_initializeBiotope();
     this->_initializeOrganisms();
     this->time = 0;
@@ -114,8 +120,8 @@ Ecosystem::Ecosystem(const string& json_path) {
     this->_initial_num_plants = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][PLANT];
     this->_initial_num_herbivores = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][HERBIVORE];
     this->_initial_num_carnivores = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][CARNIVORE];
-    this->biotope_size_x = data_json["settings"]["biotope_size_x"];
-    this->biotope_size_y = data_json["settings"]["biotope_size_y"];
+    this->biotope_size_x = data_json["constants"]["BIOTOPE_SETTINGS"]["size_x"];
+    this->biotope_size_y = data_json["constants"]["BIOTOPE_SETTINGS"]["size_y"];
     this->_initializeBiotope();
     this->_initializeOrganisms(data_json);
     this->time = data_json["state"]["time"];
@@ -346,8 +352,7 @@ void Ecosystem::serialize(json& data_json) {
     data_json["constants"]["MAX_LIFESPAN"] = MAX_LIFESPAN;
     data_json["constants"]["PROCREATION_PROBABILITY"] = PROCREATION_PROBABILITY;
     data_json["constants"]["INITIAL_ENERGY_RESERVE"] = INITIAL_ENERGY_RESERVE;
-    data_json["settings"]["biotope_size_x"] = this->biotope_size_x;
-    data_json["settings"]["biotope_size_y"] = this->biotope_size_y;
+    data_json["constants"]["BIOTOPE_SETTINGS"] = BIOTOPE_SETTINGS;
     data_json["state"]["time"] = this->time;
     ostringstream str_random;
     str_random << eng;
