@@ -12,6 +12,7 @@ default_random_engine eng((random_device())());
 string PLANT;
 string HERBIVORE;
 string CARNIVORE;
+map<string, float> ENERGY_COST;
 
 /*********************************************************
  * Ecosystem implementation
@@ -25,6 +26,15 @@ Ecosystem::Ecosystem() {
     PLANT = "P";
     HERBIVORE = "H";
     CARNIVORE = "C";
+
+    ENERGY_COST = {
+        {"to have the capability of moving", 0.0f},
+        {"to move", 5.0f},
+        {"to have the capability of hunting", 0.0f},
+        {"to hunt", 10.0f},
+        {"to have the capability of procreating", 0.0f},
+        {"to procreate", 1000.0f},
+    };
     this->_initial_num_plants = INITIAL_NUM_OF_ORGANISMS.at(PLANT);
     this->_initial_num_herbivores = INITIAL_NUM_OF_ORGANISMS.at(HERBIVORE);
     this->_initial_num_carnivores = INITIAL_NUM_OF_ORGANISMS.at(CARNIVORE);
@@ -54,6 +64,7 @@ Ecosystem::Ecosystem(const string& json_path) {
     PLANT = data_json["constants"]["PLANT"];
     HERBIVORE = data_json["constants"]["HERBIVORE"];
     CARNIVORE = data_json["constants"]["CARNIVORE"];
+    ENERGY_COST = data_json["constants"]["ENERGY_COST"].get<map<string, float>>();
 
     this->_initial_num_plants = data_json["settings"]["initial_num_plants"];
     this->_initial_num_herbivores = data_json["settings"]["initial_num_herbivores"];
@@ -283,6 +294,7 @@ void Ecosystem::serialize(json& data_json) {
     data_json["constants"]["PLANT"] = PLANT;
     data_json["constants"]["HERBIVORE"] = HERBIVORE;
     data_json["constants"]["CARNIVORE"] = CARNIVORE;
+    data_json["constants"]["ENERGY_COST"] = ENERGY_COST;
     data_json["settings"]["initial_num_plants"] = this->_initial_num_plants;
     data_json["settings"]["initial_num_herbivores"] = this->_initial_num_herbivores;
     data_json["settings"]["initial_num_carnivores"] = this->_initial_num_carnivores;

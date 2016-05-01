@@ -33,17 +33,10 @@ extern string PLANT;      // typically "P"
 extern string HERBIVORE;  // typically "H"
 extern string CARNIVORE;  // typically "C"
 
+extern map<string, float> ENERGY_COST;
+
 
 // Ecosystem constraints
-
-const map<string, float> ENERGY_COST = {
-    {"to have the capability of moving", 0.0f},
-    {"to move", 5.0f},
-    {"to have the capability of hunting", 0.0f},
-    {"to hunt", 10.0f},
-    {"to have the capability of procreating", 0.0f},
-    {"to procreate", 1000.0f},
-};
 
 const map<string, float> MINIMUM_ENERGY_REQUIRED_TO = {
     {"move", 100.0f},
