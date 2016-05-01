@@ -35,10 +35,6 @@ extern string CARNIVORE;  // typically "C"
 
 
 // Ecosystem constraints
-const map<string, int> BIOTOPE_SETTINGS = {
-    {"size_x", 200},
-    {"size_y", 200}
-};
 
 const map<string, float> ENERGY_COST = {
     {"to have the capability of moving", 0.0f},

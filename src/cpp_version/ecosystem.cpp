@@ -28,8 +28,8 @@ Ecosystem::Ecosystem() {
     this->_initial_num_plants = INITIAL_NUM_OF_ORGANISMS.at(PLANT);
     this->_initial_num_herbivores = INITIAL_NUM_OF_ORGANISMS.at(HERBIVORE);
     this->_initial_num_carnivores = INITIAL_NUM_OF_ORGANISMS.at(CARNIVORE);
-    this->biotope_size_x = BIOTOPE_SETTINGS.at("size_x");
-    this->biotope_size_y = BIOTOPE_SETTINGS.at("size_y");
+    this->biotope_size_x = 200;
+    this->biotope_size_y = 200;
     this->_initializeBiotope();
     this->_initializeOrganisms();
     this->time = 0;
@@ -597,8 +597,8 @@ void Exporter::exportInitialSettings() {
     f_settings << "HERBIVORE = " << HERBIVORE << endl;
     f_settings << "CARNIVORE = " << CARNIVORE << endl;
     f_settings << "biotope_settings = {" << endl;
-    f_settings << "    'size_x': " << BIOTOPE_SETTINGS.at("size_x") << "," << endl;
-    f_settings << "    'size_y': " << BIOTOPE_SETTINGS.at("size_y") << endl;
+    f_settings << "    'size_x': " << this->ecosystem->biotope_size_x << "," << endl;
+    f_settings << "    'size_y': " << this->ecosystem->biotope_size_y << endl;
     f_settings << "}" << endl;
     f_settings.close();
 }
