@@ -518,9 +518,9 @@ void Organism::_do_move() {
 */
 bool Organism::_is_eatable(Organism* prey) {
     bool _is_eatable = false;
-    if ((this->species == CARNIVORE) && (this->species == HERBIVORE))
+    if ((this->species == CARNIVORE) && (prey->species == HERBIVORE))
         _is_eatable = true;
-    if ((this->species == HERBIVORE) && (this->species == PLANT))
+    if ((this->species == HERBIVORE) && (prey->species == PLANT))
         _is_eatable = true;
     return _is_eatable;
 }
