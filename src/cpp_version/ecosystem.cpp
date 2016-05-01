@@ -13,6 +13,7 @@ string PLANT;
 string HERBIVORE;
 string CARNIVORE;
 map<string, float> ENERGY_COST;
+map<string, float> MINIMUM_ENERGY_REQUIRED_TO;
 
 /*********************************************************
  * Ecosystem implementation
@@ -34,6 +35,12 @@ Ecosystem::Ecosystem() {
         {"to hunt", 10.0f},
         {"to have the capability of procreating", 0.0f},
         {"to procreate", 1000.0f},
+    };
+
+    MINIMUM_ENERGY_REQUIRED_TO = {
+        {"move", 100.0f},
+        {"hunt", 100.0f},
+        {"procreate", 100.0f},
     };
     this->_initial_num_plants = INITIAL_NUM_OF_ORGANISMS.at(PLANT);
     this->_initial_num_herbivores = INITIAL_NUM_OF_ORGANISMS.at(HERBIVORE);
@@ -65,6 +72,7 @@ Ecosystem::Ecosystem(const string& json_path) {
     HERBIVORE = data_json["constants"]["HERBIVORE"];
     CARNIVORE = data_json["constants"]["CARNIVORE"];
     ENERGY_COST = data_json["constants"]["ENERGY_COST"].get<map<string, float>>();
+    MINIMUM_ENERGY_REQUIRED_TO = data_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"].get<map<string, float>>();
 
     this->_initial_num_plants = data_json["settings"]["initial_num_plants"];
     this->_initial_num_herbivores = data_json["settings"]["initial_num_herbivores"];
@@ -295,6 +303,7 @@ void Ecosystem::serialize(json& data_json) {
     data_json["constants"]["HERBIVORE"] = HERBIVORE;
     data_json["constants"]["CARNIVORE"] = CARNIVORE;
     data_json["constants"]["ENERGY_COST"] = ENERGY_COST;
+    data_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"] = MINIMUM_ENERGY_REQUIRED_TO;
     data_json["settings"]["initial_num_plants"] = this->_initial_num_plants;
     data_json["settings"]["initial_num_herbivores"] = this->_initial_num_herbivores;
     data_json["settings"]["initial_num_carnivores"] = this->_initial_num_carnivores;

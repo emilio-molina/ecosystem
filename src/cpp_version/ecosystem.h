@@ -34,15 +34,9 @@ extern string HERBIVORE;  // typically "H"
 extern string CARNIVORE;  // typically "C"
 
 extern map<string, float> ENERGY_COST;
-
+extern map<string, float> MINIMUM_ENERGY_REQUIRED_TO;
 
 // Ecosystem constraints
-
-const map<string, float> MINIMUM_ENERGY_REQUIRED_TO = {
-    {"move", 100.0f},
-    {"hunt", 100.0f},
-    {"procreate", 100.0f},
-};
 
 const map<string, float> PHOTOSYNTHESIS_CAPACITY = {
     {"P", 5.0f},
