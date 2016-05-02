@@ -79,10 +79,10 @@ public:
                 int x_size = ecosystem->biotope_size_x;
                 int y_size = ecosystem->biotope_size_y;
                 tuple<int, int> position = o.first;
-                species_t ORGANISM_TYPE = o.second->species;
+                string ORGANISM_TYPE = o.second->species;
                 float x = 2 * (float)get<0>(position) / (float)x_size - 1.0f;
                 float y = 2 * (float)get<1>(position) / (float)y_size - 1.0f;
-                if (ORGANISM_TYPE == PLANT) {
+                if (ORGANISM_TYPE == "P") {
                     Vertex v2 =
                     {
                         {x, y, 1.0f},
@@ -92,7 +92,7 @@ public:
                     };
                     v1 = v2;
                 }
-                if (ORGANISM_TYPE == HERBIVORE) {
+                if (ORGANISM_TYPE == "H") {
                     Vertex v2 =
                     {
                         {x, y, 1.0f},
@@ -102,7 +102,7 @@ public:
                     };
                     v1 = v2;
                 }
-                if (ORGANISM_TYPE == CARNIVORE) {
+                if (ORGANISM_TYPE == "C") {
                     Vertex v2 =
                     {
                         {x, y, 1.0f},
