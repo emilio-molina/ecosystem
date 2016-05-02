@@ -676,7 +676,7 @@ void Exporter::exportTimeSlice() {
     ostringstream thousands_folder;
     thousands_folder << thousands << "_to_" << thousands + 999;
     if (!fs::is_directory(this->dst_path / fs::path(thousands_folder.str())))
-        fs:create_directory(this->dst_path / fs::path(thousands_folder.str()));
+        fs::create_directory(this->dst_path / fs::path(thousands_folder.str()));
 
     // get file name
     ostringstream dst_file_name;
