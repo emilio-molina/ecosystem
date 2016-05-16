@@ -427,8 +427,21 @@ public:
         setOpaque (true);
         addAndMakeVisible (_folderLabel);
         addAndMakeVisible (_folderButton);
+        addAndMakeVisible(_runButton);
+        addAndMakeVisible(_maxTimeLabel);
+        addAndMakeVisible(_lastBackupLabel);
+        addAndMakeVisible(_pauseButton);
+        addAndMakeVisible(_timeSlider);
         _folderButton.setButtonText("Choose experiment folder");
         _folderButton.addListener(this);
+        _runButton.setButtonText("Run");
+        _runButton.addListener(this);
+        _maxTimeLabel.setText("max time:", dontSendNotification);
+        _lastBackupLabel.setText("3", dontSendNotification);
+        _pauseButton.setButtonText("Pause");
+        _pauseButton.addListener(this);
+        _timeSlider.setRange(0, 10000, 1);
+        _timeSlider.setVelocityBasedMode(true);
     }
     
     void paint (Graphics& g) override
@@ -446,6 +459,21 @@ public:
 
         _folderLabel.setBounds (1 * percentage_x, 6 * percentage_y,       // x, y
                                 90 * percentage_x, 5 * percentage_y);     // width, height
+
+        _runButton.setBounds(1 * percentage_x, 7 * percentage_y,       // x, y
+                             20 * percentage_x, 5 * percentage_y);     // width, height
+        
+        _maxTimeLabel.setBounds (1 * percentage_x, 12 * percentage_y,       // x, y
+                                 90 * percentage_x, 5 * percentage_y);     // width, height
+        
+        _lastBackupLabel.setBounds (1 * percentage_x, 17 * percentage_y,       // x, y
+                                    90 * percentage_x, 5 * percentage_y);     // width, height
+        
+        _pauseButton.setBounds (1 * percentage_x, 23 * percentage_y,       // x, y
+                                20 * percentage_x, 5 * percentage_y);     // width, height
+        
+        _timeSlider.setBounds (1 * percentage_x, 30 * percentage_y,       // x, y
+                               90 * percentage_x, 5 * percentage_y);     // width, height
     }
     
     void refreshExperimentSize()
