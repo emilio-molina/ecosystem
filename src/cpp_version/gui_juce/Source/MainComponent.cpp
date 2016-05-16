@@ -16,6 +16,10 @@ MainContentComponent::MainContentComponent()
     _tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new Component(), true);
     addAndMakeVisible(_tabbedComponent);
     startTimer(100);  // call timer callback every 100ms
+    playing = true;
+    ecosystem = nullptr;
+    //experiment_reader = ExperimentReader();
+    //ecosystem = Ecosyste();
 }
 
 MainContentComponent::~MainContentComponent()
@@ -37,11 +41,8 @@ void MainContentComponent::resized()
 }
 
 void MainContentComponent::timerCallback() {
-    ecosystem.evolve();
-    auto num_organisms = ecosystem.biotope.size();
-    auto num_free_locs = ecosystem.biotope_free_locs.size();
-    cout << "Time: " << ecosystem.time << endl;
-    cout << "    num organism: " << num_organisms << endl;
-    cout << "    num free locs: " << num_free_locs << endl;
-    cout << "    sum previous numbers: " << num_organisms + num_free_locs << endl;
+    if ((ecosystem != nullptr) && (this->playing)) {
+        ecosystem->evolve();
+        cout << ecosystem->time << endl;
+    }
 }

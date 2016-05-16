@@ -11,7 +11,6 @@
 #include "ExperimentComponent.h"
 
 
-
 /** @brief Convert float / double to string with n digits of precision
  *
  * @param[in] a_value Float or double input value
@@ -104,6 +103,7 @@ void ExperimentComponent::refreshExperimentSize()
     
 void ExperimentComponent::buttonClicked(Button* b)
 {
+    // Folder button
     if (b == &_folderButton) {
         FileChooser fc ("Choose an experiment directory",
                         File::getCurrentWorkingDirectory(),
@@ -114,8 +114,17 @@ void ExperimentComponent::buttonClicked(Button* b)
             File chosenDirectory = fc.getResult();
             _experimentFolder = chosenDirectory.getFullPathName();
             refreshExperimentSize();
-            
         }
+    }
+    
+    // Run button
+    if (b == &_runButton) {
+        this->parent_component->playing = true;
+    }
+    
+    // Pause button
+    if (b == &_pauseButton) {
+        this->parent_component->playing = false;
     }
 }
     

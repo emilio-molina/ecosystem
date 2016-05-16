@@ -17,12 +17,11 @@ bool MapComponent::keyPressed(const KeyPress &key, Component *originatingCompone
         time -= 1;
     if (key == KeyPress::spaceKey)
         _playing = !_playing;
-    cout << "OK" << endl;
     return true;
 }
 
 //==============================================================================
-MapComponent::MapComponent(Ecosystem& ecosystem, MainContentComponent* parent_component)
+MapComponent::MapComponent(Ecosystem* ecosystem, MainContentComponent* parent_component)
 {
     this->parent_component = parent_component;
     this->time = -1;
@@ -31,7 +30,7 @@ MapComponent::MapComponent(Ecosystem& ecosystem, MainContentComponent* parent_co
     normal = nullptr;
     textureCoordIn = nullptr;
     sourceColour = nullptr;
-    this->ecosystem = &ecosystem;
+    this->ecosystem = ecosystem;
     addKeyListener(this);
     setWantsKeyboardFocus(true);
 }
@@ -73,7 +72,7 @@ void MapComponent::render()
     int vertex_counter = 0;
     
     // if ecosystem->time has changed, and mutex is not locked
-    if ((time != ecosystem->time) && (parent_component->mtx.tryEnter())) {
+    if ((ecosystem != nullptr) && (time != ecosystem->time) && (parent_component->mtx.tryEnter())) {
         vertices.clear();
         indices.clear();
         Vertex v1;

@@ -12,6 +12,7 @@
 #define MapComponent_H_INCLUDED
 
 #include "MainComponent.h"
+#include "ExperimentComponent.h"
 #include "ecosystem.h"
 #include <boost/filesystem.hpp>
 
@@ -39,7 +40,7 @@ public:
     Ecosystem* ecosystem;
     MainContentComponent* parent_component;
     //==============================================================================
-    MapComponent(Ecosystem& ecosystem, MainContentComponent* parent_component);
+    MapComponent(Ecosystem* ecosystem, MainContentComponent* parent_component);
     ~MapComponent();
     void initialise() override;
     void shutdown() override;

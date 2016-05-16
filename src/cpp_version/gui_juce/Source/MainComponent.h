@@ -13,6 +13,7 @@
 #include "ecosystem.h"
 #include <boost/filesystem.hpp>
 
+class ExperimentReader;
 
 //==============================================================================
 /*
@@ -25,6 +26,9 @@ class MainContentComponent   : public Component,
 public:
     //==============================================================================
     CriticalSection mtx;
+    ExperimentReader* experiment_reader;
+    Ecosystem* ecosystem;
+    bool playing;
     MainContentComponent();
     ~MainContentComponent();
 
@@ -34,7 +38,6 @@ public:
 private:
     void timerCallback();
     //==============================================================================
-    Ecosystem ecosystem;
     ScopedPointer<TabbedComponent> _tabbedComponent;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

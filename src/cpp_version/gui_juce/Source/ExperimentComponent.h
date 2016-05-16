@@ -24,13 +24,13 @@ std::string to_string_with_precision(const T a_value, const int n);
 
 /** @brief Class to easily interact with experiment folder
  */
-class ExperimentFolderInterface {
+class ExperimentReader {
     
     /** @brief Initializer
      *
      * @param[in] experiment_folder String with experiment_folder path
      */
-    ExperimentFolderInterface(string experiment_folder);
+    ExperimentReader(string experiment_folder);
     
     
     /** @brief Get a list of time slices containing a complete backup of ecosystem
