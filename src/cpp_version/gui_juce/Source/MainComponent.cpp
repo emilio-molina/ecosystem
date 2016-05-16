@@ -3,6 +3,20 @@ namespace bf=boost::filesystem;
 
 CriticalSection mtx;
 
+/** @brief Convert float / double to string with n digits of precision
+*
+* @param[in] a_value Float or double input value
+* @param[in] n Number of decimal digits
+* @returns String containing number with the desired number of decimals
+*/
+template <typename T>
+std::string to_string_with_precision(const T a_value, const int n = 6)
+{
+    std::ostringstream out;
+    out << std::fixed << std::setprecision(n) << a_value;
+    return out.str();
+}
+
 
 /** @brief Struct storing information about one OpenGL vertex
 */
@@ -14,13 +28,6 @@ struct Vertex
     float texCoord[2];
 };
 
-template <typename T>
-std::string to_string_with_precision(const T a_value, const int n = 6)
-{
-    std::ostringstream out;
-    out << std::fixed << std::setprecision(n) << a_value;
-    return out.str();
-}
 
 /** @brief Component able to render ecosystem using OpenGL
 *
@@ -297,36 +304,46 @@ private:
     String newVertexShader, newFragmentShader;
 };
 
-class ExperimentComponent : public Component {
+
+/** @brief Component for experiment tab
+*
+*/
+class ExperimentComponent : public Component, public ButtonListener {
 public:
     
+    /** @brief ExperimentComponent constructor
+     *
+     * When a new instance is created, a browser to choose a directory appears.
+     * Once a folder is selected, then it parse the directory contents into an Ecosystem object.
+     */
     ExperimentComponent() {
         setOpaque (true);
         addAndMakeVisible (_labelFolder);
-        FileChooser fc ("Choose an experiment directory",
-                        File::getCurrentWorkingDirectory(),
-                        "*.",
-                        false);
-        if (fc.browseForFileToSave(true))
-        {
-            File chosenDirectory = fc.getResult();
-            _experimentFolder = chosenDirectory.getFullPathName();
-        }
-        string folder_size = to_string_with_precision(dir_size(fs::path(_experimentFolder.toStdString())), 2);
-        _labelFolder.setText ("Experiment folder: " + _experimentFolder + "  (" + folder_size + "MB)", dontSendNotification);
+        addAndMakeVisible (_buttonFolder);
+        _buttonFolder.setButtonText("Choose experiment folder");
+        _buttonFolder.addListener(this);
     }
+    
     void paint (Graphics& g) override
     {
         g.fillAll(Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f));
     }
+    
+    
     void resized() override
     {
-        Rectangle<int> area (getLocalBounds().reduced (5, 15));
-        _labelFolder.setBounds (area.removeFromTop (24));
+        int percentage_x = getWidth() / 100;
+        int percentage_y = getHeight() / 100;
+        _buttonFolder.setBounds(1 * percentage_x, 2 * percentage_y,       // x, y
+                                20 * percentage_x, 5 * percentage_y);     // width, height
+
+        _labelFolder.setBounds (1 * percentage_x, 6 * percentage_y,       // x, y
+                                90 * percentage_x, 5 * percentage_y);     // width, height
     }
     
-    double dir_size(const fs::path &p)
+    void refreshExperimentSize()
     {
+        fs::path p = fs::path(_experimentFolder.toStdString());
         double size=0.0;
         for(bf::recursive_directory_iterator it(p);
             it!=bf::recursive_directory_iterator();
@@ -335,11 +352,44 @@ public:
             if(!is_directory(*it))
                 size+=bf::file_size(*it);
         }
-        return size / 1000000;
+        double _directory_size = size / 1000000;
+        string str_directory_size = to_string_with_precision(_directory_size, 2);
+        _labelFolder.setText ("Experiment folder: " + _experimentFolder + "  (" + str_directory_size + "MB)",
+                              dontSendNotification);
     }
+    
+    void buttonClicked(Button* b) override {
+        if (b == &_buttonFolder) {
+            FileChooser fc ("Choose an experiment directory",
+                            File::getCurrentWorkingDirectory(),
+                            "*.",
+                            true);
+            if (fc.browseForDirectory())
+            {
+                File chosenDirectory = fc.getResult();
+                _experimentFolder = chosenDirectory.getFullPathName();
+                refreshExperimentSize();
+
+            }
+        }
+    }
+    
 private:
+    /** @brief Size of experiment directory
+    */
+    double _directory_size;
+    
+    /** @brief Chosen directory for experiment
+     */
     String _experimentFolder;
+    
+    /** @brief Label object showing directory folder and size
+     */
     Label _labelFolder;
+    
+    /** @brief Button object to choose a folder
+    */
+    TextButton _buttonFolder;
 };
 
 //==============================================================================
