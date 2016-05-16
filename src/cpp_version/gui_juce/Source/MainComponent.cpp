@@ -147,7 +147,6 @@ public:
                 vertex_counter += 1;
                 time = ecosystem->time;
             }
-        ecosystem->rendered = true;
         mtx.exit();
         }
         // ************************************************
@@ -579,10 +578,8 @@ void MainContentComponent::resized()
 }
 
 void MainContentComponent::timerCallback() {
-if (ecosystem.rendered) {
     mtx.enter();
     ecosystem.evolve();
-    ecosystem.rendered = false;
     mtx.exit();
     auto num_organisms = ecosystem.biotope.size();
     auto num_free_locs = ecosystem.biotope_free_locs.size();
@@ -590,5 +587,4 @@ if (ecosystem.rendered) {
     cout << "    num organism: " << num_organisms << endl;
     cout << "    num free locs: " << num_free_locs << endl;
     cout << "    sum previous numbers: " << num_organisms + num_free_locs << endl;
-    }
 }

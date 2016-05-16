@@ -88,7 +88,6 @@ Ecosystem::Ecosystem() {
     this->_initializeBiotope();
     this->_initializeOrganisms();
     this->time = 0;
-    this->rendered = false;
 }
 
 /** @brief Ecosystem constructor using a JSON
@@ -125,7 +124,6 @@ Ecosystem::Ecosystem(const string& json_path) {
     this->_initializeBiotope();
     this->_initializeOrganisms(data_json);
     this->time = data_json["state"]["time"];
-    this->rendered = false;
     istringstream srandom;
     string str_random = data_json["state"]["random_eng"];
     srandom.str(str_random);

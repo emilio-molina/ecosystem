@@ -59,12 +59,6 @@ public:
     */
     int time;
 
-    /** @brief True if current time slice has been already rendered
-    *
-    * @todo Move from here to the GUI code.
-    */
-    bool rendered;
-
     /** @brief Size of biotope in X axis
     */
     int biotope_size_x;
