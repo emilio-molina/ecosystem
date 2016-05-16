@@ -35,19 +35,33 @@ struct Vertex
 *
 * It is a simplified version of OpenGL example provided with JUCE
 */
-class mapComponent   : public OpenGLAppComponent
+class mapComponent   : public OpenGLAppComponent, public KeyListener
 {
 public:
+    
+    bool keyPressed(const KeyPress &key, Component *originatingComponent) override {
+        if (key == KeyPress::rightKey)
+            time += 1;
+        if (key == KeyPress::leftKey)
+            time -= 1;
+        if (key == KeyPress::spaceKey)
+            _playing = !_playing;
+        return true;
+    }
+    
     Ecosystem* ecosystem;
     //==============================================================================
     mapComponent(Ecosystem& ecosystem)
     {
-        this->time = -1; 
+        this->time = -1;
+        this->_playing = false;
         position = nullptr;
         normal = nullptr;
         textureCoordIn = nullptr;
         sourceColour = nullptr;
         this->ecosystem = &ecosystem;
+        addKeyListener(this);
+        setWantsKeyboardFocus(true);
     }
 
     ~mapComponent()
@@ -190,7 +204,7 @@ public:
         
         openGLContext.extensions.glDeleteBuffers (1, &vertexBuffer);
         openGLContext.extensions.glDeleteBuffers (1, &indexBuffer);
-        
+        repaint();
     }
 
     /** @brief Paint function continuously called to fraw non-OpenGL graphics
@@ -293,6 +307,7 @@ public:
     
 private:
     int time;
+    bool _playing;
     Array<Vertex> vertices;
     Array<int> indices;
     GLuint vertexBuffer, indexBuffer;
@@ -410,10 +425,10 @@ public:
      */
     ExperimentComponent() {
         setOpaque (true);
-        addAndMakeVisible (_labelFolder);
-        addAndMakeVisible (_buttonFolder);
-        _buttonFolder.setButtonText("Choose experiment folder");
-        _buttonFolder.addListener(this);
+        addAndMakeVisible (_folderLabel);
+        addAndMakeVisible (_folderButton);
+        _folderButton.setButtonText("Choose experiment folder");
+        _folderButton.addListener(this);
     }
     
     void paint (Graphics& g) override
@@ -426,10 +441,10 @@ public:
     {
         int percentage_x = getWidth() / 100;
         int percentage_y = getHeight() / 100;
-        _buttonFolder.setBounds(1 * percentage_x, 2 * percentage_y,       // x, y
+        _folderButton.setBounds(1 * percentage_x, 2 * percentage_y,       // x, y
                                 20 * percentage_x, 5 * percentage_y);     // width, height
 
-        _labelFolder.setBounds (1 * percentage_x, 6 * percentage_y,       // x, y
+        _folderLabel.setBounds (1 * percentage_x, 6 * percentage_y,       // x, y
                                 90 * percentage_x, 5 * percentage_y);     // width, height
     }
     
@@ -446,12 +461,12 @@ public:
         }
         double _directory_size = size / 1000000;
         string str_directory_size = to_string_with_precision(_directory_size, 2);
-        _labelFolder.setText ("Experiment folder: " + _experimentFolder + "  (" + str_directory_size + "MB)",
+        _folderLabel.setText ("Experiment folder: " + _experimentFolder + "  (" + str_directory_size + "MB)",
                               dontSendNotification);
     }
     
     void buttonClicked(Button* b) override {
-        if (b == &_buttonFolder) {
+        if (b == &_folderButton) {
             FileChooser fc ("Choose an experiment directory",
                             File::getCurrentWorkingDirectory(),
                             "*.",
@@ -477,11 +492,31 @@ private:
     
     /** @brief Label object showing directory folder and size
      */
-    Label _labelFolder;
+    Label _folderLabel;
+
+    /** @brief Label object showing max time value for experiment
+     */
+    Label _maxTimeLabel;
+
+    /** @brief Label object showing last backup of complete experiment
+     */
+    Label _lastBackupLabel;
     
     /** @brief Button object to choose a folder
     */
-    TextButton _buttonFolder;
+    TextButton _folderButton;
+    
+    /** @brief Button object to run experiment
+     */
+    TextButton _runButton;
+
+    /** @brief Button object to pause experiment
+     */
+    TextButton _pauseButton;
+
+    /** @brief Slider object to select a time slice
+     */
+    Slider _timeSlider;
 };
 
 //==============================================================================
