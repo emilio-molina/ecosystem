@@ -414,7 +414,7 @@ class ExperimentFolderInterface {
 /** @brief Component for experiment tab
 *
 */
-class ExperimentComponent : public Component, public ButtonListener {
+class ExperimentComponent : public Component, public ButtonListener, public SliderListener {
 public:
     
     /** @brief ExperimentComponent constructor
@@ -441,6 +441,7 @@ public:
         _pauseButton.addListener(this);
         _timeSlider.setRange(0, 10000, 1);
         _timeSlider.setVelocityBasedMode(true);
+        _timeSlider.addListener(this);
     }
     
     void paint (Graphics& g) override
@@ -505,6 +506,15 @@ public:
                 refreshExperimentSize();
 
             }
+        }
+    }
+    
+    void sliderValueChanged(Slider* s) override {  // needed to make it compile
+    }
+    
+    void sliderDragEnded(Slider* s) override {
+        if (s == &_timeSlider) {
+            cout << _timeSlider.getValue() << endl;
         }
     }
     
