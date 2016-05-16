@@ -10,7 +10,7 @@
 
 #ifndef MapComponent_H_INCLUDED
 #define MapComponent_H_INCLUDED
-#include "../JuceLibraryCode/JuceHeader.h"
+
 #include "MainComponent.h"
 #include "ecosystem.h"
 #include <boost/filesystem.hpp>
@@ -39,7 +39,7 @@ public:
     Ecosystem* ecosystem;
     MainContentComponent* parent_component;
     //==============================================================================
-    MapComponent(Ecosystem& ecosystem, MainContentComponent& parent_component);
+    MapComponent(Ecosystem& ecosystem, MainContentComponent* parent_component);
     ~MapComponent();
     void initialise() override;
     void shutdown() override;

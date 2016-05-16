@@ -10,7 +10,8 @@
 
 #ifndef EXPERIMENTCOMPONENT_H_INCLUDED
 #define EXPERIMENTCOMPONENT_H_INCLUDED
-#include "../JuceLibraryCode/JuceHeader.h"
+
+#include "MainComponent.h"
 #include "ecosystem.h"
 #include <boost/filesystem.hpp>
 
@@ -116,8 +117,8 @@ class ExperimentFolderInterface {
  */
 class ExperimentComponent : public Component, public ButtonListener, public SliderListener {
 public:
-    
-    ExperimentComponent();
+    MainContentComponent* parent_component;
+    ExperimentComponent(MainContentComponent* parent_component);
     
     void paint (Graphics& g) override;
     void resized() override;

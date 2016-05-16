@@ -28,10 +28,10 @@ std::string to_string_with_precision(const T a_value, const int n)
 
 /** @brief ExperimentComponent constructor
  *
- * When a new instance is created, a browser to choose a directory appears.
- * Once a folder is selected, then it parse the directory contents into an Ecosystem object.
+ * @param[in] parent_component Parent component of this one
  */
-ExperimentComponent::ExperimentComponent() {
+ExperimentComponent::ExperimentComponent(MainContentComponent* parent_component) {
+    this->parent_component = parent_component;
     setOpaque (true);
     addAndMakeVisible (_folderLabel);
     addAndMakeVisible (_folderButton);

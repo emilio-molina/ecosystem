@@ -22,9 +22,9 @@ bool MapComponent::keyPressed(const KeyPress &key, Component *originatingCompone
 }
 
 //==============================================================================
-MapComponent::MapComponent(Ecosystem& ecosystem, MainContentComponent& parent_component)
+MapComponent::MapComponent(Ecosystem& ecosystem, MainContentComponent* parent_component)
 {
-    this->parent_component = &parent_component;
+    this->parent_component = parent_component;
     this->time = -1;
     this->_playing = false;
     position = nullptr;
