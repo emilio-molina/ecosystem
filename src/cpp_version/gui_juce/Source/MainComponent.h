@@ -24,6 +24,7 @@ class MainContentComponent   : public Component,
 {
 public:
     //==============================================================================
+    CriticalSection mtx;
     MainContentComponent();
     ~MainContentComponent();
 
