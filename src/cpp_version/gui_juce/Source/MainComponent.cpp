@@ -1,5 +1,5 @@
 #include "MainComponent.h"
-
+namespace bf=boost::filesystem;
 
 CriticalSection mtx;
 
@@ -14,6 +14,13 @@ struct Vertex
     float texCoord[2];
 };
 
+template <typename T>
+std::string to_string_with_precision(const T a_value, const int n = 6)
+{
+    std::ostringstream out;
+    out << std::fixed << std::setprecision(n) << a_value;
+    return out.str();
+}
 
 /** @brief Component able to render ecosystem using OpenGL
 *
@@ -290,131 +297,50 @@ private:
     String newVertexShader, newFragmentShader;
 };
 
-
-/** @brief Component of dummy sliders taken from JUCE Demo
-*/
-struct SlidersPage  : public Component
-{
-    SlidersPage()
-    : hintLabel ("hint", "Try right-clicking on a slider for an options menu. \n\n"
-                 "Also, holding down CTRL while dragging will turn on a slider's velocity-sensitive mode")
+class ExperimentComponent : public Component {
+public:
+    
+    ExperimentComponent() {
+        setOpaque (true);
+        addAndMakeVisible (_labelFolder);
+        FileChooser fc ("Choose an experiment directory",
+                        File::getCurrentWorkingDirectory(),
+                        "*.",
+                        false);
+        if (fc.browseForFileToSave(true))
+        {
+            File chosenDirectory = fc.getResult();
+            _experimentFolder = chosenDirectory.getFullPathName();
+        }
+        string folder_size = to_string_with_precision(dir_size(fs::path(_experimentFolder.toStdString())), 2);
+        _labelFolder.setText ("Experiment folder: " + _experimentFolder + "  (" + folder_size + "MB)", dontSendNotification);
+    }
+    void paint (Graphics& g) override
     {
-        Slider* s = createSlider (false);
-        s->setSliderStyle (Slider::LinearVertical);
-        s->setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
-        s->setBounds (10, 25, 70, 200);
-        s->setDoubleClickReturnValue (true, 50.0); // double-clicking this slider will set it to 50.0
-        s->setTextValueSuffix (" units");
-        
-        s = createSlider (false);
-        s->setSliderStyle (Slider::LinearVertical);
-        s->setVelocityBasedMode (true);
-        s->setSkewFactor (0.5);
-        s->setTextBoxStyle (Slider::TextBoxAbove, true, 100, 20);
-        s->setBounds (85, 25, 70, 200);
-        s->setTextValueSuffix (" rels");
-        
-        s = createSlider (true);
-        s->setSliderStyle (Slider::LinearHorizontal);
-        s->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
-        s->setBounds (180, 35, 150, 20);
-        
-        s = createSlider (false);
-        s->setSliderStyle (Slider::LinearHorizontal);
-        s->setTextBoxStyle (Slider::NoTextBox, false, 0, 0);
-        s->setBounds (180, 65, 150, 20);
-        s->setPopupDisplayEnabled (true, this);
-        s->setTextValueSuffix (" nuns required to change a lightbulb");
-        
-        s = createSlider (false);
-        s->setSliderStyle (Slider::IncDecButtons);
-        s->setTextBoxStyle (Slider::TextBoxLeft, false, 50, 20);
-        s->setBounds (180, 105, 100, 20);
-        s->setIncDecButtonsMode (Slider::incDecButtonsDraggable_Vertical);
-        
-        s = createSlider (false);
-        s->setSliderStyle (Slider::Rotary);
-        s->setRotaryParameters (float_Pi * 1.2f, float_Pi * 2.8f, false);
-        s->setTextBoxStyle (Slider::TextBoxRight, false, 70, 20);
-        s->setBounds (190, 145, 120, 40);
-        s->setTextValueSuffix (" mm");
-        
-        s = createSlider (false);
-        s->setSliderStyle (Slider::LinearBar);
-        s->setBounds (180, 195, 100, 30);
-        s->setTextValueSuffix (" gallons");
-        
-        s = createSlider (false);
-        s->setSliderStyle (Slider::TwoValueHorizontal);
-        s->setBounds (360, 20, 160, 40);
-        
-        s = createSlider (false);
-        s->setSliderStyle (Slider::TwoValueVertical);
-        s->setBounds (360, 110, 40, 160);
-        
-        s = createSlider (false);
-        s->setSliderStyle (Slider::ThreeValueHorizontal);
-        s->setBounds (360, 70, 160, 40);
-        
-        s = createSlider (false);
-        s->setSliderStyle (Slider::ThreeValueVertical);
-        s->setBounds (440, 110, 40, 160);
-        
-        s = createSlider (false);
-        s->setSliderStyle (Slider::LinearBarVertical);
-        s->setTextBoxStyle (Slider::NoTextBox, false, 0, 0);
-        s->setBounds (540, 35, 20, 230);
-        s->setPopupDisplayEnabled (true, this);
-        s->setTextValueSuffix (" mickles in a muckle");
-        
-        for (int i = 7; i <= 10; ++i)
-        {
-            sliders.getUnchecked(i)->setTextBoxStyle (Slider::NoTextBox, false, 0, 0);
-            sliders.getUnchecked(i)->setPopupDisplayEnabled (true, this);
-        }
-        
-        /* Here, we'll create a Value object, and tell a bunch of our sliders to use it as their
-         value source. By telling them all to share the same Value, they'll stay in sync with
-         each other.
-         We could also optionally keep a copy of this Value elsewhere, and by changing it,
-         cause all the sliders to automatically update.
-         */
-        Value sharedValue;
-        sharedValue = Random::getSystemRandom().nextDouble() * 100;
-        for (int i = 0; i < 7; ++i)
-            sliders.getUnchecked(i)->getValueObject().referTo (sharedValue);
-        
-        // ..and now we'll do the same for all our min/max slider values..
-        Value sharedValueMin, sharedValueMax;
-        sharedValueMin = Random::getSystemRandom().nextDouble() * 40.0;
-        sharedValueMax = Random::getSystemRandom().nextDouble() * 40.0 + 60.0;
-        
-        for (int i = 7; i <= 10; ++i)
-        {
-            sliders.getUnchecked(i)->getMaxValueObject().referTo (sharedValueMax);
-            sliders.getUnchecked(i)->getMinValueObject().referTo (sharedValueMin);
-        }
-        
-        hintLabel.setBounds (20, 245, 350, 150);
-        addAndMakeVisible (hintLabel);
+        g.fillAll(Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f));
+    }
+    void resized() override
+    {
+        Rectangle<int> area (getLocalBounds().reduced (5, 15));
+        _labelFolder.setBounds (area.removeFromTop (24));
     }
     
+    double dir_size(const fs::path &p)
+    {
+        double size=0.0;
+        for(bf::recursive_directory_iterator it(p);
+            it!=bf::recursive_directory_iterator();
+            ++it)
+        {
+            if(!is_directory(*it))
+                size+=bf::file_size(*it);
+        }
+        return size / 1000000;
+    }
 private:
-    OwnedArray<Slider> sliders;
-    Label hintLabel;
-    
-    Slider* createSlider (bool isSnapping)
-    {
-        Slider* s = new Slider();
-        sliders.add (s);
-        addAndMakeVisible (s);
-        s->setRange (0.0, 100.0, 0.1);
-        s->setPopupMenuEnabled (true);
-        s->setValue (Random::getSystemRandom().nextDouble() * 100.0, dontSendNotification);
-        return s;
-    }
+    String _experimentFolder;
+    Label _labelFolder;
 };
-
 
 //==============================================================================
 MainContentComponent::MainContentComponent()
@@ -422,8 +348,9 @@ MainContentComponent::MainContentComponent()
     setSize (800, 600);
     // Create tabs and add components to each tab
     _tabbedComponent = new TabbedComponent(TabbedButtonBar::TabsAtTop);
-    _tabbedComponent->addTab("Map", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), new mapComponent(ecosystem), true);
-    _tabbedComponent->addTab("Controls", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new SlidersPage(), true);
+    _tabbedComponent->addTab("Experiment", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new ExperimentComponent(), true);
+    _tabbedComponent->addTab("View", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), new mapComponent(ecosystem), true);
+    _tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new Component(), true);
     addAndMakeVisible(_tabbedComponent);
     Ecosystem ecosystem = Ecosystem();
     startTimer(100);  // call timer callback every 100ms

@@ -11,6 +11,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ecosystem.h"
+#include <boost/filesystem.hpp>
 
 
 //==============================================================================
