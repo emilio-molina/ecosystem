@@ -5,6 +5,13 @@
               jucerVersion="4.2.1">
   <MAINGROUP id="g4NTly" name="gui_juce">
     <GROUP id="{E5B8CE86-4278-2FD0-C4D2-5EF0BCDE89FB}" name="Source">
+      <FILE id="F9qBtA" name="ExperimentComponent.cpp" compile="1" resource="0"
+            file="Source/ExperimentComponent.cpp"/>
+      <FILE id="CPyfay" name="ExperimentComponent.h" compile="0" resource="0"
+            file="Source/ExperimentComponent.h"/>
+      <FILE id="EQsKnB" name="MapComponent.cpp" compile="1" resource="0"
+            file="Source/MapComponent.cpp"/>
+      <FILE id="MBua0V" name="MapComponent.h" compile="0" resource="0" file="Source/MapComponent.h"/>
       <FILE id="stsESx" name="ecosystem.h" compile="0" resource="0" file="../ecosystem.h"/>
       <FILE id="GjDAY9" name="ecosystem.cpp" compile="1" resource="0" file="../ecosystem.cpp"/>
       <FILE id="C564tz" name="MainComponent.cpp" compile="1" resource="0"

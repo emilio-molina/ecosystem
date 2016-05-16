@@ -49,6 +49,8 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
+  $(OBJDIR)/ExperimentComponent_6766fbe1.o \
+  $(OBJDIR)/MapComponent_ccba70a.o \
   $(OBJDIR)/ecosystem_fa672346.o \
   $(OBJDIR)/MainComponent_a6ffb4a5.o \
   $(OBJDIR)/Main_90ebc5c2.o \
@@ -82,6 +84,16 @@ clean:
 strip:
 	@echo Stripping gui_juce
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
+
+$(OBJDIR)/ExperimentComponent_6766fbe1.o: ../../Source/ExperimentComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ExperimentComponent.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/MapComponent_ccba70a.o: ../../Source/MapComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling MapComponent.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/ecosystem_fa672346.o: ../../../ecosystem.cpp
 	-@mkdir -p $(OBJDIR)
