@@ -402,7 +402,6 @@ MainContentComponent::MainContentComponent()
     _tabbedComponent->addTab("View", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), new mapComponent(ecosystem), true);
     _tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new Component(), true);
     addAndMakeVisible(_tabbedComponent);
-    Ecosystem ecosystem = Ecosystem();
     startTimer(100);  // call timer callback every 100ms
 }
 
