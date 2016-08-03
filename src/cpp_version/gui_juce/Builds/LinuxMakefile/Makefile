@@ -49,6 +49,7 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
+  $(OBJDIR)/ExperimentInterface_af8250a2.o \
   $(OBJDIR)/ExperimentComponent_6766fbe1.o \
   $(OBJDIR)/MapComponent_ccba70a.o \
   $(OBJDIR)/ecosystem_fa672346.o \
@@ -84,6 +85,11 @@ clean:
 strip:
 	@echo Stripping gui_juce
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
+
+$(OBJDIR)/ExperimentInterface_af8250a2.o: ../../../ExperimentInterface.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ExperimentInterface.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/ExperimentComponent_6766fbe1.o: ../../Source/ExperimentComponent.cpp
 	-@mkdir -p $(OBJDIR)

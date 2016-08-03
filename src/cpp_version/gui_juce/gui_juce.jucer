@@ -5,6 +5,10 @@
               jucerVersion="4.2.1">
   <MAINGROUP id="g4NTly" name="gui_juce">
     <GROUP id="{E5B8CE86-4278-2FD0-C4D2-5EF0BCDE89FB}" name="Source">
+      <FILE id="DEA4wD" name="ExperimentInterface.cpp" compile="1" resource="0"
+            file="../ExperimentInterface.cpp"/>
+      <FILE id="a4BrbB" name="ExperimentInterface.h" compile="0" resource="0"
+            file="../ExperimentInterface.h"/>
       <FILE id="F9qBtA" name="ExperimentComponent.cpp" compile="1" resource="0"
             file="Source/ExperimentComponent.cpp"/>
       <FILE id="CPyfay" name="ExperimentComponent.h" compile="0" resource="0"
