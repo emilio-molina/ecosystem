@@ -11,9 +11,11 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ecosystem.h"
+#include "ExperimentInterface.h"
 #include <boost/filesystem.hpp>
 
-class ExperimentReader;
+
+class ExperimentInterface;
 
 //==============================================================================
 /*
@@ -26,8 +28,7 @@ class MainContentComponent   : public Component,
 public:
     //==============================================================================
     CriticalSection mtx;
-    ExperimentReader* experiment_reader;
-    Ecosystem* ecosystem;
+    ExperimentInterface* experiment_interface;
     bool playing;
     MainContentComponent();
     ~MainContentComponent();

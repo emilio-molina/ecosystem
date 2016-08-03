@@ -37,10 +37,9 @@ struct Vertex
 class MapComponent   : public OpenGLAppComponent, public KeyListener
 {
 public:
-    Ecosystem* ecosystem;
     MainContentComponent* parent_component;
     //==============================================================================
-    MapComponent(Ecosystem* ecosystem, MainContentComponent* parent_component);
+    MapComponent(MainContentComponent* parent_component);
     ~MapComponent();
     void initialise() override;
     void shutdown() override;

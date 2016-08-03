@@ -21,7 +21,7 @@ bool MapComponent::keyPressed(const KeyPress &key, Component *originatingCompone
 }
 
 //==============================================================================
-MapComponent::MapComponent(Ecosystem* ecosystem, MainContentComponent* parent_component)
+MapComponent::MapComponent(MainContentComponent* parent_component)
 {
     this->parent_component = parent_component;
     this->time = -1;
@@ -30,7 +30,6 @@ MapComponent::MapComponent(Ecosystem* ecosystem, MainContentComponent* parent_co
     normal = nullptr;
     textureCoordIn = nullptr;
     sourceColour = nullptr;
-    this->ecosystem = ecosystem;
     addKeyListener(this);
     setWantsKeyboardFocus(true);
 }
@@ -56,6 +55,8 @@ void MapComponent::shutdown()
  */
 void MapComponent::render()
 {
+    ExperimentInterface* ei = parent_component->experiment_interface;
+    Ecosystem* ecosystem = ei->getEcosystemPointer();
     // Stuff to be done before defining your triangles
     jassert (OpenGLHelpers::isContextActive());
     const float desktopScale = (float) openGLContext.getRenderingScale();
@@ -72,7 +73,7 @@ void MapComponent::render()
     int vertex_counter = 0;
     
     // if ecosystem->time has changed, and mutex is not locked
-    if ((ecosystem != nullptr) && (time != ecosystem->time) && (parent_component->mtx.tryEnter())) {
+    if ((time != ecosystem->time) && (ei->tryLockEcosystem())) {
         vertices.clear();
         indices.clear();
         Vertex v1;
@@ -118,7 +119,7 @@ void MapComponent::render()
             vertex_counter += 1;
             time = ecosystem->time;
         }
-        parent_component->mtx.exit();
+        ei->unlockEcosystem();
     }
     // ************************************************
     

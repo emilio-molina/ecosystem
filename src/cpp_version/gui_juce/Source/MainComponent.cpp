@@ -12,18 +12,17 @@ MainContentComponent::MainContentComponent()
     // Create tabs and add components to each tab
     _tabbedComponent = new TabbedComponent(TabbedButtonBar::TabsAtTop);
     _tabbedComponent->addTab("Experiment", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new ExperimentComponent(this), true);
-    _tabbedComponent->addTab("View", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), new MapComponent(ecosystem, this), true);
+    _tabbedComponent->addTab("View", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), new MapComponent(this), true);
     _tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new Component(), true);
     addAndMakeVisible(_tabbedComponent);
     startTimer(100);  // call timer callback every 100ms
     playing = true;
-    ecosystem = nullptr;
-    //experiment_reader = ExperimentReader();
-    //ecosystem = Ecosyste();
+    experiment_interface = new ExperimentInterface();
 }
 
 MainContentComponent::~MainContentComponent()
 {
+    delete experiment_interface;
 }
 
 void MainContentComponent::paint (Graphics& g)
@@ -41,8 +40,9 @@ void MainContentComponent::resized()
 }
 
 void MainContentComponent::timerCallback() {
-    if ((ecosystem != nullptr) && (this->playing)) {
-        ecosystem->evolve();
-        cout << ecosystem->time << endl;
+    if (this->playing) {
+        experiment_interface->evolve();
     }
 }
+
+
