@@ -11,20 +11,6 @@
 #include "ExperimentComponent.h"
 
 
-/** @brief Convert float / double to string with n digits of precision
- *
- * @param[in] a_value Float or double input value
- * @param[in] n Number of decimal digits
- * @returns String containing number with the desired number of decimals
- */
-template <typename T>
-std::string to_string_with_precision(const T a_value, const int n)
-{
-    std::ostringstream out;
-    out << std::fixed << std::setprecision(n) << a_value;
-    return out.str();
-}
-
 /** @brief ExperimentComponent constructor
  *
  * @param[in] parent_component Parent component of this one
@@ -51,7 +37,9 @@ ExperimentComponent::ExperimentComponent(MainContentComponent* parent_component)
     _timeSlider.setVelocityBasedMode(true);
     _timeSlider.addListener(this);
 }
-    
+
+
+
 void ExperimentComponent::paint (Graphics& g)
 {
     g.fillAll(Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f));
@@ -68,39 +56,23 @@ void ExperimentComponent::resized()
     _folderLabel.setBounds (1 * percentage_x, 6 * percentage_y,       // x, y
                             90 * percentage_x, 5 * percentage_y);     // width, height
     
-    _runButton.setBounds(1 * percentage_x, 7 * percentage_y,       // x, y
-                         20 * percentage_x, 5 * percentage_y);     // width, height
+    _runButton.setBounds(1 * percentage_x, 7 * percentage_y,          // x, y
+                         20 * percentage_x, 5 * percentage_y);        // width, height
     
-    _maxTimeLabel.setBounds (1 * percentage_x, 12 * percentage_y,       // x, y
-                             90 * percentage_x, 5 * percentage_y);     // width, height
+    _maxTimeLabel.setBounds (1 * percentage_x, 12 * percentage_y,     // x, y
+                             90 * percentage_x, 5 * percentage_y);    // width, height
     
-    _lastBackupLabel.setBounds (1 * percentage_x, 17 * percentage_y,       // x, y
-                                90 * percentage_x, 5 * percentage_y);     // width, height
+    _lastBackupLabel.setBounds (1 * percentage_x, 17 * percentage_y,  // x, y
+                                90 * percentage_x, 5 * percentage_y); // width, height
     
-    _pauseButton.setBounds (1 * percentage_x, 23 * percentage_y,       // x, y
+    _pauseButton.setBounds (1 * percentage_x, 23 * percentage_y,      // x, y
                             20 * percentage_x, 5 * percentage_y);     // width, height
     
     _timeSlider.setBounds (1 * percentage_x, 30 * percentage_y,       // x, y
-                           90 * percentage_x, 5 * percentage_y);     // width, height
+                           90 * percentage_x, 5 * percentage_y);      // width, height
 }
-    
-void ExperimentComponent::refreshExperimentSize()
-{
-    fs::path p = fs::path(_experimentFolder.toStdString());
-    double size=0.0;
-    for(bf::recursive_directory_iterator it(p);
-        it!=bf::recursive_directory_iterator();
-        ++it)
-    {
-        if(!is_directory(*it))
-            size+=bf::file_size(*it);
-    }
-    double _directory_size = size / 1000000;
-    string str_directory_size = to_string_with_precision(_directory_size, 2);
-    _folderLabel.setText ("Experiment folder: " + _experimentFolder + "  (" + str_directory_size + "MB)",
-                          dontSendNotification);
-}
-    
+
+
 void ExperimentComponent::buttonClicked(Button* b)
 {
     // Folder button
@@ -113,6 +85,22 @@ void ExperimentComponent::buttonClicked(Button* b)
         {
             File chosenDirectory = fc.getResult();
             _experimentFolder = chosenDirectory.getFullPathName();
+            parent_component->experiment_interface->setExperimentFolder(_experimentFolder.toStdString());
+            if (parent_component->experiment_interface->experimentAlreadyExists()) {
+                bool chosen_ok;
+                chosen_ok = AlertWindow::showOkCancelBox (AlertWindow::QuestionIcon,
+                                                          "Experiment already exists",
+                                                          "Press OK to load existing experiment, or Cancel to delete it and start a new experiment.",
+                                                          String(),
+                                                          String(),
+                                                          0);
+                if (chosen_ok) {
+                    parent_component->experiment_interface->loadEcosystem(0); // load initial settings of experiment
+                } else {
+                    parent_component->experiment_interface->cleanFolder();
+                    parent_component->experiment_interface->saveEcosystem();
+                }
+            }
             refreshExperimentSize();
         }
     }
@@ -128,7 +116,7 @@ void ExperimentComponent::buttonClicked(Button* b)
     }
 }
     
-void ExperimentComponent::sliderValueChanged(Slider* s) {  // needed to make it compile
+void ExperimentComponent::sliderValueChanged(Slider* s) {
 }
     
 void ExperimentComponent::sliderDragEnded(Slider* s) {
