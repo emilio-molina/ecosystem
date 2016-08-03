@@ -51,7 +51,7 @@ public:
     
 private:
     int time;
-    bool _playing;
+    bool _running;
     Array<Vertex> vertices;
     Array<int> indices;
     GLuint vertexBuffer, indexBuffer;

@@ -16,7 +16,7 @@ bool MapComponent::keyPressed(const KeyPress &key, Component *originatingCompone
     if (key == KeyPress::leftKey)
         time -= 1;
     if (key == KeyPress::spaceKey)
-        _playing = !_playing;
+        _running = !_running;
     return true;
 }
 
@@ -25,7 +25,7 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
 {
     this->parent_component = parent_component;
     this->time = -1;
-    this->_playing = false;
+    this->_running = false;
     position = nullptr;
     normal = nullptr;
     textureCoordIn = nullptr;

@@ -117,7 +117,7 @@ void ExperimentComponent::buttonClicked(Button* b)
      *
      */
     if (b == &_runButton) {
-        this->parent_component->playing = true;
+        this->parent_component->running = true;
     }
     
     /* Run button
@@ -127,7 +127,7 @@ void ExperimentComponent::buttonClicked(Button* b)
      *
      */
     if (b == &_pauseButton) {
-        this->parent_component->playing = false;
+        this->parent_component->running = false;
     }
 }
     
