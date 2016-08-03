@@ -101,7 +101,7 @@ void ExperimentComponent::buttonClicked(Button* b)
                     parent_component->experiment_interface->saveEcosystem();
                 }
             }
-            refreshExperimentSize();
+            //refreshExperimentSize();
         }
     }
     
