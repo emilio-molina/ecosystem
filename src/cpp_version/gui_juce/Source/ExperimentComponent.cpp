@@ -75,7 +75,13 @@ void ExperimentComponent::resized()
 
 void ExperimentComponent::buttonClicked(Button* b)
 {
-    // Folder button
+    /* Folder button
+     * =============
+     *
+     * 1. Open directory dialog
+     * 2. Set experiment folder
+     *    - If exists: choose if load it or delete existing experiment
+     */
     if (b == &_folderButton) {
         FileChooser fc ("Choose an experiment directory",
                         File::getCurrentWorkingDirectory(),
@@ -98,19 +104,28 @@ void ExperimentComponent::buttonClicked(Button* b)
                     parent_component->experiment_interface->loadEcosystem(0); // load initial settings of experiment
                 } else {
                     parent_component->experiment_interface->cleanFolder();
-                    parent_component->experiment_interface->saveEcosystem();
                 }
             }
             //refreshExperimentSize();
         }
     }
     
-    // Run button
+    /* Run button
+     * ==========
+     *
+     * Indicate the ecosystem must run
+     *
+     */
     if (b == &_runButton) {
         this->parent_component->playing = true;
     }
     
-    // Pause button
+    /* Run button
+     * ==========
+     *
+     * Indicate the ecosystem must stop
+     *
+     */
     if (b == &_pauseButton) {
         this->parent_component->playing = false;
     }

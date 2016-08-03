@@ -77,9 +77,10 @@ void MapComponent::render()
         vertices.clear();
         indices.clear();
         Vertex v1;
-        for (auto o:ecosystem->biotope) {
+        for (auto o:ecosystem->biotope) { // loop over all organisms in biotope
             int x_size = ecosystem->biotope_size_x;
             int y_size = ecosystem->biotope_size_y;
+
             tuple<int, int> position = o.first;
             string ORGANISM_TYPE = o.second->species;
             float x = 2 * (float)get<0>(position) / (float)x_size - 1.0f;

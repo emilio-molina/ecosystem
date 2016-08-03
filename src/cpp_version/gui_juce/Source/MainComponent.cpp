@@ -16,7 +16,9 @@ MainContentComponent::MainContentComponent()
     _tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), new Component(), true);
     addAndMakeVisible(_tabbedComponent);
     startTimer(100);  // call timer callback every 100ms
-    playing = true;
+    playing = false;
+
+    // Experiment instance:
     experiment_interface = new ExperimentInterface();
 }
 

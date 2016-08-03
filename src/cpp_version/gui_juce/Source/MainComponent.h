@@ -19,16 +19,23 @@ class ExperimentInterface;
 
 //==============================================================================
 /*
-    This component lives inside our window, and this is where you should put all
-    your controls and content.
+    Main component of the application
 */
 class MainContentComponent   : public Component,
                                private Timer
 {
 public:
-    //==============================================================================
+    /** @brief Used to lock ecosystem in some atomic operations
+        @TODO: Check if should be deleted
+     */
     CriticalSection mtx;
+
+    /** @brief Instance of ExperimentInterface. Where the Ecosystem is running.
+     */
     ExperimentInterface* experiment_interface;
+    
+    /** @brief True if ecosystem is running
+     */
     bool playing;
     MainContentComponent();
     ~MainContentComponent();
@@ -37,6 +44,8 @@ public:
     void resized();
 
 private:
+    /** @brief Function where Ecosystem evolves. It is called every 100ms by default
+     */
     void timerCallback();
     //==============================================================================
     ScopedPointer<TabbedComponent> _tabbedComponent;
