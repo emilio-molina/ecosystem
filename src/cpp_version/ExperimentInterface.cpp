@@ -28,11 +28,13 @@ std::string to_string_with_precision(const T a_value, const int n)
 }
 
 string ExperimentInterface::getEcosystemJSONPath(int time_slice) {
-    string thousands_folder = getThousandsFolder(time_slice);
+    string thousands_folder_name = getThousandsFolder(time_slice);
+    fs::path thousands_abs_path = (_dst_path / fs::path(thousands_folder_name));
+    if (!fs::is_directory(thousands_abs_path))
+        fs::create_directories(thousands_abs_path);
     ostringstream dst_file_name;
     dst_file_name << time_slice << ".json";
-    fs::path dst_file = (_dst_path /
-                         fs::path(thousands_folder) /
+    fs::path dst_file = (thousands_abs_path /
                          fs::path(dst_file_name.str()));
     return dst_file.string();
 }
@@ -76,6 +78,8 @@ void ExperimentInterface::loadEcosystem(int time_slice) {
  */
 void ExperimentInterface::setExperimentFolder(string experiment_folder) {
     _dst_path = fs::path(experiment_folder + fs::path::preferred_separator).normalize();
+    if (_dst_path.filename() == ".")
+        _dst_path.remove_leaf();
     // Iterate over directory names to get experiment name (last name)
     // e.g. from "histories/exp_name/." get: exp_name
     vector<string> parts;
@@ -100,7 +104,8 @@ void ExperimentInterface::unlockEcosystem() {
 }
 
 void ExperimentInterface::cleanFolder() {
-    
+    fs::remove_all(_dst_path);
+    fs::create_directory(_dst_path);
 }
 
 void ExperimentInterface::saveEcosystem() {

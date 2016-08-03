@@ -29,10 +29,12 @@ ExperimentComponent::ExperimentComponent(MainContentComponent* parent_component)
     _folderButton.addListener(this);
     _runButton.setButtonText("Run");
     _runButton.addListener(this);
+    _runButton.setEnabled(false);
     _maxTimeLabel.setText("max time:", dontSendNotification);
     _lastBackupLabel.setText("3", dontSendNotification);
     _pauseButton.setButtonText("Pause");
     _pauseButton.addListener(this);
+    _pauseButton.setEnabled(false);
     _timeSlider.setRange(0, 10000, 1);
     _timeSlider.setVelocityBasedMode(true);
     _timeSlider.addListener(this);
@@ -89,6 +91,8 @@ void ExperimentComponent::buttonClicked(Button* b)
                         true);
         if (fc.browseForDirectory())
         {
+            _runButton.setEnabled(true);
+            _pauseButton.setEnabled(true);
             File chosenDirectory = fc.getResult();
             _experimentFolder = chosenDirectory.getFullPathName();
             parent_component->experiment_interface->setExperimentFolder(_experimentFolder.toStdString());

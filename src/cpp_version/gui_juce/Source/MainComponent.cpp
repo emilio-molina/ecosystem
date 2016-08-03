@@ -43,6 +43,7 @@ void MainContentComponent::resized()
 
 void MainContentComponent::timerCallback() {
     if (this->running) {
+        experiment_interface->saveEcosystem();
         experiment_interface->evolve();
     }
 }
