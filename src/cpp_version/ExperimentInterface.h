@@ -134,7 +134,6 @@ private:
     mutex _mtx;
     fs::path _dst_path;
     string _experiment_name;
-    Exporter* _exporter;
     Ecosystem* _ecosystem;
 };
 
