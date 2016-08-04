@@ -24,7 +24,6 @@ ExperimentComponent::ExperimentComponent(MainContentComponent* parent_component)
     addAndMakeVisible(_maxTimeLabel);
     addAndMakeVisible(_lastBackupLabel);
     addAndMakeVisible(_pauseButton);
-    addAndMakeVisible(_timeSlider);
     _folderButton.setButtonText("Choose experiment folder");
     _folderButton.addListener(this);
     _runButton.setButtonText("Run");
@@ -35,9 +34,6 @@ ExperimentComponent::ExperimentComponent(MainContentComponent* parent_component)
     _pauseButton.setButtonText("Pause");
     _pauseButton.addListener(this);
     _pauseButton.setEnabled(false);
-    _timeSlider.setRange(0, 10000, 1);
-    _timeSlider.setVelocityBasedMode(true);
-    _timeSlider.addListener(this);
 }
 
 
@@ -69,9 +65,6 @@ void ExperimentComponent::resized()
     
     _pauseButton.setBounds (1 * percentage_x, 23 * percentage_y,      // x, y
                             20 * percentage_x, 5 * percentage_y);     // width, height
-    
-    _timeSlider.setBounds (1 * percentage_x, 30 * percentage_y,       // x, y
-                           90 * percentage_x, 5 * percentage_y);      // width, height
 }
 
 
@@ -139,14 +132,5 @@ void ExperimentComponent::buttonClicked(Button* b)
      */
     if (b == &_pauseButton) {
         this->parent_component->running = false;
-    }
-}
-    
-void ExperimentComponent::sliderValueChanged(Slider* s) {
-}
-    
-void ExperimentComponent::sliderDragEnded(Slider* s) {
-    if (s == &_timeSlider) {
-        cout << _timeSlider.getValue() << endl;
     }
 }

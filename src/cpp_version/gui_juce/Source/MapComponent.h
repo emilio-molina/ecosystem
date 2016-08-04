@@ -34,7 +34,7 @@ struct Vertex
  *
  * It is a simplified version of OpenGL example provided with JUCE
  */
-class MapComponent   : public OpenGLAppComponent, public KeyListener
+class MapComponent   : public OpenGLAppComponent, public KeyListener, public SliderListener
 {
 public:
     MainContentComponent* parent_component;
@@ -48,6 +48,8 @@ public:
     void resized() override;
     void createShaders();
     bool keyPressed(const KeyPress &key, Component *originatingComponent) override;
+    void sliderValueChanged(Slider* s) override; // needed to make it compile
+    void sliderDragEnded(Slider* s) override;
     
 private:
     int time;
@@ -63,6 +65,7 @@ private:
     ScopedPointer<OpenGLShaderProgram::Attribute> position, normal, sourceColour, textureCoordIn;
     
     String newVertexShader, newFragmentShader;
+    Slider _timeSlider;
 };
 
 

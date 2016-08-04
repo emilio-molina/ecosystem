@@ -32,6 +32,10 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     sourceColour = nullptr;
     addKeyListener(this);
     setWantsKeyboardFocus(true);
+    addAndMakeVisible(_timeSlider);
+    _timeSlider.setRange(0, 10000, 1);
+    _timeSlider.setVelocityBasedMode(true);
+    _timeSlider.addListener(this);
 }
 
 MapComponent::~MapComponent()
@@ -189,9 +193,9 @@ void MapComponent::paint (Graphics& g)
     // You can add your component specific drawing code here!
     // This will draw over the top of the openGL background.
     
-    g.setColour(Colours::white);
-    g.setFont (20);
-    g.drawText ("Ecosystem map", 25, 20, 300, 30, Justification::left);
+    //g.setColour(Colours::white);
+    //g.setFont (20);
+    //g.drawText ("Ecosystem map", 25, 20, 300, 30, Justification::left);
 }
 
 void MapComponent::resized()
@@ -199,6 +203,10 @@ void MapComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
+    int percentage_x = getWidth() / 100;
+    int percentage_y = getHeight() / 100;
+    _timeSlider.setBounds (1 * percentage_x, 1 * percentage_y,       // x, y
+                           30 * percentage_x, 3 * percentage_y);      // width, height
 }
 
 /** @brief Create OpenGL shaders
@@ -276,5 +284,14 @@ void MapComponent::createShaders()
     else
     {
         statusText = newShader->getLastError();
+    }
+}
+
+void MapComponent::sliderValueChanged(Slider* s) {
+}
+
+void MapComponent::sliderDragEnded(Slider* s) {
+    if (s == &_timeSlider) {
+        cout << _timeSlider.getValue() << endl;
     }
 }
