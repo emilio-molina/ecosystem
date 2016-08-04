@@ -28,6 +28,7 @@ public:
     /** @brief Instance of ExperimentInterface. Where the Ecosystem is running.
      */
     ExperimentInterface* experiment_interface;
+    bool experiment_has_changed;
     
     /** @brief True if ecosystem is running
      */

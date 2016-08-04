@@ -82,7 +82,7 @@ public:
 
     // Public methods (documentation in ecosystem.cpp)
     Ecosystem();
-    Ecosystem(const string& json_path);
+    Ecosystem(json data_json);
     void addOrganism(Organism* organism);
     void removeOrganism(Organism* organism);
     void updateOrganismLocation(Organism* organism);

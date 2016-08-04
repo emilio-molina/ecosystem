@@ -13,6 +13,7 @@
 
 #include "MainComponent.h"
 #include "ecosystem.h"
+#include "ExperimentInterface.h"
 #include <boost/filesystem.hpp>
 
 namespace bf=boost::filesystem;

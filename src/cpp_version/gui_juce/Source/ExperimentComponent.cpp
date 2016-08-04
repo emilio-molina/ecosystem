@@ -91,12 +91,14 @@ void ExperimentComponent::buttonClicked(Button* b)
                         true);
         if (fc.browseForDirectory())
         {
+            if (parent_component->experiment_interface != nullptr)
+                delete parent_component->experiment_interface;
+            parent_component->experiment_has_changed = true;
             _runButton.setEnabled(true);
             _pauseButton.setEnabled(true);
             File chosenDirectory = fc.getResult();
-            _experimentFolder = chosenDirectory.getFullPathName();
-            parent_component->experiment_interface->setExperimentFolder(_experimentFolder.toStdString());
-            if (parent_component->experiment_interface->experimentAlreadyExists()) {
+            string full_directory_path = chosenDirectory.getFullPathName().toStdString();
+            if (experimentAlreadyExists(full_directory_path)) {
                 bool chosen_ok;
                 chosen_ok = AlertWindow::showOkCancelBox (AlertWindow::QuestionIcon,
                                                           "Experiment already exists",
@@ -105,10 +107,15 @@ void ExperimentComponent::buttonClicked(Button* b)
                                                           String(),
                                                           0);
                 if (chosen_ok) {
-                    parent_component->experiment_interface->loadEcosystem(0); // load initial settings of experiment
+                    parent_component->experiment_interface =
+                    new ExperimentInterface(full_directory_path, false);
                 } else {
-                    parent_component->experiment_interface->cleanFolder();
+                    parent_component->experiment_interface =
+                    new ExperimentInterface(full_directory_path, true);
                 }
+            } else {
+                parent_component->experiment_interface =
+                new ExperimentInterface(full_directory_path, true);
             }
             //refreshExperimentSize();
         }

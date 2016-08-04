@@ -94,15 +94,9 @@ Ecosystem::Ecosystem() {
 *
 * @TODO: Deal with constants
 *
-* @param[in] json_path Path of JSON file with ecosystem screenshot
+* @param[in] data_json JSON data with ecosystem screenshot
 */
-Ecosystem::Ecosystem(const string& json_path) {
-    // load json file
-    ifstream f_data_json;
-    f_data_json.open(json_path);
-    json data_json;
-    f_data_json >> data_json;
-    f_data_json.close();
+Ecosystem::Ecosystem(json data_json) {
 
     // load json data
     PLANT = data_json["constants"]["PLANT"];

@@ -17,9 +17,8 @@ MainContentComponent::MainContentComponent()
     addAndMakeVisible(_tabbedComponent);
     startTimer(100);  // call timer callback every 100ms
     running = false;
-
-    // Experiment instance:
-    experiment_interface = new ExperimentInterface();
+    experiment_interface = nullptr;
+    experiment_has_changed = false;
 }
 
 MainContentComponent::~MainContentComponent()

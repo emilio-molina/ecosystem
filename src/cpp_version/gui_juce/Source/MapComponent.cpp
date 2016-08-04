@@ -56,7 +56,6 @@ void MapComponent::shutdown()
 void MapComponent::render()
 {
     ExperimentInterface* ei = parent_component->experiment_interface;
-    Ecosystem* ecosystem = ei->getEcosystemPointer();
     // Stuff to be done before defining your triangles
     jassert (OpenGLHelpers::isContextActive());
     const float desktopScale = (float) openGLContext.getRenderingScale();
@@ -73,54 +72,58 @@ void MapComponent::render()
     int vertex_counter = 0;
     
     // if ecosystem->time has changed, and mutex is not locked
-    if ((time != ecosystem->time) && (ei->tryLockEcosystem())) {
-        vertices.clear();
-        indices.clear();
-        Vertex v1;
-        for (auto o:ecosystem->biotope) { // loop over all organisms in biotope
-            int x_size = ecosystem->biotope_size_x;
-            int y_size = ecosystem->biotope_size_y;
+    if (ei != nullptr) {
+        Ecosystem* ecosystem = ei->getEcosystemPointer();
+        if (parent_component->experiment_has_changed || ((time != ecosystem->time) && (ei->tryLockEcosystem()))) {
+            parent_component->experiment_has_changed = false;
+            vertices.clear();
+            indices.clear();
+            Vertex v1;
+            for (auto o:ecosystem->biotope) { // loop over all organisms in biotope
+                int x_size = ecosystem->biotope_size_x;
+                int y_size = ecosystem->biotope_size_y;
 
-            tuple<int, int> position = o.first;
-            string ORGANISM_TYPE = o.second->species;
-            float x = 2 * (float)get<0>(position) / (float)x_size - 1.0f;
-            float y = 2 * (float)get<1>(position) / (float)y_size - 1.0f;
-            if (ORGANISM_TYPE == "P") {
-                Vertex v2 =
-                {
-                    {x, y, 1.0f},
-                    { 0.5f, 0.5f, 0.5f},
-                    { 0.0f, 1.0f, 0.0f, 1.0f },  // green
-                    { 0.5f, 0.5f,}
-                };
-                v1 = v2;
+                tuple<int, int> position = o.first;
+                string ORGANISM_TYPE = o.second->species;
+                float x = 2 * (float)get<0>(position) / (float)x_size - 1.0f;
+                float y = 2 * (float)get<1>(position) / (float)y_size - 1.0f;
+                if (ORGANISM_TYPE == "P") {
+                    Vertex v2 =
+                    {
+                        {x, y, 1.0f},
+                        { 0.5f, 0.5f, 0.5f},
+                        { 0.0f, 1.0f, 0.0f, 1.0f },  // green
+                        { 0.5f, 0.5f,}
+                    };
+                    v1 = v2;
+                }
+                if (ORGANISM_TYPE == "H") {
+                    Vertex v2 =
+                    {
+                        {x, y, 1.0f},
+                        { 0.5f, 0.5f, 0.5f},
+                        { 0.5f, 0.5f, 0.5f, 1.0f },  // grey
+                        { 0.5f, 0.5f,}
+                    };
+                    v1 = v2;
+                }
+                if (ORGANISM_TYPE == "C") {
+                    Vertex v2 =
+                    {
+                        {x, y, 1.0f},
+                        { 0.5f, 0.5f, 0.5f},
+                        { 1.0f, 0.0f, 0.0f, 1.0f },  // red
+                        { 0.5f, 0.5f,}
+                    };
+                    v1 = v2;
+                }
+                indices.add(vertex_counter);
+                vertices.add(v1);
+                vertex_counter += 1;
+                time = ecosystem->time;
             }
-            if (ORGANISM_TYPE == "H") {
-                Vertex v2 =
-                {
-                    {x, y, 1.0f},
-                    { 0.5f, 0.5f, 0.5f},
-                    { 0.5f, 0.5f, 0.5f, 1.0f },  // grey
-                    { 0.5f, 0.5f,}
-                };
-                v1 = v2;
-            }
-            if (ORGANISM_TYPE == "C") {
-                Vertex v2 =
-                {
-                    {x, y, 1.0f},
-                    { 0.5f, 0.5f, 0.5f},
-                    { 1.0f, 0.0f, 0.0f, 1.0f },  // red
-                    { 0.5f, 0.5f,}
-                };
-                v1 = v2;
-            }
-            indices.add(vertex_counter);
-            vertices.add(v1);
-            vertex_counter += 1;
-            time = ecosystem->time;
+            ei->unlockEcosystem();
         }
-        ei->unlockEcosystem();
     }
     // ************************************************
     
