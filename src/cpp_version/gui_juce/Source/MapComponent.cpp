@@ -10,7 +10,60 @@
 
 #include "MapComponent.h"
 
-bool MapComponent::keyPressed(const KeyPress &key, Component *originatingComponent) {
+void jsonToVertices(string jsonPath, Array<Vertex> &vertices, Array<int> &indices) {
+    
+}
+void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<int> &indices) {
+    vertices.clear();
+    indices.clear();
+    Vertex v1;
+    int vertex_counter = 0;
+    for (auto o:ecosystem->biotope) {
+            int x_size = ecosystem->biotope_size_x;
+            int y_size = ecosystem->biotope_size_y;
+            
+            tuple<int, int> position = o.first;
+            string ORGANISM_TYPE = o.second->species;
+            float x = 2 * (float)get<0>(position) / (float)x_size - 1.0f;
+            float y = 2 * (float)get<1>(position) / (float)y_size - 1.0f;
+            if (ORGANISM_TYPE == "P") {
+                Vertex v2 =
+                {
+                    {x, y, 1.0f},
+                    { 0.5f, 0.5f, 0.5f},
+                    { 0.0f, 1.0f, 0.0f, 1.0f },  // green
+                    { 0.5f, 0.5f,}
+                };
+                v1 = v2;
+            }
+            if (ORGANISM_TYPE == "H") {
+                Vertex v2 =
+                {
+                    {x, y, 1.0f},
+                    { 0.5f, 0.5f, 0.5f},
+                    { 0.5f, 0.5f, 0.5f, 1.0f },  // grey
+                    { 0.5f, 0.5f,}
+                };
+                v1 = v2;
+            }
+            if (ORGANISM_TYPE == "C") {
+                Vertex v2 =
+                {
+                    {x, y, 1.0f},
+                    { 0.5f, 0.5f, 0.5f},
+                    { 1.0f, 0.0f, 0.0f, 1.0f },  // red
+                    { 0.5f, 0.5f,}
+                };
+                v1 = v2;
+            }
+            indices.add(vertex_counter);
+            vertices.add(v1);
+            vertex_counter += 1;
+        }
+    }
+    
+    
+    bool MapComponent::keyPressed(const KeyPress &key, Component *originatingComponent) {
     if (key == KeyPress::rightKey)
         time += 1;
     if (key == KeyPress::leftKey)
@@ -91,62 +144,14 @@ void MapComponent::render()
     openGLContext.extensions.glGenBuffers (1, &vertexBuffer);
     openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
     
-    // ************************** TRIANGLES DEFINITION
-    // Here you can draw whatever you want
-    int vertex_counter = 0;
     
-    // if ecosystem->time has changed, and mutex is not locked
+    // if ecosystem has changed, and mutex is not locked
     if (ei != nullptr) {
         Ecosystem* ecosystem = ei->getEcosystemPointer();
-        if (parent_component->experiment_has_changed || ((time != ecosystem->time) && (ei->tryLockEcosystem()))) {
-            parent_component->experiment_has_changed = false;
-            vertices.clear();
-            indices.clear();
-            Vertex v1;
-            for (auto o:ecosystem->biotope) { // loop over all organisms in biotope
-                int x_size = ecosystem->biotope_size_x;
-                int y_size = ecosystem->biotope_size_y;
-
-                tuple<int, int> position = o.first;
-                string ORGANISM_TYPE = o.second->species;
-                float x = 2 * (float)get<0>(position) / (float)x_size - 1.0f;
-                float y = 2 * (float)get<1>(position) / (float)y_size - 1.0f;
-                if (ORGANISM_TYPE == "P") {
-                    Vertex v2 =
-                    {
-                        {x, y, 1.0f},
-                        { 0.5f, 0.5f, 0.5f},
-                        { 0.0f, 1.0f, 0.0f, 1.0f },  // green
-                        { 0.5f, 0.5f,}
-                    };
-                    v1 = v2;
-                }
-                if (ORGANISM_TYPE == "H") {
-                    Vertex v2 =
-                    {
-                        {x, y, 1.0f},
-                        { 0.5f, 0.5f, 0.5f},
-                        { 0.5f, 0.5f, 0.5f, 1.0f },  // grey
-                        { 0.5f, 0.5f,}
-                    };
-                    v1 = v2;
-                }
-                if (ORGANISM_TYPE == "C") {
-                    Vertex v2 =
-                    {
-                        {x, y, 1.0f},
-                        { 0.5f, 0.5f, 0.5f},
-                        { 1.0f, 0.0f, 0.0f, 1.0f },  // red
-                        { 0.5f, 0.5f,}
-                    };
-                    v1 = v2;
-                }
-                indices.add(vertex_counter);
-                vertices.add(v1);
-                vertex_counter += 1;
-                time = ecosystem->time;
-            }
+        if (parent_component->experiment_has_changed && ei->tryLockEcosystem()) {
+            ecosystemToVertices(ecosystem, vertices, indices);
             ei->unlockEcosystem();
+            parent_component->experiment_has_changed = false;
         }
     }
     // ************************************************

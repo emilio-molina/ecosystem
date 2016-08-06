@@ -30,6 +30,10 @@ struct Vertex
 };
 
 
+void jsonToVertices(string jsonPath, Array<Vertex> &vertices, Array<int> &indices);
+void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<int> &indices);
+
+
 /** @brief Component able to render ecosystem using OpenGL
  *
  * It is a simplified version of OpenGL example provided with JUCE
@@ -73,7 +77,6 @@ private:
     TextButton _loadButton;
     Label _ecosystemInfoLabel;
     Slider _timeSlider;
-    
 };
 
 

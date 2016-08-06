@@ -44,6 +44,7 @@ void MainContentComponent::timerCallback() {
     if (this->running) {
         experiment_interface->saveEcosystem();
         experiment_interface->evolve();
+        experiment_has_changed = true;
     }
 }
 
