@@ -33,9 +33,22 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     addKeyListener(this);
     setWantsKeyboardFocus(true);
     addAndMakeVisible(_timeSlider);
+    addAndMakeVisible(_historyToggle);
+    addAndMakeVisible(_runToggle);
+    addAndMakeVisible(_autoForwardToggle);
+    addAndMakeVisible(_loadButton);
     _timeSlider.setRange(0, 10000, 1);
     _timeSlider.setVelocityBasedMode(true);
     _timeSlider.addListener(this);
+    _historyToggle.setButtonText("History");
+    _historyToggle.setColour(ToggleButton::textColourId, Colours::white);
+    _historyToggle.addListener(this);
+    _runToggle.setButtonText("Run");
+    _runToggle.setColour(ToggleButton::textColourId, Colours::white);
+    _runToggle.addListener(this);
+    _autoForwardToggle.setButtonText("Auto-forward");
+    _autoForwardToggle.setColour(ToggleButton::textColourId, Colours::white);
+    _loadButton.setButtonText("Load");
 }
 
 MapComponent::~MapComponent()
@@ -192,8 +205,11 @@ void MapComponent::paint (Graphics& g)
 {
     // You can add your component specific drawing code here!
     // This will draw over the top of the openGL background.
-    
-    //g.setColour(Colours::white);
+    int percentage_x = getWidth();
+    int percentage_y = getHeight();
+    g.setColour(Colours::darkred);
+    g.fillRect(0 * percentage_x, 0 * percentage_y,
+               1.0 * percentage_x, 0.06 * percentage_y);
     //g.setFont (20);
     //g.drawText ("Ecosystem map", 25, 20, 300, 30, Justification::left);
 }
@@ -207,6 +223,18 @@ void MapComponent::resized()
     int percentage_y = getHeight() / 100;
     _timeSlider.setBounds (1 * percentage_x, 1 * percentage_y,       // x, y
                            30 * percentage_x, 3 * percentage_y);      // width, height
+    
+    _historyToggle.setBounds (32 * percentage_x, 1 * percentage_y,       // x, y
+                           10 * percentage_x, 3 * percentage_y);      // width, height
+    
+    _autoForwardToggle.setBounds (44 * percentage_x, 1 * percentage_y,       // x, y
+                          10 * percentage_x, 3 * percentage_y);      // width, height
+    
+    _runToggle.setBounds (56 * percentage_x, 1 * percentage_y,       // x, y
+                          10 * percentage_x, 3 * percentage_y);      // width, height
+    
+    _loadButton.setBounds (68 * percentage_x, 1 * percentage_y,       // x, y
+                           10 * percentage_x, 3 * percentage_y);      // width, height
 }
 
 /** @brief Create OpenGL shaders
@@ -293,5 +321,25 @@ void MapComponent::sliderValueChanged(Slider* s) {
 void MapComponent::sliderDragEnded(Slider* s) {
     if (s == &_timeSlider) {
         cout << _timeSlider.getValue() << endl;
+    }
+}
+
+void MapComponent::mouseDown (const MouseEvent& e)
+{
+    cout << e.getPosition().getX() << "  " << e.getPosition().getY() << endl;
+}
+
+void MapComponent::buttonClicked (Button* b) {
+    /* Run button
+     * ==========
+     *
+     * Indicate the ecosystem must run
+     *
+     */
+    if (b == &_runToggle) {
+        if (_runToggle.getToggleState())
+            this->parent_component->running = true;
+        else
+            this->parent_component->running = false;
     }
 }

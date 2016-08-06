@@ -20,20 +20,12 @@ ExperimentComponent::ExperimentComponent(MainContentComponent* parent_component)
     setOpaque (true);
     addAndMakeVisible (_folderLabel);
     addAndMakeVisible (_folderButton);
-    addAndMakeVisible(_runButton);
     addAndMakeVisible(_maxTimeLabel);
     addAndMakeVisible(_lastBackupLabel);
-    addAndMakeVisible(_pauseButton);
     _folderButton.setButtonText("Choose experiment folder");
     _folderButton.addListener(this);
-    _runButton.setButtonText("Run");
-    _runButton.addListener(this);
-    _runButton.setEnabled(false);
     _maxTimeLabel.setText("max time:", dontSendNotification);
     _lastBackupLabel.setText("3", dontSendNotification);
-    _pauseButton.setButtonText("Pause");
-    _pauseButton.addListener(this);
-    _pauseButton.setEnabled(false);
 }
 
 
@@ -54,17 +46,11 @@ void ExperimentComponent::resized()
     _folderLabel.setBounds (1 * percentage_x, 6 * percentage_y,       // x, y
                             90 * percentage_x, 5 * percentage_y);     // width, height
     
-    _runButton.setBounds(1 * percentage_x, 7 * percentage_y,          // x, y
-                         20 * percentage_x, 5 * percentage_y);        // width, height
-    
     _maxTimeLabel.setBounds (1 * percentage_x, 12 * percentage_y,     // x, y
                              90 * percentage_x, 5 * percentage_y);    // width, height
     
     _lastBackupLabel.setBounds (1 * percentage_x, 17 * percentage_y,  // x, y
                                 90 * percentage_x, 5 * percentage_y); // width, height
-    
-    _pauseButton.setBounds (1 * percentage_x, 23 * percentage_y,      // x, y
-                            20 * percentage_x, 5 * percentage_y);     // width, height
 }
 
 
@@ -87,8 +73,6 @@ void ExperimentComponent::buttonClicked(Button* b)
             if (parent_component->experiment_interface != nullptr)
                 delete parent_component->experiment_interface;
             parent_component->experiment_has_changed = true;
-            _runButton.setEnabled(true);
-            _pauseButton.setEnabled(true);
             File chosenDirectory = fc.getResult();
             string full_directory_path = chosenDirectory.getFullPathName().toStdString();
             if (experimentAlreadyExists(full_directory_path)) {
@@ -112,25 +96,5 @@ void ExperimentComponent::buttonClicked(Button* b)
             }
             //refreshExperimentSize();
         }
-    }
-    
-    /* Run button
-     * ==========
-     *
-     * Indicate the ecosystem must run
-     *
-     */
-    if (b == &_runButton) {
-        this->parent_component->running = true;
-    }
-    
-    /* Run button
-     * ==========
-     *
-     * Indicate the ecosystem must stop
-     *
-     */
-    if (b == &_pauseButton) {
-        this->parent_component->running = false;
     }
 }

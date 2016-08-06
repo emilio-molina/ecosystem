@@ -59,15 +59,7 @@ private:
     
     /** @brief Button object to choose a folder
      */
-    TextButton _folderButton;
-    
-    /** @brief Button object to run experiment
-     */
-    TextButton _runButton;
-    
-    /** @brief Button object to pause experiment
-     */
-    TextButton _pauseButton;
+    TextButton _folderButton;    
 };
 
 
