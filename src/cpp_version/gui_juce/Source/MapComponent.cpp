@@ -40,15 +40,22 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     _timeSlider.setRange(0, 10000, 1);
     _timeSlider.setVelocityBasedMode(true);
     _timeSlider.addListener(this);
-    _historyToggle.setButtonText("History");
+    _timeSlider.setEnabled(false);
+
+    _historyToggle.setButtonText("View history");
     _historyToggle.setColour(ToggleButton::textColourId, Colours::white);
     _historyToggle.addListener(this);
+    
     _runToggle.setButtonText("Run");
     _runToggle.setColour(ToggleButton::textColourId, Colours::white);
     _runToggle.addListener(this);
+    
     _autoForwardToggle.setButtonText("Auto-forward");
     _autoForwardToggle.setColour(ToggleButton::textColourId, Colours::white);
+    _autoForwardToggle.setEnabled(false);
+    
     _loadButton.setButtonText("Load");
+    _loadButton.setEnabled(false);
 }
 
 MapComponent::~MapComponent()
@@ -209,7 +216,7 @@ void MapComponent::paint (Graphics& g)
     int percentage_y = getHeight();
     g.setColour(Colours::darkred);
     g.fillRect(0 * percentage_x, 0 * percentage_y,
-               1.0 * percentage_x, 0.06 * percentage_y);
+               1.0 * percentage_x, 0.04 * percentage_y);
     //g.setFont (20);
     //g.drawText ("Ecosystem map", 25, 20, 300, 30, Justification::left);
 }
@@ -219,22 +226,18 @@ void MapComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-    int percentage_x = getWidth() / 100;
-    int percentage_y = getHeight() / 100;
-    _timeSlider.setBounds (1 * percentage_x, 1 * percentage_y,       // x, y
-                           30 * percentage_x, 3 * percentage_y);      // width, height
-    
-    _historyToggle.setBounds (32 * percentage_x, 1 * percentage_y,       // x, y
-                           10 * percentage_x, 3 * percentage_y);      // width, height
-    
-    _autoForwardToggle.setBounds (44 * percentage_x, 1 * percentage_y,       // x, y
-                          10 * percentage_x, 3 * percentage_y);      // width, height
-    
-    _runToggle.setBounds (56 * percentage_x, 1 * percentage_y,       // x, y
-                          10 * percentage_x, 3 * percentage_y);      // width, height
-    
-    _loadButton.setBounds (68 * percentage_x, 1 * percentage_y,       // x, y
-                           10 * percentage_x, 3 * percentage_y);      // width, height
+    int percentage_x = getWidth();
+    int percentage_y = getHeight();
+    _runToggle.setBounds (0 * percentage_x, 0 * percentage_y,       // x, y
+                          0.1 * percentage_x, 0.03 * percentage_y);      // width, height
+    _historyToggle.setBounds (0.50 * percentage_x, 0 * percentage_y,       // x, y
+                              0.10 * percentage_x, 0.03 * percentage_y);      // width, height
+    _timeSlider.setBounds (0.60 * percentage_x, 0 * percentage_y,       // x, y
+                           0.25 * percentage_x, 0.03 * percentage_y);      // width, height
+    _autoForwardToggle.setBounds (0.85 * percentage_x, 0 * percentage_y,       // x, y
+                          0.10 * percentage_x, 0.03 * percentage_y);      // width, height
+    _loadButton.setBounds (0.95 * percentage_x, 0 * percentage_y,       // x, y
+                           0.05 * percentage_x, 0.03 * percentage_y);      // width, height
 }
 
 /** @brief Create OpenGL shaders
@@ -341,5 +344,12 @@ void MapComponent::buttonClicked (Button* b) {
             this->parent_component->running = true;
         else
             this->parent_component->running = false;
+    }
+    
+    if (b == &_historyToggle) {
+        bool enable = _historyToggle.getToggleState();
+        _timeSlider.setEnabled(enable);
+        _autoForwardToggle.setEnabled(enable);
+        _loadButton.setEnabled(enable);
     }
 }
