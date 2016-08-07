@@ -38,7 +38,7 @@ void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<in
  *
  * It is a simplified version of OpenGL example provided with JUCE
  */
-class MapComponent   : public OpenGLAppComponent, public KeyListener, public SliderListener, public ButtonListener
+class MapComponent   : public OpenGLAppComponent, public KeyListener, public SliderListener, public ButtonListener, private Timer
 {
 public:
     MainContentComponent* parent_component;
@@ -63,6 +63,7 @@ private:
     int time;
     bool _running;
     bool _historyView;
+    bool _autoForward;
     int _timeHistory;
     Array<Vertex> vertices;
     Array<int> indices;
@@ -82,6 +83,7 @@ private:
     TextButton _loadButton;
     Label _ecosystemInfoLabel;
     Slider _timeSlider;
+    void timerCallback() override;
 };
 
 

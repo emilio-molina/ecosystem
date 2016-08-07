@@ -73,12 +73,25 @@ void jsonToVertices(string jsonPath, Array<Vertex> &vertices, Array<int> &indice
     
     
 bool MapComponent::keyPressed(const KeyPress &key, Component *originatingComponent) {
-    if (key == KeyPress::rightKey)
-        time += 1;
-    if (key == KeyPress::leftKey)
-        time -= 1;
-    if (key == KeyPress::spaceKey)
-        _running = !_running;
+    if (key == KeyPress::rightKey) {
+        _timeHistory += 1;
+        _timeSlider.setValue(_timeHistory);
+    }
+    
+    if (key == KeyPress::leftKey) {
+        _timeHistory -= 1;
+        _timeSlider.setValue(_timeHistory);
+    }
+    
+    if (key == KeyPress::spaceKey) {
+        _autoForward = !_autoForward;
+        _autoForwardToggle.setToggleState(_autoForward, NotificationType::dontSendNotification);
+        if (_autoForward)
+            startTimer(100);
+        else
+            stopTimer();
+    }
+    parent_component->experiment_has_changed = true;
     return true;
 }
 
@@ -120,6 +133,7 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     _loadButton.setEnabled(false);
     _historyView = false;
     _timeHistory = 0;
+    _autoForward = false;
     
 }
 
@@ -367,6 +381,7 @@ void MapComponent::createShaders()
 void MapComponent::sliderValueChanged(Slider* s) {
     if (s == &_timeSlider) {
         _timeHistory = _timeSlider.getValue();
+        parent_component->experiment_has_changed = true;
     }
 }
 
@@ -400,4 +415,18 @@ void MapComponent::buttonClicked (Button* b) {
         _historyView = enable;
         parent_component->experiment_has_changed = true;
     }
+    
+    if (b == &_autoForwardToggle) {
+        _autoForward = _autoForwardToggle.getToggleState();
+        if (_autoForward)
+            startTimer(100);
+        else
+            stopTimer();
+    }
+}
+
+void MapComponent::timerCallback() {
+    _timeHistory += 1;
+    _timeSlider.setValue(_timeHistory);
+    parent_component->experiment_has_changed = true;
 }

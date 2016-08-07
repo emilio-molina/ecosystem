@@ -40,7 +40,7 @@ Ecosystem::Ecosystem() {
         {"to have the capability of hunting", 0.0f},
         {"to hunt", 10.0f},
         {"to have the capability of procreating", 0.0f},
-        {"to procreate", 1000.0f},
+        {"to procreate", 100.0f},
     };
 
     MINIMUM_ENERGY_REQUIRED_TO = {
@@ -50,15 +50,15 @@ Ecosystem::Ecosystem() {
     };
 
     PHOTOSYNTHESIS_CAPACITY = {
-        {PLANT, 5.0f},
+        {PLANT, 10.0f},
         {HERBIVORE, 0.0f},
         {CARNIVORE, 0.0f}
     };
 
     INITIAL_NUM_OF_ORGANISMS = {
-        {PLANT, 3},
-        {HERBIVORE, 3},
-        {CARNIVORE, 3}
+        {PLANT, 30},
+        {HERBIVORE, 30},
+        {CARNIVORE, 30}
     };
 
     // Definition of gens grouped by species
@@ -69,7 +69,7 @@ Ecosystem::Ecosystem() {
     };
 
     PROCREATION_PROBABILITY = {
-        {PLANT, 0.5f},
+        {PLANT, 0.6f},
         {HERBIVORE, 0.2f},
         {CARNIVORE, 0.2f}
     };
