@@ -62,6 +62,8 @@ public:
 private:
     int time;
     bool _running;
+    bool _historyView;
+    int _timeHistory;
     Array<Vertex> vertices;
     Array<int> indices;
     GLuint vertexBuffer, indexBuffer;

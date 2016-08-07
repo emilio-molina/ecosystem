@@ -118,6 +118,9 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     
     _loadButton.setButtonText("Load");
     _loadButton.setEnabled(false);
+    _historyView = false;
+    _timeHistory = 0;
+    
 }
 
 MapComponent::~MapComponent()
@@ -226,12 +229,21 @@ void MapComponent::render()
     auxRender1();
     ExperimentInterface* ei = parent_component->experiment_interface;
     if ((ei != nullptr) && parent_component->experiment_has_changed) {
-        if (ei->tryLockEcosystem()) {
-            Ecosystem* ecosystem = ei->getEcosystemPointer();
+        if (_historyView) {
+            string experimentFolder = ei->getExperimentFolder();
+            ExperimentInterface* einterface = new ExperimentInterface(experimentFolder, false);
+            einterface->loadEcosystem(_timeHistory);
+            Ecosystem* ecosystem = einterface->getEcosystemPointer();
             ecosystemToVertices(ecosystem, vertices, indices);
-            ei->unlockEcosystem();
-            parent_component->experiment_has_changed = false;
+            delete einterface;
+        } else {
+            if (ei->tryLockEcosystem()) {
+                Ecosystem* ecosystem = ei->getEcosystemPointer();
+                ecosystemToVertices(ecosystem, vertices, indices);
+                ei->unlockEcosystem();
+            }
         }
+        parent_component->experiment_has_changed = false;
     }
     auxRender2();
     glPointSize(4.0);
@@ -353,12 +365,12 @@ void MapComponent::createShaders()
 }
 
 void MapComponent::sliderValueChanged(Slider* s) {
+    if (s == &_timeSlider) {
+        _timeHistory = _timeSlider.getValue();
+    }
 }
 
 void MapComponent::sliderDragEnded(Slider* s) {
-    if (s == &_timeSlider) {
-        cout << _timeSlider.getValue() << endl;
-    }
 }
 
 void MapComponent::mouseDown (const MouseEvent& e)
@@ -385,5 +397,7 @@ void MapComponent::buttonClicked (Button* b) {
         _timeSlider.setEnabled(enable);
         _autoForwardToggle.setEnabled(enable);
         _loadButton.setEnabled(enable);
+        _historyView = enable;
+        parent_component->experiment_has_changed = true;
     }
 }

@@ -77,7 +77,7 @@ ExperimentInterface::ExperimentInterface(string experiment_folder,
         _cleanFolder();
         saveEcosystem();  // _ecosystem->time is 0, so we save initial settings
     } else {
-        _loadEcosystem(0); // load initial settings
+        loadEcosystem(0); // load initial settings
     }
 }
 
@@ -149,13 +149,17 @@ void ExperimentInterface::_setExperimentFolder(string experiment_folder) {
         fs::create_directories(_dst_path);
 }
 
+string ExperimentInterface::getExperimentFolder() {
+    return _dst_path.string();
+}
+
 
 void ExperimentInterface::_cleanFolder() {
     fs::remove_all(_dst_path);
     fs::create_directory(_dst_path);
 }
 
-void ExperimentInterface::_loadEcosystem(int time_slice) {
+void ExperimentInterface::loadEcosystem(int time_slice) {
     lockEcosystem();
     delete _ecosystem;
     // load json file

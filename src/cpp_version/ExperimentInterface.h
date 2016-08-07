@@ -122,6 +122,9 @@ public:
     
     void saveEcosystem();
     
+    string getExperimentFolder();
+    
+    void loadEcosystem(int time_slice);
 private:
     string _path;
     mutex _mtx;
@@ -130,7 +133,6 @@ private:
     Ecosystem* _ecosystem;
     void _setExperimentFolder(string experiment_folder);
     void _cleanFolder();
-    void _loadEcosystem(int time_slice);
 };
 
 
