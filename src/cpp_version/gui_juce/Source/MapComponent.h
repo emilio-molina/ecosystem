@@ -56,6 +56,9 @@ public:
     void sliderValueChanged(Slider* s) override; // needed to make it compile
     void sliderDragEnded(Slider* s) override;
     void mouseDown (const MouseEvent& e) override;
+    void auxRender1();
+    void auxRender2();
+    void auxRender3();
 private:
     int time;
     bool _running;

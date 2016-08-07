@@ -10,9 +10,7 @@
 
 #include "MapComponent.h"
 
-void jsonToVertices(string jsonPath, Array<Vertex> &vertices, Array<int> &indices) {
-    
-}
+
 void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<int> &indices) {
     vertices.clear();
     indices.clear();
@@ -60,6 +58,17 @@ void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<in
         vertices.add(v1);
         vertex_counter += 1;
     }
+}
+
+
+void jsonToVertices(string jsonPath, Array<Vertex> &vertices, Array<int> &indices) {
+    ifstream f_data_json;
+    f_data_json.open(jsonPath);
+    json data_json;
+    f_data_json >> data_json;
+    f_data_json.close();
+    Ecosystem* ecosystem = new Ecosystem(data_json);
+    ecosystemToVertices(ecosystem, vertices, indices);
 }
     
     
@@ -128,10 +137,11 @@ void MapComponent::shutdown()
     shader = nullptr;
 }
 
-/** @brief OpenGL render function continuously called (25 fps)
+
+/** @brief Needed code for render function
+ *
  */
-void MapComponent::render()
-{
+void MapComponent::auxRender1() {
     // Stuff to be done before defining your triangles
     jassert (OpenGLHelpers::isContextActive());
     const float desktopScale = (float) openGLContext.getRenderingScale();
@@ -142,16 +152,13 @@ void MapComponent::render()
     shader->use();
     openGLContext.extensions.glGenBuffers (1, &vertexBuffer);
     openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
-    
-    ExperimentInterface* ei = parent_component->experiment_interface;
-    if ((ei != nullptr) && parent_component->experiment_has_changed) {
-        if (ei->tryLockEcosystem()) {
-            Ecosystem* ecosystem = ei->getEcosystemPointer();
-            ecosystemToVertices(ecosystem, vertices, indices);
-            ei->unlockEcosystem();
-            parent_component->experiment_has_changed = false;
-        }
-    }
+}
+
+
+/** @brief Needed code for render function
+ *
+ */
+void MapComponent::auxRender2() {
     // ************************************************
     
     // Now prepare this information to be drawn
@@ -190,11 +197,13 @@ void MapComponent::render()
         openGLContext.extensions.glVertexAttribPointer (textureCoordIn->attributeID, 2, GL_FLOAT, GL_FALSE, sizeof (Vertex), (GLvoid*) (sizeof (float) * 10));
         openGLContext.extensions.glEnableVertexAttribArray (textureCoordIn->attributeID);
     }
-    
-    glPointSize(4.0);
-    glDrawElements (GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);  // Draw points!
-    //glDrawElements (GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles!
-    
+}
+
+
+/** @brief Needed code for render function
+ *
+ */
+void MapComponent::auxRender3() {
     if (position != nullptr)       openGLContext.extensions.glDisableVertexAttribArray (position->attributeID);
     if (normal != nullptr)         openGLContext.extensions.glDisableVertexAttribArray (normal->attributeID);
     if (sourceColour != nullptr)   openGLContext.extensions.glDisableVertexAttribArray (sourceColour->attributeID);
@@ -207,6 +216,28 @@ void MapComponent::render()
     openGLContext.extensions.glDeleteBuffers (1, &vertexBuffer);
     openGLContext.extensions.glDeleteBuffers (1, &indexBuffer);
     repaint();
+}
+
+
+/** @brief OpenGL render function continuously called (25 fps)
+ */
+void MapComponent::render()
+{
+    auxRender1();
+    ExperimentInterface* ei = parent_component->experiment_interface;
+    if ((ei != nullptr) && parent_component->experiment_has_changed) {
+        if (ei->tryLockEcosystem()) {
+            Ecosystem* ecosystem = ei->getEcosystemPointer();
+            ecosystemToVertices(ecosystem, vertices, indices);
+            ei->unlockEcosystem();
+            parent_component->experiment_has_changed = false;
+        }
+    }
+    auxRender2();
+    glPointSize(4.0);
+    glDrawElements (GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);  // Draw points
+    //glDrawElements (GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles
+    auxRender3();
 }
 
 /** @brief Paint function continuously called to fraw non-OpenGL graphics
