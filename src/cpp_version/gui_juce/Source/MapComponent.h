@@ -83,6 +83,7 @@ private:
     TextButton _loadButton;
     Label _ecosystemInfoLabel;
     Slider _timeSlider;
+    void _toggleAutoForward();
     void timerCallback() override;
 };
 

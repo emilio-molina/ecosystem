@@ -84,12 +84,7 @@ bool MapComponent::keyPressed(const KeyPress &key, Component *originatingCompone
     }
     
     if (key == KeyPress::spaceKey) {
-        _autoForward = !_autoForward;
-        _autoForwardToggle.setToggleState(_autoForward, NotificationType::dontSendNotification);
-        if (_autoForward)
-            startTimer(100);
-        else
-            stopTimer();
+        _toggleAutoForward();
     }
     parent_component->experiment_has_changed = true;
     return true;
@@ -417,11 +412,7 @@ void MapComponent::buttonClicked (Button* b) {
     }
     
     if (b == &_autoForwardToggle) {
-        _autoForward = _autoForwardToggle.getToggleState();
-        if (_autoForward)
-            startTimer(100);
-        else
-            stopTimer();
+        _toggleAutoForward();
     }
 }
 
@@ -429,4 +420,13 @@ void MapComponent::timerCallback() {
     _timeHistory += 1;
     _timeSlider.setValue(_timeHistory);
     parent_component->experiment_has_changed = true;
+}
+
+void MapComponent::_toggleAutoForward() {
+    _autoForward = !_autoForward;
+    _autoForwardToggle.setToggleState(_autoForward, NotificationType::dontSendNotification);
+    if (_autoForward)
+        startTimer(250);
+    else
+        stopTimer();
 }
