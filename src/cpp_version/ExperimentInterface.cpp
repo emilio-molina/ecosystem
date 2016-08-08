@@ -9,6 +9,9 @@
 */
 
 #include "ExperimentInterface.h"
+#include <regex>
+#include <stdlib.h>
+#include <algorithm>
 
 namespace bf=boost::filesystem;
 
@@ -77,7 +80,7 @@ ExperimentInterface::ExperimentInterface(string experiment_folder,
         _cleanFolder();
         saveEcosystem();  // _ecosystem->time is 0, so we save initial settings
     } else {
-        loadEcosystem(0); // load initial settings
+        loadEcosystem(getTimesHavingCompleteBackups().back());
     }
 }
 
@@ -172,7 +175,42 @@ void ExperimentInterface::loadEcosystem(int time_slice) {
     unlockEcosystem();
 }
 
-int ExperimentInterface::getTimesHavingCompleteBackups() {
+void split(const string &s, char delim, vector<string> &elems) {
+    stringstream ss(s);
+    string item;
+    while (getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+}
+
+
+vector<string> split(const string &s, char delim) {
+    vector<string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
+vector<int> ExperimentInterface::getTimesHavingCompleteBackups() {
     // TODO: Do it with a vector.
-    return _ecosystem->time;
+    vector<int> times;
+    for(bf::recursive_directory_iterator it(_dst_path);
+        it!=bf::recursive_directory_iterator();
+        ++it)
+    {
+        if(!is_directory(*it)) {
+            string path = (*it).path().string();
+            std::string result;
+            std::regex re("/(\\d+)\\.json");
+            std::smatch match;
+            if (std::regex_search(path, match, re) && match.size() > 1) {
+                result = match.str(1);
+            } else {
+                result = std::string("");
+            }
+            int json_num = atoi(result.c_str());
+            times.push_back(json_num);
+        }
+    }
+    sort(begin(times), end(times));
+    return times;
 }

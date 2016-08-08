@@ -47,13 +47,13 @@ void MainContentComponent::timerCallback() {
         experiment_interface->saveEcosystem();
         experiment_interface->evolve();
         experiment_has_changed = true;
-        _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups());
+        _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups().back());
     }
 }
 
 void MainContentComponent::loadEcosystemInterface(ExperimentInterface* ei) {
     experiment_interface = ei;
-    _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups());
+    _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups().back());
     experiment_has_changed = true;
 }
 
