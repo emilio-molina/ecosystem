@@ -40,7 +40,7 @@ Ecosystem::Ecosystem() {
         {"to have the capability of hunting", 0.0f},
         {"to hunt", 10.0f},
         {"to have the capability of procreating", 0.0f},
-        {"to procreate", 100.0f},
+        {"to procreate", 10.0f},
     };
 
     MINIMUM_ENERGY_REQUIRED_TO = {
@@ -69,9 +69,9 @@ Ecosystem::Ecosystem() {
     };
 
     PROCREATION_PROBABILITY = {
-        {PLANT, 0.6f},
-        {HERBIVORE, 0.2f},
-        {CARNIVORE, 0.2f}
+        {PLANT, 0.7f},
+        {HERBIVORE, 0.3f},
+        {CARNIVORE, 0.3f}
     };
 
     BIOTOPE_SETTINGS = {
