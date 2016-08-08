@@ -70,9 +70,9 @@ void ExperimentComponent::buttonClicked(Button* b)
                         true);
         if (fc.browseForDirectory())
         {
+            ExperimentInterface* ei;
             if (parent_component->experiment_interface != nullptr)
                 delete parent_component->experiment_interface;
-            parent_component->experiment_has_changed = true;
             File chosenDirectory = fc.getResult();
             string full_directory_path = chosenDirectory.getFullPathName().toStdString();
             if (experimentAlreadyExists(full_directory_path)) {
@@ -84,17 +84,16 @@ void ExperimentComponent::buttonClicked(Button* b)
                                                           String(),
                                                           0);
                 if (chosen_ok) {
-                    parent_component->experiment_interface =
-                    new ExperimentInterface(full_directory_path, false);
+                    ei = new ExperimentInterface(full_directory_path, false);
                 } else {
-                    parent_component->experiment_interface =
+                    ei =
                     new ExperimentInterface(full_directory_path, true);
                 }
             } else {
-                parent_component->experiment_interface =
+                ei =
                 new ExperimentInterface(full_directory_path, true);
             }
-            //refreshExperimentSize();
+            parent_component->loadEcosystemInterface(ei);
         }
     }
 }

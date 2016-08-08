@@ -10,6 +10,49 @@
 
 #include "MapComponent.h"
 
+//==============================================================================
+MapComponent::MapComponent(MainContentComponent* parent_component)
+{
+    this->parent_component = parent_component;
+    this->time = -1;
+    this->_running = false;
+    position = nullptr;
+    normal = nullptr;
+    textureCoordIn = nullptr;
+    sourceColour = nullptr;
+    addKeyListener(this);
+    setWantsKeyboardFocus(true);
+    addAndMakeVisible(_timeSlider);
+    addAndMakeVisible(_historyToggle);
+    addAndMakeVisible(_runToggle);
+    addAndMakeVisible(_autoForwardToggle);
+    addAndMakeVisible(_loadButton);
+    _timeSlider.setRange(0, 0, 1);
+    _timeSlider.setVelocityBasedMode(true);
+    _timeSlider.addListener(this);
+    _timeSlider.setEnabled(false);
+    
+    _historyToggle.setButtonText("View history");
+    _historyToggle.setColour(ToggleButton::textColourId, Colours::white);
+    _historyToggle.addListener(this);
+    
+    _runToggle.setButtonText("Run");
+    _runToggle.setColour(ToggleButton::textColourId, Colours::white);
+    _runToggle.addListener(this);
+    
+    _autoForwardToggle.setButtonText("Auto-forward");
+    _autoForwardToggle.setColour(ToggleButton::textColourId, Colours::white);
+    _autoForwardToggle.setEnabled(false);
+    _autoForwardToggle.addListener(this);
+    
+    _loadButton.setButtonText("Load");
+    _loadButton.setEnabled(false);
+    _historyView = false;
+    _timeHistory = 0;
+    _autoForward = false;
+    
+}
+
 
 void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<int> &indices) {
     vertices.clear();
@@ -74,63 +117,21 @@ void jsonToVertices(string jsonPath, Array<Vertex> &vertices, Array<int> &indice
     
 bool MapComponent::keyPressed(const KeyPress &key, Component *originatingComponent) {
     if (key == KeyPress::rightKey) {
-        _timeHistory += 1;
-        _timeSlider.setValue(_timeHistory);
+        _increaseTimeHistory(1);
     }
     
     if (key == KeyPress::leftKey) {
-        _timeHistory -= 1;
-        _timeSlider.setValue(_timeHistory);
+        _increaseTimeHistory(-1);
+        
     }
     
     if (key == KeyPress::spaceKey) {
         _toggleAutoForward();
     }
-    parent_component->experiment_has_changed = true;
     return true;
 }
 
-//==============================================================================
-MapComponent::MapComponent(MainContentComponent* parent_component)
-{
-    this->parent_component = parent_component;
-    this->time = -1;
-    this->_running = false;
-    position = nullptr;
-    normal = nullptr;
-    textureCoordIn = nullptr;
-    sourceColour = nullptr;
-    addKeyListener(this);
-    setWantsKeyboardFocus(true);
-    addAndMakeVisible(_timeSlider);
-    addAndMakeVisible(_historyToggle);
-    addAndMakeVisible(_runToggle);
-    addAndMakeVisible(_autoForwardToggle);
-    addAndMakeVisible(_loadButton);
-    _timeSlider.setRange(0, 10000, 1);
-    _timeSlider.setVelocityBasedMode(true);
-    _timeSlider.addListener(this);
-    _timeSlider.setEnabled(false);
 
-    _historyToggle.setButtonText("View history");
-    _historyToggle.setColour(ToggleButton::textColourId, Colours::white);
-    _historyToggle.addListener(this);
-    
-    _runToggle.setButtonText("Run");
-    _runToggle.setColour(ToggleButton::textColourId, Colours::white);
-    _runToggle.addListener(this);
-    
-    _autoForwardToggle.setButtonText("Auto-forward");
-    _autoForwardToggle.setColour(ToggleButton::textColourId, Colours::white);
-    _autoForwardToggle.setEnabled(false);
-    
-    _loadButton.setButtonText("Load");
-    _loadButton.setEnabled(false);
-    _historyView = false;
-    _timeHistory = 0;
-    _autoForward = false;
-    
-}
 
 MapComponent::~MapComponent()
 {
@@ -417,9 +418,7 @@ void MapComponent::buttonClicked (Button* b) {
 }
 
 void MapComponent::timerCallback() {
-    _timeHistory += 1;
-    _timeSlider.setValue(_timeHistory);
-    parent_component->experiment_has_changed = true;
+    _increaseTimeHistory(1);
 }
 
 void MapComponent::_toggleAutoForward() {
@@ -429,4 +428,19 @@ void MapComponent::_toggleAutoForward() {
         startTimer(250);
     else
         stopTimer();
+}
+
+void MapComponent::setMaxTime(int max_time) {
+    _timeSlider.setRange(0, max_time - 1, 1);
+    _max_time = max_time;
+}
+
+void MapComponent::_increaseTimeHistory(int n) {
+    _timeHistory += n;
+    if (_timeHistory < 0)
+        _timeHistory = 0;
+    if (_timeHistory > _max_time)
+        _timeHistory = _max_time;
+    _timeSlider.setValue(_timeHistory);
+    parent_component->experiment_has_changed = true;
 }

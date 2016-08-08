@@ -59,6 +59,7 @@ public:
     void auxRender1();
     void auxRender2();
     void auxRender3();
+    void setMaxTime(int max_time);
 private:
     int time;
     bool _running;
@@ -83,8 +84,10 @@ private:
     TextButton _loadButton;
     Label _ecosystemInfoLabel;
     Slider _timeSlider;
+    int _max_time;
     void _toggleAutoForward();
     void timerCallback() override;
+    void _increaseTimeHistory(int n);
 };
 
 

@@ -42,7 +42,7 @@ public:
      *
      * @returns List of time slices allowing complete backup
      */
-    vector<int> getTimesHavingCompleteBackups();
+    int getTimesHavingCompleteBackups();
     
     
     /** @brief Get a list of time slices containing a given organism parameter

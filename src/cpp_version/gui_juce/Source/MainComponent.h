@@ -15,6 +15,9 @@
 #include <boost/filesystem.hpp>
 
 
+
+class MapComponent;
+class ExperimentComponent;
 class ExperimentInterface;
 
 //==============================================================================
@@ -38,11 +41,14 @@ public:
 
     void paint (Graphics&);
     void resized();
-
+    void loadEcosystemInterface(ExperimentInterface* ei);
 private:
     /** @brief Function where Ecosystem evolves. It is called every 100ms by default
      */
     void timerCallback();
+    
+    MapComponent* _map_component;
+    ExperimentComponent* _experiment_component;
     //==============================================================================
     ScopedPointer<TabbedComponent> _tabbedComponent;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)

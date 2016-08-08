@@ -171,3 +171,8 @@ void ExperimentInterface::loadEcosystem(int time_slice) {
     _ecosystem = new Ecosystem(data_json);
     unlockEcosystem();
 }
+
+int ExperimentInterface::getTimesHavingCompleteBackups() {
+    // TODO: Do it with a vector.
+    return _ecosystem->time;
+}
