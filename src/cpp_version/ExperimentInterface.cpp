@@ -204,13 +204,11 @@ vector<int> ExperimentInterface::getTimesHavingCompleteBackups() {
             std::smatch match;
             if (std::regex_search(path, match, re) && match.size() > 1) {
                 result = match.str(1);
-            } else {
-                result = std::string("");
+                int json_num = atoi(result.c_str());
+                times.push_back(json_num);
             }
-            int json_num = atoi(result.c_str());
-            times.push_back(json_num);
         }
     }
-    sort(begin(times), end(times));
+    sort(times.begin(), times.end());
     return times;
 }

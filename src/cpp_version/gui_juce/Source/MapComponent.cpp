@@ -47,6 +47,7 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     
     _loadButton.setButtonText("Load");
     _loadButton.setEnabled(false);
+    _loadButton.addListener(this);
     _historyView = false;
     _timeHistory = 0;
     _autoForward = false;
@@ -414,6 +415,12 @@ void MapComponent::buttonClicked (Button* b) {
     
     if (b == &_autoForwardToggle) {
         _toggleAutoForward();
+    }
+
+    if (b == &_loadButton) {
+        ExperimentInterface* ei = parent_component->experiment_interface;
+        ei->loadEcosystem(_timeHistory);
+        parent_component->experiment_has_changed = true;
     }
 }
 
