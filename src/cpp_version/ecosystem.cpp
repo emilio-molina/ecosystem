@@ -40,7 +40,7 @@ Ecosystem::Ecosystem() {
         {"to have the capability of hunting", 0.0f},
         {"to hunt", 10.0f},
         {"to have the capability of procreating", 0.0f},
-        {"to procreate", 1000.0f},
+        {"to procreate", 100.0f},
     };
 
     MINIMUM_ENERGY_REQUIRED_TO = {
@@ -50,15 +50,15 @@ Ecosystem::Ecosystem() {
     };
 
     PHOTOSYNTHESIS_CAPACITY = {
-        {PLANT, 5.0f},
+        {PLANT, 10.0f},
         {HERBIVORE, 0.0f},
         {CARNIVORE, 0.0f}
     };
 
     INITIAL_NUM_OF_ORGANISMS = {
-        {PLANT, 3},
-        {HERBIVORE, 3},
-        {CARNIVORE, 3}
+        {PLANT, 30},
+        {HERBIVORE, 30},
+        {CARNIVORE, 30}
     };
 
     // Definition of gens grouped by species
@@ -69,7 +69,7 @@ Ecosystem::Ecosystem() {
     };
 
     PROCREATION_PROBABILITY = {
-        {PLANT, 0.5f},
+        {PLANT, 0.6f},
         {HERBIVORE, 0.2f},
         {CARNIVORE, 0.2f}
     };
@@ -94,15 +94,9 @@ Ecosystem::Ecosystem() {
 *
 * @TODO: Deal with constants
 *
-* @param[in] json_path Path of JSON file with ecosystem screenshot
+* @param[in] data_json JSON data with ecosystem screenshot
 */
-Ecosystem::Ecosystem(const string& json_path) {
-    // load json file
-    ifstream f_data_json;
-    f_data_json.open(json_path);
-    json data_json;
-    f_data_json >> data_json;
-    f_data_json.close();
+Ecosystem::Ecosystem(json data_json) {
 
     // load json data
     PLANT = data_json["constants"]["PLANT"];
@@ -616,78 +610,4 @@ void Organism::_do_die(const string &cause_of_death) {
     this->is_alive = false;
     this->cause_of_death = cause_of_death;
     this->_parent_ecosystem->removeOrganism(this);
-}
-
-
-/*********************************************************
- * Exporter implementation
- */
-
-/** @brief Exporter constructor
-*
-* @param[in] ecosystem Pointer to ecosystem to be exported
-* @param[in] dst_path Path of destination folder
-*/
-Exporter::Exporter(Ecosystem* ecosystem, const string& dst_path) {
-    this->ecosystem = ecosystem;
-    // normalize dst_path to be in format: "histories/exp_name/."
-    this->dst_path = fs::path(dst_path + fs::path::preferred_separator).normalize();
-    if (!fs::is_directory(dst_path))
-        fs::create_directories(dst_path);
-    // Iterate over directory names to get experiment name (last name)
-    // e.g. from "histories/exp_name/." get: exp_name
-    vector<string> parts;
-    for(auto& part : this->dst_path)
-        parts.push_back(part.string());
-    this->experiment_name = parts[parts.size() - 2];
-}
-
-
-/** @brief Export initial settings of experiment
-*
-* For compatibility issues, it exports them as a python module (by now)
-*/
-void Exporter::exportInitialSettings() {
-    ofstream f_settings;
-    fs::path dst_folder = this->dst_path / fs::path("settings");
-    if (!fs::is_directory(dst_folder))
-        fs::create_directories(dst_folder);
-    fs::path dst_file = dst_folder / fs::path(this->experiment_name + ".py");
-    f_settings.open(dst_file.string(), ios::out);
-    f_settings << "PLANT = " << PLANT << endl;
-    f_settings << "HERBIVORE = " << HERBIVORE << endl;
-    f_settings << "CARNIVORE = " << CARNIVORE << endl;
-    f_settings << "biotope_settings = {" << endl;
-    f_settings << "    'size_x': " << this->ecosystem->biotope_size_x << "," << endl;
-    f_settings << "    'size_y': " << this->ecosystem->biotope_size_y << endl;
-    f_settings << "}" << endl;
-    f_settings.close();
-}
-
-/** @brief Export biotope of current time slice as a JSON
-*
-*/
-void Exporter::exportTimeSlice() {
-    // get thousands intermediate folder
-    int curr_time = this->ecosystem->time;
-    int thousands = (curr_time / 1000) * 1000;
-    ostringstream thousands_folder;
-    thousands_folder << thousands << "_to_" << thousands + 999;
-    if (!fs::is_directory(this->dst_path / fs::path(thousands_folder.str())))
-        fs::create_directory(this->dst_path / fs::path(thousands_folder.str()));
-
-    // get file name
-    ostringstream dst_file_name;
-    dst_file_name << curr_time << ".json";
-    fs::path dst_file = this->dst_path /
-                        fs::path(thousands_folder.str()) /
-                        fs::path(dst_file_name.str());
-
-    // export data
-    ofstream f_data;
-    f_data.open(dst_file.string(), ios::out);
-    json data_json;
-    this->ecosystem->serialize(data_json);
-    f_data << data_json;
-    f_data.close();
 }

@@ -82,7 +82,7 @@ public:
 
     // Public methods (documentation in ecosystem.cpp)
     Ecosystem();
-    Ecosystem(const string& json_path);
+    Ecosystem(json data_json);
     void addOrganism(Organism* organism);
     void removeOrganism(Organism* organism);
     void updateOrganismLocation(Organism* organism);
@@ -187,22 +187,6 @@ private:
     void _do_procreate();
     void _do_age();
     void _do_die(const string &cause_of_death);
-};
-
-
-
-/** @brief Class to export ecosystem to files
-*/
-class Exporter {
-public:
-    Exporter(Ecosystem* ecosystem, const string& dst_path);
-    void exportInitialSettings();
-    void exportTimeSlice();
-private:
-    Ecosystem* ecosystem;
-    fs::path dst_path;
-    string experiment_name;
-    void organismToString(Organism* organism);
 };
 
 #endif  // ECOSYSTEM_H_INCLUDED

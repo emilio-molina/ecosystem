@@ -13,6 +13,7 @@
 
 #include "MainComponent.h"
 #include "ecosystem.h"
+#include "ExperimentInterface.h"
 #include <boost/filesystem.hpp>
 
 namespace bf=boost::filesystem;
@@ -25,7 +26,7 @@ std::string to_string_with_precision(const T a_value, const int n);
 /** @brief Component for experiment tab
  *
  */
-class ExperimentComponent : public Component, public ButtonListener, public SliderListener {
+class ExperimentComponent : public Component, public ButtonListener {
 public:
     MainContentComponent* parent_component;
     ExperimentComponent(MainContentComponent* parent_component);
@@ -34,8 +35,6 @@ public:
     void resized() override;
     void refreshExperimentSize();
     void buttonClicked(Button* b) override;
-    void sliderValueChanged(Slider* s) override; // needed to make it compile
-    void sliderDragEnded(Slider* s) override;
     
 private:
     /** @brief Size of experiment directory
@@ -60,19 +59,7 @@ private:
     
     /** @brief Button object to choose a folder
      */
-    TextButton _folderButton;
-    
-    /** @brief Button object to run experiment
-     */
-    TextButton _runButton;
-    
-    /** @brief Button object to pause experiment
-     */
-    TextButton _pauseButton;
-    
-    /** @brief Slider object to select a time slice
-     */
-    Slider _timeSlider;
+    TextButton _folderButton;    
 };
 
 

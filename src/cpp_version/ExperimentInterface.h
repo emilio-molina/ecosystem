@@ -17,18 +17,25 @@
 
 using namespace std;
 
+bool experimentAlreadyExists(string experiment_folder);
+/** @brief Get path of JSON containing ecosystem data
+ *
+ * @param[in] dst_path Path of destination folder
+ * @param[in] time_slice Time slice for which ecosystem data will be get
+ *
+ * @returns Path of JSON file
+ */
+string getEcosystemJSONPath(fs::path dst_path, int time_slice);
+string getThousandsFolder(int time_slice);
+fs::path stringToPath(string experiment_folder);
+
+
 /** @brief Class to easily interact with experiment folder
  */
 class ExperimentInterface {
 public:
 
-    ExperimentInterface();
-    
-
-    void setExperimentFolder(string experiment_folder);
-    
-
-    bool experimentAlreadyExists();
+    ExperimentInterface(string experiment_folder, bool overwrite);
     
     
     /** @brief Get a list of time slices containing a complete backup of ecosystem
@@ -37,14 +44,6 @@ public:
      */
     vector<int> getTimesHavingCompleteBackups();
     
-    
-    /** @brief Get path of JSON containing ecosystem data
-     *
-     * @param[in] time_slice Time slice for which ecosystem data will be get
-     *
-     * @returns Path of JSON file
-     */
-    string getEcosystemJSONPath(int time_slice);
     
     /** @brief Get a list of time slices containing a given organism parameter
      *
@@ -121,21 +120,19 @@ public:
     
     void unlockEcosystem();
     
-    void loadEcosystem(int time_slice);
-    
-    void cleanFolder();
-    
     void saveEcosystem();
     
-    string getThousandsFolder(int time_slice);
+    string getExperimentFolder();
     
+    void loadEcosystem(int time_slice);
 private:
     string _path;
     mutex _mtx;
     fs::path _dst_path;
     string _experiment_name;
-    Exporter* _exporter;
     Ecosystem* _ecosystem;
+    void _setExperimentFolder(string experiment_folder);
+    void _cleanFolder();
 };
 
 
