@@ -21,6 +21,7 @@ MainContentComponent::MainContentComponent()
     running = false;
     experiment_interface = nullptr;
     experiment_has_changed = false;
+    _backupCounter = 0;
 }
 
 MainContentComponent::~MainContentComponent()
@@ -44,7 +45,9 @@ void MainContentComponent::resized()
 
 void MainContentComponent::timerCallback() {
     if (this->running) {
-        experiment_interface->saveEcosystem();
+        if (_backupCounter == 0)
+            experiment_interface->saveEcosystem();
+        _backupCounter = (_backupCounter + 1) % 10;
         experiment_interface->evolve();
         experiment_has_changed = true;
         _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups().back());

@@ -46,7 +46,7 @@ private:
     /** @brief Function where Ecosystem evolves. It is called every 100ms by default
      */
     void timerCallback();
-    
+    int _backupCounter;
     MapComponent* _map_component;
     ExperimentComponent* _experiment_component;
     //==============================================================================

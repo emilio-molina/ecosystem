@@ -118,11 +118,11 @@ void jsonToVertices(string jsonPath, Array<Vertex> &vertices, Array<int> &indice
     
 bool MapComponent::keyPressed(const KeyPress &key, Component *originatingComponent) {
     if (key == KeyPress::rightKey) {
-        _increaseTimeHistory(1);
+        _increaseTimeHistory(10);
     }
     
     if (key == KeyPress::leftKey) {
-        _increaseTimeHistory(-1);
+        _increaseTimeHistory(-10);
         
     }
     
@@ -425,7 +425,7 @@ void MapComponent::buttonClicked (Button* b) {
 }
 
 void MapComponent::timerCallback() {
-    _increaseTimeHistory(1);
+    _increaseTimeHistory(10);
 }
 
 void MapComponent::_toggleAutoForward() {
