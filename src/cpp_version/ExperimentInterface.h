@@ -17,7 +17,11 @@
 
 using namespace std;
 
+void decompressData(stringstream &compressed, stringstream &decompressed);
+void compressData(stringstream &decompressed, stringstream &compressed);
+
 bool experimentAlreadyExists(string experiment_folder);
+
 /** @brief Get path of JSON containing ecosystem data
  *
  * @param[in] dst_path Path of destination folder

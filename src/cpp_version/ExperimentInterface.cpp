@@ -12,8 +12,15 @@
 #include <regex>
 #include <stdlib.h>
 #include <algorithm>
+#include <iterator>
+#include <fstream>
+#include <sstream>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/copy.hpp>
 
 namespace bf=boost::filesystem;
+namespace bio=boost::iostreams;
 
 
 fs::path stringToPath(string experiment_folder) {
@@ -110,14 +117,38 @@ void ExperimentInterface::saveEcosystem() {
     int curr_time = _ecosystem->time;
     string dst_file = getEcosystemJSONPath(_dst_path, curr_time);
     
+    json data_json;
+    _ecosystem->serialize(data_json);
+    stringstream data_uncompressed;
+    stringstream data_compressed;
+    data_uncompressed << data_json;
+    compressData(data_uncompressed,data_compressed);
+    //data_compressed << data_json;
+
     // export data
     ofstream f_data;
     f_data.open(dst_file, ios::out);
-    json data_json;
-    _ecosystem->serialize(data_json);
-    f_data << data_json;
+    f_data << data_compressed.rdbuf();
     f_data.close();
 }
+
+void compressData(stringstream &decompressed, stringstream &compressed)
+{
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
+    out.push(boost::iostreams::zlib_compressor());
+    out.push(decompressed);
+    bio::copy(out, compressed);
+}
+
+void decompressData(stringstream &compressed, stringstream &decompressed)
+{
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+    in.push(boost::iostreams::zlib_decompressor());
+    in.push(compressed);
+    bio::copy(in, decompressed);
+
+}
+
 
 string ExperimentInterface::getExperimentSize() {
     double size = 0.0;
@@ -165,11 +196,17 @@ void ExperimentInterface::_cleanFolder() {
 void ExperimentInterface::loadEcosystem(int time_slice) {
     lockEcosystem();
     delete _ecosystem;
+    
     // load json file
     ifstream f_data_json;
     f_data_json.open(getEcosystemJSONPath(_dst_path, time_slice));
+    stringstream compressed;
+    stringstream decompressed;
+    compressed << f_data_json.rdbuf();
+    decompressData(compressed, decompressed);
+    //decompressed << f_data_json.rdbuf();
     json data_json;
-    f_data_json >> data_json;
+    decompressed >> data_json;
     f_data_json.close();
     _ecosystem = new Ecosystem(data_json);
     unlockEcosystem();
