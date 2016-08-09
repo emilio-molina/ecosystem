@@ -27,7 +27,7 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     addAndMakeVisible(_runToggle);
     addAndMakeVisible(_autoForwardToggle);
     addAndMakeVisible(_loadButton);
-    _timeSlider.setRange(0, 0, 1);
+    _timeSlider.setRange(0, 0, 10);
     _timeSlider.setVelocityBasedMode(true);
     _timeSlider.addListener(this);
     _timeSlider.setEnabled(false);
@@ -438,7 +438,7 @@ void MapComponent::_toggleAutoForward() {
 }
 
 void MapComponent::setMaxTime(int max_time) {
-    _timeSlider.setRange(0, max_time - 1, 1);
+    _timeSlider.setRange(0, max_time - 1, 10);
     _max_time = max_time;
 }
 
