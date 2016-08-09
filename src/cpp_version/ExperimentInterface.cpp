@@ -43,7 +43,7 @@ string getEcosystemJSONPath(fs::path dst_path, int time_slice) {
     if (!fs::is_directory(thousands_abs_path))
         fs::create_directories(thousands_abs_path);
     ostringstream dst_file_name;
-    dst_file_name << time_slice << ".json";
+    dst_file_name << "bk_"<< time_slice << ".zjson";
     fs::path dst_file = (thousands_abs_path /
                          fs::path(dst_file_name.str()));
     return dst_file.string();
@@ -237,7 +237,7 @@ vector<int> ExperimentInterface::getTimesHavingCompleteBackups() {
         if(!is_directory(*it)) {
             string path = (*it).path().string();
             std::string result;
-            std::regex re("/(\\d+)\\.json");
+            std::regex re("/bk_(\\d+)\\.zjson");
             std::smatch match;
             if (std::regex_search(path, match, re) && match.size() > 1) {
                 result = match.str(1);
