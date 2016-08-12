@@ -129,6 +129,8 @@ public:
     string getExperimentFolder();
     
     void loadEcosystem(int time_slice);
+    
+    int getRunningTime();
 private:
     string _path;
     mutex _mtx;

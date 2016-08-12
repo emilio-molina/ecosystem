@@ -249,3 +249,10 @@ vector<int> ExperimentInterface::getTimesHavingCompleteBackups() {
     sort(times.begin(), times.end());
     return times;
 }
+
+int ExperimentInterface::getRunningTime() {
+    if (_ecosystem == nullptr)
+        return 0;
+    else
+        return _ecosystem->time;
+}

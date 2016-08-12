@@ -27,6 +27,9 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     addAndMakeVisible(_runToggle);
     addAndMakeVisible(_autoForwardToggle);
     addAndMakeVisible(_loadButton);
+    addAndMakeVisible(_ecosystemInfoLabel);
+    _ecosystemInfoLabel.setText("", juce::NotificationType::dontSendNotification);
+    _ecosystemInfoLabel.setColour(Label::textColourId, Colours::white);
     _timeSlider.setRange(0, 0, 10);
     _timeSlider.setVelocityBasedMode(true);
     _timeSlider.addListener(this);
@@ -48,6 +51,7 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     _loadButton.setButtonText("Load");
     _loadButton.setEnabled(false);
     _loadButton.addListener(this);
+    
     _historyView = false;
     _timeHistory = 0;
     _autoForward = false;
@@ -287,6 +291,9 @@ void MapComponent::resized()
     int percentage_y = getHeight();
     _runToggle.setBounds (0 * percentage_x, 0 * percentage_y,       // x, y
                           0.1 * percentage_x, 0.03 * percentage_y);      // width, height
+    _ecosystemInfoLabel.setBounds (0.1 * percentage_x, 0 * percentage_y,       // x, y
+                          0.15 * percentage_x, 0.03 * percentage_y);      // width, height
+    
     _historyToggle.setBounds (0.50 * percentage_x, 0 * percentage_y,       // x, y
                               0.10 * percentage_x, 0.03 * percentage_y);      // width, height
     _timeSlider.setBounds (0.60 * percentage_x, 0 * percentage_y,       // x, y
@@ -421,6 +428,7 @@ void MapComponent::buttonClicked (Button* b) {
         ExperimentInterface* ei = parent_component->experiment_interface;
         ei->loadEcosystem(_timeHistory);
         parent_component->experiment_has_changed = true;
+        setRunningTime(ei->getRunningTime());
     }
 }
 
@@ -441,6 +449,12 @@ void MapComponent::setMaxTime(int max_time) {
     _timeSlider.setRange(0, max_time - 1, 10);
     _max_time = max_time;
 }
+
+void MapComponent::setRunningTime(int time) {
+    _ecosystemInfoLabel.setText(to_string(time), juce::NotificationType::dontSendNotification);
+}
+
+
 
 void MapComponent::_increaseTimeHistory(int n) {
     _timeHistory += n;

@@ -60,6 +60,7 @@ public:
     void auxRender2();
     void auxRender3();
     void setMaxTime(int max_time);
+    void setRunningTime(int time);
 private:
     int time;
     bool _running;

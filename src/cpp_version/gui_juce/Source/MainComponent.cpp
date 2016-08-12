@@ -51,12 +51,14 @@ void MainContentComponent::timerCallback() {
         experiment_interface->evolve();
         experiment_has_changed = true;
         _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups().back());
+        _map_component->setRunningTime(experiment_interface->getRunningTime());
     }
 }
 
 void MainContentComponent::loadEcosystemInterface(ExperimentInterface* ei) {
     experiment_interface = ei;
     _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups().back());
+    _map_component->setRunningTime(experiment_interface->getRunningTime());
     experiment_has_changed = true;
 }
 
