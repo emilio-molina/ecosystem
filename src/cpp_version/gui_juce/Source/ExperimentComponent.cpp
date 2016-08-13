@@ -1,12 +1,7 @@
-/*
-  ==============================================================================
-
-    ExperimentComponent.cpp
-    Created: 16 May 2016 6:46:19pm
-    Author:  Emilio Molina
-
-  ==============================================================================
-*/
+/** @file ExperimentComponent.cpp
+ * @brief Implementation of ExperimentComponent
+ *
+ */
 
 #include "ExperimentComponent.h"
 
@@ -18,42 +13,30 @@
 ExperimentComponent::ExperimentComponent(MainContentComponent* parent_component) {
     this->parent_component = parent_component;
     setOpaque (true);
-    addAndMakeVisible (_folderLabel);
     addAndMakeVisible (_folderButton);
-    addAndMakeVisible(_maxTimeLabel);
-    addAndMakeVisible(_lastBackupLabel);
     _folderButton.setButtonText("Choose experiment folder");
     _folderButton.addListener(this);
-    _maxTimeLabel.setText("max time:", dontSendNotification);
-    _lastBackupLabel.setText("3", dontSendNotification);
 }
 
-
-
+/** @brief Override callback to paint component
+ */
 void ExperimentComponent::paint (Graphics& g)
 {
     g.fillAll(Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f));
 }
-    
-    
+
+/** @brief Override callback for resizing
+ */
 void ExperimentComponent::resized()
 {
     int percentage_x = getWidth() / 100;
     int percentage_y = getHeight() / 100;
     _folderButton.setBounds(1 * percentage_x, 2 * percentage_y,       // x, y
                             20 * percentage_x, 5 * percentage_y);     // width, height
-    
-    _folderLabel.setBounds (1 * percentage_x, 6 * percentage_y,       // x, y
-                            90 * percentage_x, 5 * percentage_y);     // width, height
-    
-    _maxTimeLabel.setBounds (1 * percentage_x, 12 * percentage_y,     // x, y
-                             90 * percentage_x, 5 * percentage_y);    // width, height
-    
-    _lastBackupLabel.setBounds (1 * percentage_x, 17 * percentage_y,  // x, y
-                                90 * percentage_x, 5 * percentage_y); // width, height
 }
 
-
+/** @brief Callback when a button is clicked
+ */
 void ExperimentComponent::buttonClicked(Button* b)
 {
     /* Folder button

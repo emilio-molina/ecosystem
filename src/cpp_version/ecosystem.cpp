@@ -1,5 +1,5 @@
 /** @file ecosystem.cpp
- * @brief Everything is in this file
+ * @brief Implementation of ecosystem
  *
  */
 #include "ecosystem.h"
@@ -92,8 +92,6 @@ Ecosystem::Ecosystem() {
 
 /** @brief Ecosystem constructor using a JSON
 *
-* @TODO: Deal with constants
-*
 * @param[in] data_json JSON data with ecosystem screenshot
 */
 Ecosystem::Ecosystem(json data_json) {
@@ -154,10 +152,10 @@ void Ecosystem::removeOrganism(Organism* organism) {
 
 /** @brief Update organism location
 *
-* Organism must call this function when it moves to let Ecosystem know
+* Organism must call this function when it moves to let Ecosystem know it
 *
 * Procedure:
-* 1. delete organism's old_location (inner variable of organism) from biotope
+* 1. delete organism's old_location from biotope
 * 2. add its old position to biotope_free_locs
 * 3. add organism to biotope according with its new location
 * 2. delete organism's new location from biotope_free_locs
@@ -227,8 +225,8 @@ void Ecosystem::getSurroundingOrganisms(tuple<int, int> center, vector<Organism*
 
 /** @brief Evolve one time unit in ecosystem
 *
-* 1. For each organism in biotope, run organism->act()
-* 2. Delete all dead organisms to free their memory
+* 1. Delete dead organisms
+* 2. For each organism in current biotope, run organism->act()
 * 3. Increase ecosystem time in 1 unit
 */
 void Ecosystem::evolve() {
@@ -288,6 +286,7 @@ void Ecosystem::_initializeOrganisms() {
 
 /** @brief Create organisms from a JSON and add them to ecosystem
 *
+* @param[in] data_json Variable with ecosystem info in JSON format
 */
 void Ecosystem::_initializeOrganisms(json& data_json) {
     int num_organisms = data_json["organisms"]["locations"].size();
@@ -319,7 +318,7 @@ tuple<int, int> Ecosystem::_getRandomFreeLocation() {
 
 /** @brief Delete all objects queued in dead_organisms vector
 *
-* It is run at the end of each iteration
+* It is run at the beginning of each iteration
 */
 void Ecosystem::_deleteDeadOrganisms() {
     for (auto dead_organism:this->_dead_organisms) {
@@ -381,6 +380,11 @@ void Ecosystem::serialize(json& data_json) {
 
 
 /** @brief Organism constructor
+*
+* @param[in] location Location of organism
+* @param[in] parent_ecosystem Pointer to parent ecosystem
+* @param[in] species Species identifier
+* @param[in] energy_reserve Amount of initial energy
 */
 Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string& species, float energy_reserve) {
 
@@ -406,35 +410,27 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string
 
 /** @brief Act
 *
-* Procedure:
-* 1. if it is a plant: do photosynthesis
-* 2. move
-* 3. if still alive: hunt
-* 4. if still alive: procreate
-* 5. if still alive: age
 */
 void Organism::act() {
-    // Do photosynthesis
+
     this->_do_photosynthesis();
-    // Move
+
     this->_do_move();
-    // Hunt
-    if (!this->is_alive)
+    if (!this->is_alive)  // can die while moving
         return;
+
     this->_do_hunt();
-
-    // Procreate
-    if (!this->is_alive)
+    if (!this->is_alive)  // can die while hunting
         return;
+
     this->_do_procreate();
-
-    // Procreate
-    if (!this->is_alive)
+    if (!this->is_alive)  // can die while procreating
         return;
+
     this->_do_age();
 }
 
-/** @brief Do phosynthesis (only called in this organism is a plant)
+/** @brief Do phosynthesis
 *
 * It just increases energy_reserve a constant value equals to photosynthesis_capacity
 */
@@ -517,7 +513,7 @@ bool Organism::_is_eatable(Organism* prey) {
     return _is_eatable;
 }
 
-/** Do hunt
+/** @brief Do hunt
 *
 * Procedure:
 * 1. spend energy for having the capability of hunting

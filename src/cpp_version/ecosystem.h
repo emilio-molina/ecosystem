@@ -1,12 +1,7 @@
-/*
-  ==============================================================================
-
-    ecosystem.h
-    Created: 24 Apr 2016 10:13:01pm
-    Author:  Emilio Molina
-
-  ==============================================================================
-*/
+/** @file ecosystem.h
+ * @brief Header of ecosystem
+ *
+ */
 
 #ifndef ECOSYSTEM_H_INCLUDED
 #define ECOSYSTEM_H_INCLUDED
@@ -54,8 +49,8 @@ class Organism;
 */
 class Ecosystem {
 public:
-    // Public ttributes
-    /** @brief Current time in ecosystem
+    // Public attributes
+    /** @brief Current time
     */
     int time;
 
@@ -108,7 +103,7 @@ private:
     */
     int _initial_num_carnivores;
 
-    // Public methods (documentation in ecosystem.cpp)
+    // Private methods (documentation in ecosystem.cpp)
     void _initializeBiotope();
     void _initializeOrganisms();
     void _initializeOrganisms(json& data_json);

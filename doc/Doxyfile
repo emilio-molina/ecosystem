@@ -3,7 +3,7 @@ PROJECT_NUMBER     = 0.1
 OUTPUT_DIRECTORY   = doxygen
 EXTRACT_ALL        = YES
 EXTRACT_PRIVATE    = YES
-INPUT              = ../
+INPUT              = ../src/cpp_version ../src/cpp_version/gui_juce/Source
 FILE_PATTERNS      = *.cpp *.h
-RECURSIVE          = YES
+RECURSIVE          = NO
 

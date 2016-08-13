@@ -1,12 +1,7 @@
-/*
-  ==============================================================================
-
-    ExperimentComponent.h
-    Created: 16 May 2016 6:46:19pm
-    Author:  Emilio Molina
-
-  ==============================================================================
-*/
+/** @file ExperimentComponent.h
+ * @brief Header of ExperimentComponent
+ *
+ */
 
 #ifndef EXPERIMENTCOMPONENT_H_INCLUDED
 #define EXPERIMENTCOMPONENT_H_INCLUDED
@@ -19,18 +14,16 @@
 namespace bf=boost::filesystem;
 using json = nlohmann::json;
 
-
-template <typename T>
-std::string to_string_with_precision(const T a_value, const int n);
-
 /** @brief Component for experiment tab
- *
  */
 class ExperimentComponent : public Component, public ButtonListener {
 public:
+    /** @brief Pointer to parent MainContentComponent
+     */
     MainContentComponent* parent_component;
-    ExperimentComponent(MainContentComponent* parent_component);
     
+    // Public methods (documentation in ExperimentComponent.cpp)
+    ExperimentComponent(MainContentComponent* parent_component);
     void paint (Graphics& g) override;
     void resized() override;
     void refreshExperimentSize();
@@ -44,19 +37,7 @@ private:
     /** @brief Chosen directory for experiment
      */
     String _experimentFolder;
-    
-    /** @brief Label object showing directory folder and size
-     */
-    Label _folderLabel;
-    
-    /** @brief Label object showing max time value for experiment
-     */
-    Label _maxTimeLabel;
-    
-    /** @brief Label object showing last backup of complete experiment
-     */
-    Label _lastBackupLabel;
-    
+        
     /** @brief Button object to choose a folder
      */
     TextButton _folderButton;    

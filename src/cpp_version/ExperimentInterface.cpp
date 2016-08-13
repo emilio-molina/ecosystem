@@ -23,13 +23,48 @@ namespace bf=boost::filesystem;
 namespace bio=boost::iostreams;
 
 
-fs::path stringToPath(string experiment_folder) {
-    fs::path dst_path = fs::path(experiment_folder + fs::path::preferred_separator).normalize();
-    if (dst_path.filename() == ".")
-    dst_path.remove_leaf();
-    return dst_path;
+void split(const string &s, char delim, vector<string> &elems) {
+    stringstream ss(s);
+    string item;
+    while (getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
 }
 
+/** @brief Auxiliar function to split a string
+ *
+ * @param[in] s Input string
+ * @param[in] delim Delimiter
+ *
+ * @return Vector of strings
+ */
+vector<string> split(const string &s, char delim) {
+    vector<string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
+
+/** @brief Auxiliar function to convert a string to a bs::path
+ *
+ * @param[in] experiment_folder String with full path
+ *
+ * @return Normalized path in type bs::path
+ */
+fs::path stringToPath(string path_str) {
+    fs::path path_path = fs::path(path_str + fs::path::preferred_separator).normalize();
+    if (path_path.filename() == ".")
+    path_path.remove_leaf();
+    return path_path;
+}
+
+
+/** @brief Get name of thousands folder (e.g. 0_to_999) given a time value
+ *
+ * @param[in] time_slice Time value
+ *
+ * @return Name of thousands folder
+ */
 string getThousandsFolder(int time_slice) {
     int thousands = (time_slice / 1000) * 1000;
     ostringstream thousands_folder;
@@ -37,6 +72,14 @@ string getThousandsFolder(int time_slice) {
     return thousands_folder.str();
 }
 
+
+/** @brief Get path of JSON containing ecosystem data
+ *
+ * @param[in] dst_path Path of destination folder
+ * @param[in] time_slice Time slice for which ecosystem data will be get
+ *
+ * @returns Path of JSON file
+ */
 string getEcosystemJSONPath(fs::path dst_path, int time_slice) {
     string thousands_folder_name = getThousandsFolder(time_slice);
     fs::path thousands_abs_path = (dst_path / fs::path(thousands_folder_name));
@@ -74,6 +117,33 @@ std::string to_string_with_precision(const T a_value, const int n)
     return out.str();
 }
 
+/** @brief Compress stringstream data using zlib
+ *
+ * @param[in] decompressed Input decompressed data
+ * @param[out] compressed Output compressed data
+ */
+void compressData(stringstream &decompressed, stringstream &compressed)
+{
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
+    out.push(boost::iostreams::zlib_compressor());
+    out.push(decompressed);
+    bio::copy(out, compressed);
+}
+
+
+/** @brief Decompress stringstream data using zlib
+ *
+ * @param[in] compressed Input compressed data
+ * @param[out] decompressed Output decompressed data
+ */
+void decompressData(stringstream &compressed, stringstream &decompressed)
+{
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+    in.push(boost::iostreams::zlib_decompressor());
+    in.push(compressed);
+    bio::copy(in, decompressed);
+}
+
 
 /** @brief Initializer
  *
@@ -91,27 +161,41 @@ ExperimentInterface::ExperimentInterface(string experiment_folder,
     }
 }
 
+
+/** @brief Get pointer to ecosystem object
+ */
 Ecosystem* ExperimentInterface::getEcosystemPointer() {
     return _ecosystem;
 }
 
+/** @brief Make ecosystem evolve one time slice
+ */
 void ExperimentInterface::evolve() {
     _ecosystem->evolve();
 }
 
-
+/** @brief Lock ecosystem to avoid concurrency conflicts
+ */
 void ExperimentInterface::lockEcosystem() {
     _mtx.lock();
 }
 
+/** @brief Return true if locking operation succeeds
+ */
 bool ExperimentInterface::tryLockEcosystem() {
     return _mtx.try_lock();
 }
 
+
+/** @brief Unlock ecosystem
+ */
 void ExperimentInterface::unlockEcosystem() {
     _mtx.unlock();
 }
 
+
+/** @brief Save current time slice to disk
+ */
 void ExperimentInterface::saveEcosystem() {
     // get file name
     int curr_time = _ecosystem->time;
@@ -132,24 +216,10 @@ void ExperimentInterface::saveEcosystem() {
     f_data.close();
 }
 
-void compressData(stringstream &decompressed, stringstream &compressed)
-{
-    boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
-    out.push(boost::iostreams::zlib_compressor());
-    out.push(decompressed);
-    bio::copy(out, compressed);
-}
-
-void decompressData(stringstream &compressed, stringstream &decompressed)
-{
-    boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
-    in.push(boost::iostreams::zlib_decompressor());
-    in.push(compressed);
-    bio::copy(in, decompressed);
-
-}
-
-
+/* @brief Get experiment size in MBs in format e.g. "321.16MB"
+ *
+ * @returns String with experiment size
+ */
 string ExperimentInterface::getExperimentSize() {
     double size = 0.0;
     for(bf::recursive_directory_iterator it(_dst_path);
@@ -183,16 +253,24 @@ void ExperimentInterface::_setExperimentFolder(string experiment_folder) {
         fs::create_directories(_dst_path);
 }
 
+
+/** @brief Get experiment folder in string type
+ */
 string ExperimentInterface::getExperimentFolder() {
     return _dst_path.string();
 }
 
-
+/** @brief Delete content of experiment folder
+ */
 void ExperimentInterface::_cleanFolder() {
     fs::remove_all(_dst_path);
     fs::create_directory(_dst_path);
 }
 
+/** @brief Load a given time slice into ecosystem object
+ *
+ * @param[in] time_slice Time value to load
+ */
 void ExperimentInterface::loadEcosystem(int time_slice) {
     lockEcosystem();
     delete _ecosystem;
@@ -212,21 +290,10 @@ void ExperimentInterface::loadEcosystem(int time_slice) {
     unlockEcosystem();
 }
 
-void split(const string &s, char delim, vector<string> &elems) {
-    stringstream ss(s);
-    string item;
-    while (getline(ss, item, delim)) {
-        elems.push_back(item);
-    }
-}
-
-
-vector<string> split(const string &s, char delim) {
-    vector<string> elems;
-    split(s, delim, elems);
-    return elems;
-}
-
+/** @brief Get a list of time slices containing a complete backup of ecosystem
+ *
+ * @returns List of time slices allowing complete backup
+ */
 vector<int> ExperimentInterface::getTimesHavingCompleteBackups() {
     // TODO: Do it with a vector.
     vector<int> times;
@@ -250,6 +317,8 @@ vector<int> ExperimentInterface::getTimesHavingCompleteBackups() {
     return times;
 }
 
+/** @brief Get time of running ecosystem
+ */
 int ExperimentInterface::getRunningTime() {
     if (_ecosystem == nullptr)
         return 0;

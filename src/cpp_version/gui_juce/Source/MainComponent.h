@@ -31,26 +31,36 @@ public:
     /** @brief Instance of ExperimentInterface. Where the Ecosystem is running.
      */
     ExperimentInterface* experiment_interface;
+    
+    /** @brief Indicates the experiment has changed and must be redrawn
+     */
     bool experiment_has_changed;
     
     /** @brief True if ecosystem is running
      */
     bool running;
+    
+    // Public methods (documentation in MainComponent.cpp)
     MainContentComponent();
     ~MainContentComponent();
-
     void paint (Graphics&);
     void resized();
     void loadEcosystemInterface(ExperimentInterface* ei);
 private:
-    /** @brief Function where Ecosystem evolves. It is called every 100ms by default
-     */
-    void timerCallback();
     int _backupCounter;
+    /** @brief Pointer to MapComponent (where ecosystem is rendered)
+     */
     MapComponent* _map_component;
+    
+    /** @brief Pointer to ExperimentComponent (where experiment is loaded)
+     */
     ExperimentComponent* _experiment_component;
-    //==============================================================================
+
+    //---
     ScopedPointer<TabbedComponent> _tabbedComponent;
+    void timerCallback();
+
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
 

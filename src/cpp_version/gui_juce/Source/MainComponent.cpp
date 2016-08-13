@@ -1,3 +1,9 @@
+/** @file MainComponent.cpp
+ * @brief Main of GUI (based on JUCE library)
+ *
+ *
+ */
+
 #include "MainComponent.h"
 #include "MapComponent.h"
 #include "ExperimentComponent.h"
@@ -5,7 +11,9 @@ namespace bf=boost::filesystem;
 using json = nlohmann::json;
 
 
-//==============================================================================
+/** @brief MainContentComponent constructor
+ *
+ */
 MainContentComponent::MainContentComponent()
 {
     setSize (800, 600);
@@ -24,18 +32,27 @@ MainContentComponent::MainContentComponent()
     _backupCounter = 0;
 }
 
+/** @brief MainContentComponent destructor
+ *
+ */
 MainContentComponent::~MainContentComponent()
 {
     delete experiment_interface;
 }
 
+/** @brief Override method to paint JUCE component
+ *
+ */
 void MainContentComponent::paint (Graphics& g)
 {
     g.fillAll (Colour::greyLevel(0.1f));
-    _tabbedComponent->setBounds(0, 0, getWidth(), getHeight());
+    _tabbedComponent->setBounds(0, 0, getWidth(), getHeight());  // TODO: Check, is this right?
     
 }
 
+/** @brief Override method to resize JUCE component
+ *
+ */
 void MainContentComponent::resized()
 {
     // This is called when the MainContentComponent is resized.
@@ -43,7 +60,10 @@ void MainContentComponent::resized()
     // update their positions.
 }
 
-void MainContentComponent::timerCallback() {
+/** @brief This function is called periodically to evolve ecosystem
+ *
+ */
+void MainContentComponent::timerCallback() {  // evolve ecosystem
     if (this->running) {
         if (_backupCounter == 0)
             experiment_interface->saveEcosystem();
@@ -55,6 +75,9 @@ void MainContentComponent::timerCallback() {
     }
 }
 
+/** @brief Load an ecosystem interface
+ *
+ */
 void MainContentComponent::loadEcosystemInterface(ExperimentInterface* ei) {
     experiment_interface = ei;
     _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups().back());

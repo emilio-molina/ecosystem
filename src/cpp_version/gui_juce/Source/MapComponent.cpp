@@ -1,64 +1,16 @@
-/*
-  ==============================================================================
-
-    MapComponent.cpp
-    Created: 16 May 2016 6:46:10pm
-    Author:  Emilio Molina
-
-  ==============================================================================
-*/
+/** @file MapComponent.cpp
+ * @brief Implementation of MapComponent
+ *
+ */
 
 #include "MapComponent.h"
 
-//==============================================================================
-MapComponent::MapComponent(MainContentComponent* parent_component)
-{
-    this->parent_component = parent_component;
-    this->time = -1;
-    this->_running = false;
-    position = nullptr;
-    normal = nullptr;
-    textureCoordIn = nullptr;
-    sourceColour = nullptr;
-    addKeyListener(this);
-    setWantsKeyboardFocus(true);
-    addAndMakeVisible(_timeSlider);
-    addAndMakeVisible(_historyToggle);
-    addAndMakeVisible(_runToggle);
-    addAndMakeVisible(_autoForwardToggle);
-    addAndMakeVisible(_loadButton);
-    addAndMakeVisible(_ecosystemInfoLabel);
-    _ecosystemInfoLabel.setText("", juce::NotificationType::dontSendNotification);
-    _ecosystemInfoLabel.setColour(Label::textColourId, Colours::white);
-    _timeSlider.setRange(0, 0, 10);
-    _timeSlider.setVelocityBasedMode(true);
-    _timeSlider.addListener(this);
-    _timeSlider.setEnabled(false);
-    
-    _historyToggle.setButtonText("View history");
-    _historyToggle.setColour(ToggleButton::textColourId, Colours::white);
-    _historyToggle.addListener(this);
-    
-    _runToggle.setButtonText("Run");
-    _runToggle.setColour(ToggleButton::textColourId, Colours::white);
-    _runToggle.addListener(this);
-    
-    _autoForwardToggle.setButtonText("Auto-forward");
-    _autoForwardToggle.setColour(ToggleButton::textColourId, Colours::white);
-    _autoForwardToggle.setEnabled(false);
-    _autoForwardToggle.addListener(this);
-    
-    _loadButton.setButtonText("Load");
-    _loadButton.setEnabled(false);
-    _loadButton.addListener(this);
-    
-    _historyView = false;
-    _timeHistory = 0;
-    _autoForward = false;
-    
-}
-
-
+/** @brief Read ecosystem object and generate a OpenGL formatted list of vertices
+ *
+ * @param[in] ecosystem Pointer to input ecosystem object
+ * @param[out] vertices List of OpenGL formatted vertices
+ * @param[out] indices List of vertices indices
+ */
 void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<int> &indices) {
     vertices.clear();
     indices.clear();
@@ -109,17 +61,57 @@ void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<in
 }
 
 
-void jsonToVertices(string jsonPath, Array<Vertex> &vertices, Array<int> &indices) {
-    ifstream f_data_json;
-    f_data_json.open(jsonPath);
-    json data_json;
-    f_data_json >> data_json;
-    f_data_json.close();
-    Ecosystem* ecosystem = new Ecosystem(data_json);
-    ecosystemToVertices(ecosystem, vertices, indices);
+/** @brief MapComponent constructor
+ *
+ * @param[in] parent_component Pointer to parent MainContentComponent
+ */
+MapComponent::MapComponent(MainContentComponent* parent_component)
+{
+    this->parent_component = parent_component;
+    _running = false;
+    position = nullptr;
+    normal = nullptr;
+    textureCoordIn = nullptr;
+    sourceColour = nullptr;
+    _historyView = false;
+    _timeHistory = 0;
+    _autoForward = false;
+    
+    addKeyListener(this);
+    setWantsKeyboardFocus(true);
+    addAndMakeVisible(_timeSlider);
+    addAndMakeVisible(_historyToggle);
+    addAndMakeVisible(_runToggle);
+    addAndMakeVisible(_autoForwardToggle);
+    addAndMakeVisible(_loadButton);
+    addAndMakeVisible(_ecosystemInfoLabel);
+    _ecosystemInfoLabel.setText("", juce::NotificationType::dontSendNotification);
+    _ecosystemInfoLabel.setColour(Label::textColourId, Colours::white);
+    _timeSlider.setRange(0, 0, 10);
+    _timeSlider.setVelocityBasedMode(true);
+    _timeSlider.addListener(this);
+    _timeSlider.setEnabled(false);
+    
+    _historyToggle.setButtonText("View history");
+    _historyToggle.setColour(ToggleButton::textColourId, Colours::white);
+    _historyToggle.addListener(this);
+    
+    _runToggle.setButtonText("Run");
+    _runToggle.setColour(ToggleButton::textColourId, Colours::white);
+    _runToggle.addListener(this);
+    
+    _autoForwardToggle.setButtonText("Auto-forward");
+    _autoForwardToggle.setColour(ToggleButton::textColourId, Colours::white);
+    _autoForwardToggle.setEnabled(false);
+    _autoForwardToggle.addListener(this);
+    
+    _loadButton.setButtonText("Load");
+    _loadButton.setEnabled(false);
+    _loadButton.addListener(this);
 }
     
-    
+/** @brief Override callback to control ecosystem with keyboard
+ */
 bool MapComponent::keyPressed(const KeyPress &key, Component *originatingComponent) {
     if (key == KeyPress::rightKey) {
         _increaseTimeHistory(10);
@@ -136,104 +128,11 @@ bool MapComponent::keyPressed(const KeyPress &key, Component *originatingCompone
     return true;
 }
 
-
-
+/** @brief MapComponent destructor
+ */
 MapComponent::~MapComponent()
 {
     shutdownOpenGL();
-}
-
-/** @brief OpenGL initialization function called only once
- */
-void MapComponent::initialise()
-{
-    createShaders();
-}
-
-void MapComponent::shutdown()
-{
-    shader = nullptr;
-}
-
-
-/** @brief Needed code for render function
- *
- */
-void MapComponent::auxRender1() {
-    // Stuff to be done before defining your triangles
-    jassert (OpenGLHelpers::isContextActive());
-    const float desktopScale = (float) openGLContext.getRenderingScale();
-    OpenGLHelpers::clear (Colour::greyLevel (0.05f));
-    glEnable (GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glViewport (0, 0, roundToInt (desktopScale * getWidth()), roundToInt (desktopScale * getHeight()));
-    shader->use();
-    openGLContext.extensions.glGenBuffers (1, &vertexBuffer);
-    openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
-}
-
-
-/** @brief Needed code for render function
- *
- */
-void MapComponent::auxRender2() {
-    // ************************************************
-    
-    // Now prepare this information to be drawn
-    openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER,
-                                           static_cast<GLsizeiptr> (static_cast<size_t> (vertices.size()) * sizeof (Vertex)),
-                                           vertices.getRawDataPointer(), GL_DYNAMIC_DRAW);
-    
-    openGLContext.extensions.glGenBuffers (1, &indexBuffer);
-    openGLContext.extensions.glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    openGLContext.extensions.glBufferData (GL_ELEMENT_ARRAY_BUFFER,
-                                           static_cast<GLsizeiptr> (static_cast<size_t> (indices.size()) * sizeof (juce::uint32)),
-                                           indices.getRawDataPointer(), GL_DYNAMIC_DRAW);
-    openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
-    openGLContext.extensions.glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    
-    if (position != nullptr)
-    {
-        openGLContext.extensions.glVertexAttribPointer (position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof (Vertex), 0);
-        openGLContext.extensions.glEnableVertexAttribArray (position->attributeID);
-    }
-    
-    if (normal != nullptr)
-    {
-        openGLContext.extensions.glVertexAttribPointer (normal->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof (Vertex), (GLvoid*) (sizeof (float) * 3));
-        openGLContext.extensions.glEnableVertexAttribArray (normal->attributeID);
-    }
-    
-    if (sourceColour != nullptr)
-    {
-        openGLContext.extensions.glVertexAttribPointer (sourceColour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof (Vertex), (GLvoid*) (sizeof (float) * 6));
-        openGLContext.extensions.glEnableVertexAttribArray (sourceColour->attributeID);
-    }
-    
-    if (textureCoordIn != nullptr)
-    {
-        openGLContext.extensions.glVertexAttribPointer (textureCoordIn->attributeID, 2, GL_FLOAT, GL_FALSE, sizeof (Vertex), (GLvoid*) (sizeof (float) * 10));
-        openGLContext.extensions.glEnableVertexAttribArray (textureCoordIn->attributeID);
-    }
-}
-
-
-/** @brief Needed code for render function
- *
- */
-void MapComponent::auxRender3() {
-    if (position != nullptr)       openGLContext.extensions.glDisableVertexAttribArray (position->attributeID);
-    if (normal != nullptr)         openGLContext.extensions.glDisableVertexAttribArray (normal->attributeID);
-    if (sourceColour != nullptr)   openGLContext.extensions.glDisableVertexAttribArray (sourceColour->attributeID);
-    if (textureCoordIn != nullptr)  openGLContext.extensions.glDisableVertexAttribArray (textureCoordIn->attributeID);
-    
-    // Reset the element buffers so child Components draw correctly
-    openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, 0);
-    openGLContext.extensions.glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);
-    
-    openGLContext.extensions.glDeleteBuffers (1, &vertexBuffer);
-    openGLContext.extensions.glDeleteBuffers (1, &indexBuffer);
-    repaint();
 }
 
 
@@ -267,7 +166,7 @@ void MapComponent::render()
     auxRender3();
 }
 
-/** @brief Paint function continuously called to fraw non-OpenGL graphics
+/** @brief Paint function continuously called to draw non-OpenGL graphics
  */
 void MapComponent::paint (Graphics& g)
 {
@@ -278,10 +177,10 @@ void MapComponent::paint (Graphics& g)
     g.setColour(Colours::darkred);
     g.fillRect(0 * percentage_x, 0 * percentage_y,
                1.0 * percentage_x, 0.04 * percentage_y);
-    //g.setFont (20);
-    //g.drawText ("Ecosystem map", 25, 20, 300, 30, Justification::left);
 }
 
+/** @brief Resize function for MapComponent
+ */
 void MapComponent::resized()
 {
     // This is called when the MainContentComponent is resized.
@@ -289,20 +188,127 @@ void MapComponent::resized()
     // update their positions.
     int percentage_x = getWidth();
     int percentage_y = getHeight();
-    _runToggle.setBounds (0 * percentage_x, 0 * percentage_y,       // x, y
-                          0.1 * percentage_x, 0.03 * percentage_y);      // width, height
-    _ecosystemInfoLabel.setBounds (0.1 * percentage_x, 0 * percentage_y,       // x, y
-                          0.15 * percentage_x, 0.03 * percentage_y);      // width, height
+    _runToggle.setBounds (0 * percentage_x, 0 * percentage_y,
+                          0.1 * percentage_x, 0.03 * percentage_y);
+    _ecosystemInfoLabel.setBounds (0.1 * percentage_x, 0 * percentage_y,
+                          0.15 * percentage_x, 0.03 * percentage_y);
     
-    _historyToggle.setBounds (0.50 * percentage_x, 0 * percentage_y,       // x, y
-                              0.10 * percentage_x, 0.03 * percentage_y);      // width, height
-    _timeSlider.setBounds (0.60 * percentage_x, 0 * percentage_y,       // x, y
-                           0.25 * percentage_x, 0.03 * percentage_y);      // width, height
-    _autoForwardToggle.setBounds (0.85 * percentage_x, 0 * percentage_y,       // x, y
-                          0.10 * percentage_x, 0.03 * percentage_y);      // width, height
-    _loadButton.setBounds (0.95 * percentage_x, 0 * percentage_y,       // x, y
-                           0.05 * percentage_x, 0.03 * percentage_y);      // width, height
+    _historyToggle.setBounds (0.50 * percentage_x, 0 * percentage_y,
+                              0.10 * percentage_x, 0.03 * percentage_y);
+    _timeSlider.setBounds (0.60 * percentage_x, 0 * percentage_y,
+                           0.25 * percentage_x, 0.03 * percentage_y);
+    _autoForwardToggle.setBounds (0.85 * percentage_x, 0 * percentage_y,
+                          0.10 * percentage_x, 0.03 * percentage_y);
+    _loadButton.setBounds (0.95 * percentage_x, 0 * percentage_y,
+                           0.05 * percentage_x, 0.03 * percentage_y);
 }
+
+/** @brief Callback called when slider value is changed
+ */
+void MapComponent::sliderValueChanged(Slider* s) {
+    if (s == &_timeSlider) {
+        _timeHistory = _timeSlider.getValue();
+        parent_component->experiment_has_changed = true;
+    }
+}
+
+/** @brief Callback when mouse is clicked
+ *
+ * NOTE: Just for debug by the moment
+ */
+void MapComponent::mouseDown (const MouseEvent& e)
+{
+    cout << e.getPosition().getX() << "  " << e.getPosition().getY() << endl;
+}
+
+/** @brief Callback when a button is clicked
+ */
+void MapComponent::buttonClicked (Button* b) {
+    /* Run button
+     * ==========
+     *
+     * Indicate the ecosystem must run
+     *
+     */
+    if (b == &_runToggle) {
+        if (_runToggle.getToggleState())
+            this->parent_component->running = true;
+        else
+            this->parent_component->running = false;
+    }
+    
+    if (b == &_historyToggle) {
+        bool enable = _historyToggle.getToggleState();
+        _timeSlider.setEnabled(enable);
+        _autoForwardToggle.setEnabled(enable);
+        _loadButton.setEnabled(enable);
+        _historyView = enable;
+        parent_component->experiment_has_changed = true;
+    }
+    
+    if (b == &_autoForwardToggle) {
+        _toggleAutoForward();
+    }
+
+    if (b == &_loadButton) {
+        ExperimentInterface* ei = parent_component->experiment_interface;
+        ei->loadEcosystem(_timeHistory);
+        parent_component->experiment_has_changed = true;
+        setRunningTime(ei->getRunningTime());
+    }
+}
+
+/** @brief Timer callback for history-view mode with auto-forward
+ */
+void MapComponent::timerCallback() {
+    _increaseTimeHistory(10);
+}
+
+/** @brief Toggle auto-forward function
+ */
+void MapComponent::_toggleAutoForward() {
+    _autoForward = !_autoForward;
+    _autoForwardToggle.setToggleState(_autoForward, NotificationType::dontSendNotification);
+    if (_autoForward)
+        startTimer(250);
+    else
+        stopTimer();
+}
+
+/** @brief Set max time for history-view mode
+ *
+ * @param[in] max_time Value of maximum time
+ */
+void MapComponent::setMaxTime(int max_time) {
+    _timeSlider.setRange(0, max_time - 1, 10);
+    _max_time = max_time;
+}
+
+
+/** @brief Set running time for running-view mode
+ *
+ * @param[in] time Value of running time
+ */
+void MapComponent::setRunningTime(int time) {
+    _ecosystemInfoLabel.setText(to_string(time), juce::NotificationType::dontSendNotification);
+}
+
+/** @brief Increase time history
+ *
+ * @param[in] n Step of increase
+ */
+void MapComponent::_increaseTimeHistory(int n) {
+    _timeHistory += n;
+    if (_timeHistory < 0)
+        _timeHistory = 0;
+    if (_timeHistory > _max_time)
+        _timeHistory = _max_time;
+    _timeSlider.setValue(_timeHistory);
+    parent_component->experiment_has_changed = true;
+}
+
+
+//=== OpenGL auxiliar functions
 
 /** @brief Create OpenGL shaders
  *
@@ -382,86 +388,96 @@ void MapComponent::createShaders()
     }
 }
 
-void MapComponent::sliderValueChanged(Slider* s) {
-    if (s == &_timeSlider) {
-        _timeHistory = _timeSlider.getValue();
-        parent_component->experiment_has_changed = true;
-    }
-}
-
-void MapComponent::sliderDragEnded(Slider* s) {
-}
-
-void MapComponent::mouseDown (const MouseEvent& e)
+/** @brief OpenGL initialization function called only once
+ */
+void MapComponent::initialise()
 {
-    cout << e.getPosition().getX() << "  " << e.getPosition().getY() << endl;
+    createShaders();
 }
 
-void MapComponent::buttonClicked (Button* b) {
-    /* Run button
-     * ==========
-     *
-     * Indicate the ecosystem must run
-     *
-     */
-    if (b == &_runToggle) {
-        if (_runToggle.getToggleState())
-            this->parent_component->running = true;
-        else
-            this->parent_component->running = false;
+/** @brief Shutdown OpenGL
+ */
+void MapComponent::shutdown()
+{
+    shader = nullptr;
+}
+
+/** @brief Needed code for render function
+ *
+ */
+void MapComponent::auxRender1() {
+    // Stuff to be done before defining your triangles
+    jassert (OpenGLHelpers::isContextActive());
+    const float desktopScale = (float) openGLContext.getRenderingScale();
+    OpenGLHelpers::clear (Colour::greyLevel (0.05f));
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glViewport (0, 0, roundToInt (desktopScale * getWidth()), roundToInt (desktopScale * getHeight()));
+    shader->use();
+    openGLContext.extensions.glGenBuffers (1, &vertexBuffer);
+    openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
+}
+
+
+/** @brief Needed code for render function
+ *
+ */
+void MapComponent::auxRender2() {
+    // ************************************************
+    
+    // Now prepare this information to be drawn
+    openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER,
+                                           static_cast<GLsizeiptr> (static_cast<size_t> (vertices.size()) * sizeof (Vertex)),
+                                           vertices.getRawDataPointer(), GL_DYNAMIC_DRAW);
+    
+    openGLContext.extensions.glGenBuffers (1, &indexBuffer);
+    openGLContext.extensions.glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    openGLContext.extensions.glBufferData (GL_ELEMENT_ARRAY_BUFFER,
+                                           static_cast<GLsizeiptr> (static_cast<size_t> (indices.size()) * sizeof (juce::uint32)),
+                                           indices.getRawDataPointer(), GL_DYNAMIC_DRAW);
+    openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
+    openGLContext.extensions.glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    
+    if (position != nullptr)
+    {
+        openGLContext.extensions.glVertexAttribPointer (position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof (Vertex), 0);
+        openGLContext.extensions.glEnableVertexAttribArray (position->attributeID);
     }
     
-    if (b == &_historyToggle) {
-        bool enable = _historyToggle.getToggleState();
-        _timeSlider.setEnabled(enable);
-        _autoForwardToggle.setEnabled(enable);
-        _loadButton.setEnabled(enable);
-        _historyView = enable;
-        parent_component->experiment_has_changed = true;
+    if (normal != nullptr)
+    {
+        openGLContext.extensions.glVertexAttribPointer (normal->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof (Vertex), (GLvoid*) (sizeof (float) * 3));
+        openGLContext.extensions.glEnableVertexAttribArray (normal->attributeID);
     }
     
-    if (b == &_autoForwardToggle) {
-        _toggleAutoForward();
+    if (sourceColour != nullptr)
+    {
+        openGLContext.extensions.glVertexAttribPointer (sourceColour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof (Vertex), (GLvoid*) (sizeof (float) * 6));
+        openGLContext.extensions.glEnableVertexAttribArray (sourceColour->attributeID);
     }
-
-    if (b == &_loadButton) {
-        ExperimentInterface* ei = parent_component->experiment_interface;
-        ei->loadEcosystem(_timeHistory);
-        parent_component->experiment_has_changed = true;
-        setRunningTime(ei->getRunningTime());
+    
+    if (textureCoordIn != nullptr)
+    {
+        openGLContext.extensions.glVertexAttribPointer (textureCoordIn->attributeID, 2, GL_FLOAT, GL_FALSE, sizeof (Vertex), (GLvoid*) (sizeof (float) * 10));
+        openGLContext.extensions.glEnableVertexAttribArray (textureCoordIn->attributeID);
     }
 }
 
-void MapComponent::timerCallback() {
-    _increaseTimeHistory(10);
-}
 
-void MapComponent::_toggleAutoForward() {
-    _autoForward = !_autoForward;
-    _autoForwardToggle.setToggleState(_autoForward, NotificationType::dontSendNotification);
-    if (_autoForward)
-        startTimer(250);
-    else
-        stopTimer();
-}
-
-void MapComponent::setMaxTime(int max_time) {
-    _timeSlider.setRange(0, max_time - 1, 10);
-    _max_time = max_time;
-}
-
-void MapComponent::setRunningTime(int time) {
-    _ecosystemInfoLabel.setText(to_string(time), juce::NotificationType::dontSendNotification);
-}
-
-
-
-void MapComponent::_increaseTimeHistory(int n) {
-    _timeHistory += n;
-    if (_timeHistory < 0)
-        _timeHistory = 0;
-    if (_timeHistory > _max_time)
-        _timeHistory = _max_time;
-    _timeSlider.setValue(_timeHistory);
-    parent_component->experiment_has_changed = true;
+/** @brief Needed code for render function
+ *
+ */
+void MapComponent::auxRender3() {
+    if (position != nullptr)       openGLContext.extensions.glDisableVertexAttribArray (position->attributeID);
+    if (normal != nullptr)         openGLContext.extensions.glDisableVertexAttribArray (normal->attributeID);
+    if (sourceColour != nullptr)   openGLContext.extensions.glDisableVertexAttribArray (sourceColour->attributeID);
+    if (textureCoordIn != nullptr)  openGLContext.extensions.glDisableVertexAttribArray (textureCoordIn->attributeID);
+    
+    // Reset the element buffers so child Components draw correctly
+    openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, 0);
+    openGLContext.extensions.glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);
+    
+    openGLContext.extensions.glDeleteBuffers (1, &vertexBuffer);
+    openGLContext.extensions.glDeleteBuffers (1, &indexBuffer);
+    repaint();
 }
