@@ -1,5 +1,7 @@
 # ecosystem v0.3
 
+Individual-based ecosystem simulation.
+
 v0.3 is implemented in C++, so it is much faster than v0.2, which was implemented in Python.
 
 It has two independent set of files:
