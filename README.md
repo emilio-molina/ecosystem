@@ -11,18 +11,21 @@ Note: By the moment it is very simple. Only three kind of organisms are consider
 v0.3 is implemented in C++, so it is much faster than v0.2, which was implemented in Python.
 
 It has two independent set of files:
-- Ecosystem core (the only dependency is `boost`):
+- Ecosystem core, in folder `src/cpp` (the only dependency is `boost`):
     + `ecosystem.h` and `.cpp`
     + `ExperimentInterface.h` and `.cpp`
     + `main.cpp`
     + `json.hpp` (Third party: https://github.com/nlohmann/json)
-- GUI based on JUCE (www.juce.com)
+- OpenGL based GUI implemented with JUCE (www.juce.com) in folder `src/cpp/gui_juce`:
     + `Main.cpp`
     + `MainComponent.h` and `.cpp`
     + `MapComponent.h` and `.cpp`
     + `ExperimentComponent.h` and `.cpp`
 
-# How to run the GUI?
+In addition, the initial prototype in python is included in folder `src/python`.
+
+
+# How to run the OpenGL-based GUI?
 
 The GUI has been developed using JUCE (www.juce.com), so it has to be installed in your system. A Projucer project is included in `src/cpp_version/gui_juce`. Two builds are included in this project:
 
@@ -33,7 +36,7 @@ By default, JUCE is searched in `../../../../../JUCE` relative path. For example
 
 # How to compile a command-line version of ecosystem?
 
-The only dependency used is `boost` (http://www.boost.org/). In Mac OSx it can be installed with brew: `brew install boost`, which install the library in `/usr/local/Cellar/boost/1.57.0`. Therefore, to compile the program run:
+The core of the system does not depend on JUCE. Instead, the only dependency used is `boost` (http://www.boost.org/). In Mac OSx it can be installed with brew: `brew install boost`, which install the library in `/usr/local/Cellar/boost/1.57.0`. Therefore, to compile the program run:
 
 `g++ main.cpp ecosystem.cpp --std=c++11 -I/usr/local/Cellar/boost/1.57.0/include -L/usr/local/Cellar/boost/1.57.0/lib -lboost_system -lboost_filesystem -lboost_iostreams -o ecosystem`
 
