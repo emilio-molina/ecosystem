@@ -1,6 +1,10 @@
 # ecosystem v0.3
 
-Individual-based ecosystem simulation.
+**Individual-based ecosystem simulation.**
+
+*authors: Juan Luis Salas & Emilio Molina*
+
+Note: By the moment it is very simple. Only three kind of organisms are considered: predator, prey and grass. 
 
 ![](https://raw.githubusercontent.com/EliosMolina/ecosystem/master/ecosystem.gif)
 
