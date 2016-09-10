@@ -57,74 +57,6 @@ void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<in
         indices.add(vertex_counter);
         vertices.add(v1);
         vertex_counter += 1;
-        x += 0.02;
-        if (ORGANISM_TYPE == "P") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},  // x, y, z coordinates
-                { 0.5f, 0.5f, 0.5f},
-                { 1.0f, 0.0f, 1.0f, 0.5f },  // green
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        if (ORGANISM_TYPE == "H") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},
-                { 0.5f, 0.5f, 0.5f},
-                { 0.0f, 0.5f, 0.5f, 0.5f },  // grey
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        if (ORGANISM_TYPE == "C") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},
-                { 0.5f, 0.5f, 0.5f},
-                { 1.0f, 0.0f, 1.0f, 0.5f },  // red
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        indices.add(vertex_counter);
-        vertices.add(v1);
-        vertex_counter += 1;
-        y += 0.02;
-        if (ORGANISM_TYPE == "P") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},  // x, y, z coordinates
-                { 0.5f, 0.5f, 0.5f},
-                { 0.0f, 1.0f, 0.0f, 0.5f },  // green
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        if (ORGANISM_TYPE == "H") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},
-                { 0.5f, 0.5f, 0.5f},
-                { 0.5f, 0.5f, 0.5f, 1.0f },  // grey
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        if (ORGANISM_TYPE == "C") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},
-                { 0.5f, 0.5f, 0.5f},
-                { 1.0f, 0.0f, 0.0f, 1.0f },  // red
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        indices.add(vertex_counter);
-        vertices.add(v1);
-        vertex_counter += 1;
     }
 }
 
@@ -246,9 +178,9 @@ void MapComponent::render()
         parent_component->experiment_has_changed = false;
     }
     auxRender2();
-    //glPointSize(4.0);
-    //glDrawElements (GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);  // Draw points
-    glDrawElements (GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles
+    glPointSize(4.0);
+    glDrawElements (GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);  // Draw points
+    //glDrawElements (GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles
     auxRender3();
 }
 
@@ -423,7 +355,8 @@ void MapComponent::createShaders()
     "{\n"
     "    destinationColour = sourceColour;\n"
     "    textureCoordOut = texureCoordIn;\n"
-    "    gl_Position = projectionMatrix * viewMatrix * position;\n"
+    //"    gl_Position = projectionMatrix * viewMatrix * position;\n"
+    "    gl_Position = position;\n"
     "}\n";
     
     fragmentShader =
