@@ -35,9 +35,9 @@ Ecosystem::Ecosystem() {
     CARNIVORE = "C";
 
     ENERGY_COST = {
-        {"to have the capability of moving", 0.0f},
+        {"to have the capability of moving", 0.5f},
         {"to move", 5.0f},
-        {"to have the capability of hunting", 0.0f},
+        {"to have the capability of hunting", 1.0f},
         {"to hunt", 10.0f},
         {"to have the capability of procreating", 0.0f},
         {"to procreate", 10.0f},
@@ -63,15 +63,15 @@ Ecosystem::Ecosystem() {
 
     // Definition of gens grouped by species
     MAX_LIFESPAN = {
-        {PLANT, 50},
-        {HERBIVORE, 200},
+        {PLANT, 30},
+        {HERBIVORE, 50},
         {CARNIVORE, 100}
     };
 
     PROCREATION_PROBABILITY = {
         {PLANT, 0.7f},
-        {HERBIVORE, 0.3f},
-        {CARNIVORE, 0.3f}
+        {HERBIVORE, 0.2f},
+        {CARNIVORE, 0.05f}
     };
 
     BIOTOPE_SETTINGS = {
