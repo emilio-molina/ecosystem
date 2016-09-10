@@ -14,6 +14,30 @@
 namespace bf=boost::filesystem;
 using json = nlohmann::json;
 
+
+
+struct Uniforms
+{
+    Uniforms (OpenGLContext& openGLContext, OpenGLShaderProgram& shaderProgram)
+    {
+        projectionMatrix = createUniform (openGLContext, shaderProgram, "projectionMatrix");
+        viewMatrix       = createUniform (openGLContext, shaderProgram, "viewMatrix");
+    }
+    
+    ScopedPointer<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix;
+    
+private:
+    static OpenGLShaderProgram::Uniform* createUniform (OpenGLContext& openGLContext,
+                                                        OpenGLShaderProgram& shaderProgram,
+                                                        const char* uniformName)
+    {
+        if (openGLContext.extensions.glGetUniformLocation (shaderProgram.getProgramID(), uniformName) < 0)
+            return nullptr;
+        
+        return new OpenGLShaderProgram::Uniform (shaderProgram, uniformName);
+    }
+};
+
 /** @brief Struct storing information about one OpenGL vertex
  */
 struct Vertex
@@ -56,6 +80,8 @@ public:
     void auxRender3();
     void setMaxTime(int max_time);
     void setRunningTime(int time);
+    Matrix3D<float> getProjectionMatrix() const;
+    Matrix3D<float> getViewMatrix() const;
 private:
     /** @brief True when ecosystem is running
      */
@@ -93,6 +119,7 @@ private:
     const char* fragmentShader;
     ScopedPointer<OpenGLShaderProgram> shader;
     ScopedPointer<OpenGLShaderProgram::Attribute> position, normal, sourceColour, textureCoordIn;
+    ScopedPointer<Uniforms> uniforms;
     String newVertexShader, newFragmentShader;
     
     // Private methods (documentation in MapComponent.cpp)

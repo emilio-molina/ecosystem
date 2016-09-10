@@ -109,7 +109,25 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     _loadButton.setEnabled(false);
     _loadButton.addListener(this);
 }
+
+Matrix3D<float> MapComponent::getProjectionMatrix() const
+{
+    float w = 1.0f;
     
+    float h = w * getLocalBounds().toFloat().getAspectRatio (false);
+    return Matrix3D<float>::fromFrustum (-w, w, -h, h, 1.0f, 0.0f);
+}
+
+Matrix3D<float> MapComponent::getViewMatrix() const
+{
+    Matrix3D<float> viewMatrix (Vector3D<float> (0.0f, 0.0f, -2.5f));
+    Matrix3D<float> rotationMatrix
+    = viewMatrix.rotated (Vector3D<float> (-0.5f, 0.03f * 5.0f * std::sin (getFrameCounter() * 0.04f), 0.0f));
+    
+    return rotationMatrix * viewMatrix;
+}
+
+
 /** @brief Override callback to control ecosystem with keyboard
  */
 bool MapComponent::keyPressed(const KeyPress &key, Component *originatingComponent) {
@@ -325,7 +343,10 @@ void MapComponent::createShaders()
     vertexShader =
     "attribute vec4 position;\n"
     "attribute vec4 sourceColour;\n"
-    "attribute vec2 textureCoordIn;\n"
+    "attribute vec2 texureCoordIn;\n"
+    "\n"
+    "uniform mat4 projectionMatrix;\n"
+    "uniform mat4 viewMatrix;\n"
     "\n"
     "varying vec4 destinationColour;\n"
     "varying vec2 textureCoordOut;\n"
@@ -333,7 +354,8 @@ void MapComponent::createShaders()
     "void main()\n"
     "{\n"
     "    destinationColour = sourceColour;\n"
-    "    textureCoordOut = textureCoordIn;\n"
+    "    textureCoordOut = texureCoordIn;\n"
+    //"    gl_Position = projectionMatrix * viewMatrix * position;\n"
     "    gl_Position = position;\n"
     "}\n";
     
@@ -361,6 +383,8 @@ void MapComponent::createShaders()
     {
         shader = newShader;
         shader->use();
+        
+        uniforms   = new Uniforms (openGLContext, *shader);
         
         if (openGLContext.extensions.glGetAttribLocation (shader->getProgramID(), "position") < 0)
             position      = nullptr;
@@ -402,6 +426,7 @@ void MapComponent::shutdown()
     shader = nullptr;
 }
 
+
 /** @brief Needed code for render function
  *
  */
@@ -414,6 +439,11 @@ void MapComponent::auxRender1() {
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glViewport (0, 0, roundToInt (desktopScale * getWidth()), roundToInt (desktopScale * getHeight()));
     shader->use();
+    if (uniforms->projectionMatrix != nullptr)
+        uniforms->projectionMatrix->setMatrix4 (getProjectionMatrix().mat, 1, false);
+    
+    if (uniforms->viewMatrix != nullptr)
+        uniforms->viewMatrix->setMatrix4 (getViewMatrix().mat, 1, false);
     openGLContext.extensions.glGenBuffers (1, &vertexBuffer);
     openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
 }
