@@ -120,9 +120,9 @@ Matrix3D<float> MapComponent::getProjectionMatrix() const
 
 Matrix3D<float> MapComponent::getViewMatrix() const
 {
-    Matrix3D<float> viewMatrix (Vector3D<float> (0.0f, 0.0f, -2.5f));
+    Matrix3D<float> viewMatrix (Vector3D<float> (0.0f, -0.25f, -2.5f));
     Matrix3D<float> rotationMatrix
-    = viewMatrix.rotated (Vector3D<float> (-0.5f, 0.03f * 5.0f * std::sin (getFrameCounter() * 0.04f), 0.0f));
+    = viewMatrix.rotated (Vector3D<float> (-0.5f, 0.0f, 0.0f));
     
     return rotationMatrix * viewMatrix;
 }
@@ -355,8 +355,8 @@ void MapComponent::createShaders()
     "{\n"
     "    destinationColour = sourceColour;\n"
     "    textureCoordOut = texureCoordIn;\n"
-    //"    gl_Position = projectionMatrix * viewMatrix * position;\n"
-    "    gl_Position = position;\n"
+    "    gl_Position = projectionMatrix * viewMatrix * position;\n"
+    //"    gl_Position = position;\n"
     "}\n";
     
     fragmentShader =
