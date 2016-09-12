@@ -19,6 +19,7 @@
 class MapComponent;
 class ExperimentComponent;
 class ExperimentInterface;
+class SettingsComponent;
 
 //==============================================================================
 /*
@@ -55,7 +56,11 @@ private:
     /** @brief Pointer to ExperimentComponent (where experiment is loaded)
      */
     ExperimentComponent* _experiment_component;
-
+    
+    /** @brief Pointer to SettingsComponent (where settings are shown)
+     */
+    SettingsComponent* _settings_component;
+    
     //---
     ScopedPointer<TabbedComponent> _tabbedComponent;
     void timerCallback();
