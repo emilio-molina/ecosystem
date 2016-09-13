@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "F101A2E438573B3C4AD65307F08497DE20559739",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "558B34B1EB88F3AD3A8F6A882907FBD90D4283FD" : 0,
+    "F101A2E438573B3C4AD65307F08497DE20559739" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "385488FB-BC8E-4461-A1CB-35B037122621",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "558B34B1EB88F3AD3A8F6A882907FBD90D4283FD" : "",
+    "F101A2E438573B3C4AD65307F08497DE20559739" : "ecosystem\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "gui_juce",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "src\/cpp\/gui_juce\/Builds\/MacOSX\/gui_juce.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/salasgar\/PruebasEcosystem.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "558B34B1EB88F3AD3A8F6A882907FBD90D4283FD"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/EliosMolina\/ecosystem.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F101A2E438573B3C4AD65307F08497DE20559739"
+    }
+  ]
+}
