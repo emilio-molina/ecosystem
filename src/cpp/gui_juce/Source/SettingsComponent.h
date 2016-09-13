@@ -41,9 +41,6 @@ private:
      */
     String _experimentFolder;
     
-    /** @brief Button object to choose a folder
-     */
-    TextButton _folderButton;
 };
 
 #endif /* SettingsComponent_h */
