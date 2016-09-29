@@ -17,9 +17,13 @@
 namespace bf=boost::filesystem;
 using json = nlohmann::json;
 
+ValueTree createTree (const String& desc);
+
+class ValueTreeItem;
+
 /** @brief Component for experiment tab
  */
-class SettingsComponent : public Component, public ButtonListener {
+class SettingsComponent : public Component {
 public:
     /** @brief Pointer to parent MainContentComponent
      */
@@ -27,20 +31,18 @@ public:
     
     // Public methods (documentation in SettingsComponent.cpp)
     SettingsComponent(MainContentComponent* parent_component);
+    virtual ~SettingsComponent();
     void paint (Graphics& g) override;
     void resized() override;
     void refreshExperimentSize();
-    void buttonClicked(Button* b) override;
+    void changeSelectedItem(ValueTreeItem* selectedItem);
+    ValueTreeItem* selectedItem;
     
 private:
-    /** @brief Size of experiment directory
+    /** @brief Tree of settings
      */
-    double _directory_size;
-    
-    /** @brief Chosen directory for experiment
-     */
-    String _experimentFolder;
-    
+    TreeView _tv;
+    ScopedPointer<ValueTreeItem> rootItem;
 };
 
 #endif /* SettingsComponent_h */
