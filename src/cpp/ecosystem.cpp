@@ -55,12 +55,6 @@ Ecosystem::Ecosystem() {
         {CARNIVORE, 0.0f}
     };
 
-    INITIAL_NUM_OF_ORGANISMS = {
-        {PLANT, 30},
-        {HERBIVORE, 30},
-        {CARNIVORE, 30}
-    };
-
     // Definition of gens grouped by species
     MAX_LIFESPAN = {
         {PLANT, 30},
@@ -72,6 +66,12 @@ Ecosystem::Ecosystem() {
         {PLANT, 0.7f},
         {HERBIVORE, 0.2f},
         {CARNIVORE, 0.05f}
+    };
+
+    INITIAL_NUM_OF_ORGANISMS = {
+        {PLANT, 30},
+        {HERBIVORE, 30},
+        {CARNIVORE, 30}
     };
 
     BIOTOPE_SETTINGS = {

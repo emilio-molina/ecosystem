@@ -32,6 +32,7 @@ public:
     // Public methods (documentation in SettingsComponent.cpp)
     SettingsComponent(MainContentComponent* parent_component);
     virtual ~SettingsComponent();
+    virtual void focusGained (FocusChangeType cause) override;
     void paint (Graphics& g) override;
     void resized() override;
     void refreshExperimentSize();

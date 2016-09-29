@@ -28,25 +28,120 @@ ValueTree createTree (const String& desc)
     return t;
 }
 
+static void addChildrenFromMap (ValueTree &vt, map<string, float> source_map) {
+    for (auto item : source_map) {
+        ValueTree childrenTree = createTree (item.first + ": " + String (item.second));
+        vt.addChild(childrenTree, -1, nullptr);
+        cout << item.first + ": " + String (item.second);
+    }
+}
+
+static void addChildrenFromMap (ValueTree &vt, map<string, int> source_map) {
+    for (auto item : source_map) {
+        ValueTree childrenTree = createTree (item.first + ": " + String (item.second));
+        vt.addChild(childrenTree, -1, nullptr);
+        cout << item.first + ": " + String (item.second);
+    }
+}
+
+static void addChildrenFromMap (ValueTree &vt, map<int, int> source_map) {
+    for (auto item : source_map) {
+        ValueTree childrenTree = createTree (String (item.first) + ": " + String (item.second));
+        vt.addChild(childrenTree, -1, nullptr);
+        cout << item.first << ": " << String (item.second) << "\n";
+    }
+}
+
 static ValueTree createRootValueTree()
 {
-    /* 
-    //From demo:
-    ValueTree vt = createTree ("This demo displays a ValueTree as a treeview.");
-    vt.addChild (createTree ("You can drag around the nodes to rearrange them"), -1, nullptr);
-    vt.addChild (createTree ("..and press 'delete' to delete them"), -1, nullptr);
-    vt.addChild (createTree ("Then, you can use the undo/redo buttons to undo these changes"), -1, nullptr);
-    */
+    PLANT = "P";
+    HERBIVORE = "H";
+    CARNIVORE = "C";
 
+    ENERGY_COST = {
+        {"to have the capability of moving", 0.5f},
+        {"to move", 5.0f},
+        {"to have the capability of hunting", 1.0f},
+        {"to hunt", 10.0f},
+        {"to have the capability of procreating", 0.0f},
+        {"to procreate", 10.0f},
+    };
+    
+    MINIMUM_ENERGY_REQUIRED_TO = {
+        {"move", 100.0f},
+        {"hunt", 100.0f},
+        {"procreate", 100.0f},
+    };
+    
+    PHOTOSYNTHESIS_CAPACITY = {
+        {PLANT, 10.0f},
+        {HERBIVORE, 0.0f},
+        {CARNIVORE, 0.0f}
+    };
+    
+    // Definition of gens grouped by species
+    MAX_LIFESPAN = {
+        {PLANT, 30},
+        {HERBIVORE, 50},
+        {CARNIVORE, 100}
+    };
+    
+    PROCREATION_PROBABILITY = {
+        {PLANT, 0.7f},
+        {HERBIVORE, 0.2f},
+        {CARNIVORE, 0.05f}
+    };
+    
+    INITIAL_NUM_OF_ORGANISMS = {
+        {PLANT, 30},
+        {HERBIVORE, 30},
+        {CARNIVORE, 30}
+    };
+    
+    BIOTOPE_SETTINGS = {
+        {"size_x", 200},
+        {"size_y", 200}
+    };
+
+    ValueTree energy_costs_t = createTree("Energy costs");
+    ValueTree minimum_energy_required_to_t = createTree("Minimum energy required to");
+    ValueTree photosynthesis_capacity_t = createTree("Photosynthesis capacity");
+    ValueTree max_lifespan_t = createTree("Max lifespan");
+    ValueTree procreation_probability_t = createTree("Procreation probability");
+    ValueTree initial_num_of_organisms_t = createTree("Initial number of organisms");
+    ValueTree biotope_settings_t = createTree("Biotope settings");
+    ValueTree organisms_t = createTree ("Organisms settings");
+    ValueTree constraints_t = createTree ("Constraints");
+    ValueTree costs_t = createTree ("Costs");
     ValueTree vt = createTree ("Settings");
-    vt.addChild (createTree ("Biotope settings"), -1, nullptr);
-    vt.addChild (createTree ("Organisms settings"), -1, nullptr);
-    vt.addChild (createTree ("Constraints"), -1, nullptr);
-    vt.addChild (createTree ("Cost"), -1, nullptr);
     
-    int n = 1;
-    vt.addChild (createRandomTree (n, 0), -1, nullptr);
+    addChildrenFromMap (energy_costs_t, ENERGY_COST);
+    addChildrenFromMap (minimum_energy_required_to_t, MINIMUM_ENERGY_REQUIRED_TO);
+    addChildrenFromMap (photosynthesis_capacity_t, PHOTOSYNTHESIS_CAPACITY);
+    addChildrenFromMap (max_lifespan_t, MAX_LIFESPAN);
+    addChildrenFromMap (procreation_probability_t, PROCREATION_PROBABILITY);
+    addChildrenFromMap (initial_num_of_organisms_t, INITIAL_NUM_OF_ORGANISMS);
+    addChildrenFromMap (biotope_settings_t, BIOTOPE_SETTINGS);
+ 
+    costs_t.addChild(       energy_costs_t,                 -1, nullptr);
+    constraints_t.addChild( minimum_energy_required_to_t,   -1, nullptr);
+    organisms_t.addChild(   photosynthesis_capacity_t,      -1, nullptr);
+    organisms_t.addChild(   max_lifespan_t,                 -1, nullptr);
+    organisms_t.addChild(   procreation_probability_t,      -1, nullptr);
+    organisms_t.addChild(   initial_num_of_organisms_t,     -1, nullptr);
     
+    /*   ¿Cómo se hace esto? Así da error:
+    biotope_settings_t.setOpen( false );
+    organisms_t.setOpen( false );
+    constraints_t.setOpen( false );
+    costs_t.setOpen( false );
+    */
+    
+    vt.addChild (biotope_settings_t, -1, nullptr);
+    vt.addChild (organisms_t, -1, nullptr);
+    vt.addChild (constraints_t, -1, nullptr);
+    vt.addChild (costs_t, -1, nullptr);
+        
     return vt;
 }
 
@@ -173,5 +268,10 @@ SettingsComponent::~SettingsComponent() {};
 void SettingsComponent::changeSelectedItem(ValueTreeItem* selectedItem) {
     this->selectedItem = selectedItem;
     std::cout << selectedItem->getUniqueName() << std::endl;
+}
+
+void SettingsComponent::focusGained (FocusChangeType cause) {
+    _tv.setRootItem (rootItem = new ValueTreeItem (createRootValueTree(), this));
+    cout << "Focus gained";
 }
 
