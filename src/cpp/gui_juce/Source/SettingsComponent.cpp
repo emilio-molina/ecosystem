@@ -6,7 +6,7 @@
 //
 //
 
-#include <stdio.h>
+//#include <stdio.h>
 #include "SettingsComponent.h"
 
 static ValueTree createRandomTree (int& counter, int depth)
