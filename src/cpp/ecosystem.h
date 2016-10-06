@@ -50,6 +50,11 @@ class Organism;
 class Ecosystem {
 public:
     // Public attributes
+    
+    /** @brief All settings stored in the attribute settings_json:
+     */
+    json settings_json;
+    
     /** @brief Current time
     */
     int time;

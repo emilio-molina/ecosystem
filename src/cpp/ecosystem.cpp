@@ -34,7 +34,7 @@ Ecosystem::Ecosystem() {
     HERBIVORE = "H";
     CARNIVORE = "C";
 
-    ENERGY_COST = {
+    map<string, float> ENERGY_COST = {
         {"to have the capability of moving", 0.5f},
         {"to move", 5.0f},
         {"to have the capability of hunting", 1.0f},
@@ -80,44 +80,62 @@ Ecosystem::Ecosystem() {
     };
 
     INITIAL_ENERGY_RESERVE = 30000.0f;
-    this->_initial_num_plants = INITIAL_NUM_OF_ORGANISMS.at(PLANT);
-    this->_initial_num_herbivores = INITIAL_NUM_OF_ORGANISMS.at(HERBIVORE);
-    this->_initial_num_carnivores = INITIAL_NUM_OF_ORGANISMS.at(CARNIVORE);
-    this->biotope_size_x = BIOTOPE_SETTINGS["size_x"];
-    this->biotope_size_y = BIOTOPE_SETTINGS["size_y"];
+    
+    settings_json["constants"]["PLANT"] = PLANT;
+    settings_json["constants"]["HERBIVORE"] = HERBIVORE;
+    settings_json["constants"]["CARNIVORE"] = CARNIVORE;
+    settings_json["constants"]["ENERGY_COST"] = ENERGY_COST;
+    settings_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"] = MINIMUM_ENERGY_REQUIRED_TO;
+    settings_json["constants"]["PHOTOSYNTHESIS_CAPACITY"] = PHOTOSYNTHESIS_CAPACITY;
+    settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"] = INITIAL_NUM_OF_ORGANISMS;
+    settings_json["constants"]["MAX_LIFESPAN"] = MAX_LIFESPAN;
+    settings_json["constants"]["PROCREATION_PROBABILITY"] = PROCREATION_PROBABILITY;
+    settings_json["constants"]["INITIAL_ENERGY_RESERVE"] = INITIAL_ENERGY_RESERVE;
+    settings_json["constants"]["BIOTOPE_SETTINGS"] = BIOTOPE_SETTINGS;
+    settings_json["state"]["time"] = 0;
+
+    this->_initial_num_plants = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][PLANT];
+    this->_initial_num_herbivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][HERBIVORE];
+    this->_initial_num_carnivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][CARNIVORE];
+    this->biotope_size_x = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_x"];
+    this->biotope_size_y = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_y"];
     this->_initializeBiotope();
-    this->_initializeOrganisms();
-    this->time = 0;
+    this->_initializeOrganisms(settings_json);
+    this->time = settings_json["state"]["time"];
+    
+    ostringstream str_random;
+    str_random << eng;
+    settings_json["state"]["random_eng"] = str_random.str();
 }
 
 /** @brief Ecosystem constructor using a JSON
 *
-* @param[in] data_json JSON data with ecosystem screenshot
+* @param[in] settings_json JSON data with ecosystem screenshot
 */
-Ecosystem::Ecosystem(json data_json) {
+Ecosystem::Ecosystem(json settings_json) {
 
     // load json data
-    PLANT = data_json["constants"]["PLANT"];
-    HERBIVORE = data_json["constants"]["HERBIVORE"];
-    CARNIVORE = data_json["constants"]["CARNIVORE"];
-    ENERGY_COST = data_json["constants"]["ENERGY_COST"].get<map<string, float>>();
-    MINIMUM_ENERGY_REQUIRED_TO = data_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"].get<map<string, float>>();
-    PHOTOSYNTHESIS_CAPACITY = data_json["constants"]["PHOTOSYNTHESIS_CAPACITY"].get<map<string, float>>();
-    INITIAL_NUM_OF_ORGANISMS = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"].get<map<string, int>>();
-    MAX_LIFESPAN = data_json["constants"]["MAX_LIFESPAN"].get<map<string, int>>();
-    PROCREATION_PROBABILITY = data_json["constants"]["PROCREATION_PROBABILITY"].get<map<string, float>>();
-    INITIAL_ENERGY_RESERVE = data_json["constants"]["INITIAL_ENERGY_RESERVE"];
+    PLANT = settings_json["constants"]["PLANT"];
+    HERBIVORE = settings_json["constants"]["HERBIVORE"];
+    CARNIVORE = settings_json["constants"]["CARNIVORE"];
+    ENERGY_COST = settings_json["constants"]["ENERGY_COST"].get<map<string, float>>();
+    MINIMUM_ENERGY_REQUIRED_TO = settings_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"].get<map<string, float>>();
+    PHOTOSYNTHESIS_CAPACITY = settings_json["constants"]["PHOTOSYNTHESIS_CAPACITY"].get<map<string, float>>();
+    INITIAL_NUM_OF_ORGANISMS = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"].get<map<string, int>>();
+    MAX_LIFESPAN = settings_json["constants"]["MAX_LIFESPAN"].get<map<string, int>>();
+    PROCREATION_PROBABILITY = settings_json["constants"]["PROCREATION_PROBABILITY"].get<map<string, float>>();
+    INITIAL_ENERGY_RESERVE = settings_json["constants"]["INITIAL_ENERGY_RESERVE"];
 
-    this->_initial_num_plants = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][PLANT];
-    this->_initial_num_herbivores = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][HERBIVORE];
-    this->_initial_num_carnivores = data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][CARNIVORE];
-    this->biotope_size_x = data_json["constants"]["BIOTOPE_SETTINGS"]["size_x"];
-    this->biotope_size_y = data_json["constants"]["BIOTOPE_SETTINGS"]["size_y"];
+    this->_initial_num_plants = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][PLANT];
+    this->_initial_num_herbivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][HERBIVORE];
+    this->_initial_num_carnivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][CARNIVORE];
+    this->biotope_size_x = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_x"];
+    this->biotope_size_y = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_y"];
     this->_initializeBiotope();
-    this->_initializeOrganisms(data_json);
-    this->time = data_json["state"]["time"];
+    this->_initializeOrganisms(settings_json);
+    this->time = settings_json["state"]["time"];
     istringstream srandom;
-    string str_random = data_json["state"]["random_eng"];
+    string str_random = settings_json["state"]["random_eng"];
     srandom.str(str_random);
     srandom >> eng;
 }
@@ -289,19 +307,22 @@ void Ecosystem::_initializeOrganisms() {
 * @param[in] data_json Variable with ecosystem info in JSON format
 */
 void Ecosystem::_initializeOrganisms(json& data_json) {
-    int num_organisms = data_json["organisms"]["locations"].size();
-    for (int i=0; i < num_organisms; i++) {
-        tuple<int, int> location = make_tuple(data_json["organisms"]["locations"][i][0],
-                                              data_json["organisms"]["locations"][i][1]);
-        string species = data_json["organisms"]["species"][i];
-        float energy_reserve = data_json["organisms"]["energy_reserve"][i];
-        Organism* o = new Organism(location, this, species, energy_reserve);
-        // Set genes and state
-        o->age = data_json["organisms"]["age"][i];
-        o->death_age = data_json["organisms"]["death_age"][i];
-        o->is_energy_dependent = data_json["organisms"]["is_energy_dependent"][i];
-        this->addOrganism(o);
+    if (data_json.find("organisms") != data_json.end()) {
+        int num_organisms = data_json["organisms"]["locations"].size();
+        for (int i=0; i < num_organisms; i++) {
+            tuple<int, int> location = make_tuple(data_json["organisms"]["locations"][i][0],
+                                                  data_json["organisms"]["locations"][i][1]);
+            string species = data_json["organisms"]["species"][i];
+            float energy_reserve = data_json["organisms"]["energy_reserve"][i];
+            Organism* o = new Organism(location, this, species, energy_reserve);
+            // Set genes and state
+            o->age = data_json["organisms"]["age"][i];
+            o->death_age = data_json["organisms"]["death_age"][i];
+            o->is_energy_dependent = data_json["organisms"]["is_energy_dependent"][i];
+            this->addOrganism(o);
+        }
     }
+    else _initializeOrganisms();
 }
 
 /** @brief Get random free location in biotope
@@ -480,7 +501,8 @@ void Organism::_do_move() {
     // If it is energy dependent
     if (is_energy_dependent) {
         if (this->_has_enough_energy_to("move")) {
-            this->_do_spend_energy(ENERGY_COST.at("to have the capability of moving"));
+            this->_do_spend_energy(
+                _parent_ecosystem->settings_json["constants"]["ENERGY_COST"]["to have the capability of moving"]);
         }
         if (!this->is_alive)
             return;
@@ -490,7 +512,7 @@ void Organism::_do_move() {
     this->_parent_ecosystem->getSurroundingFreeLocations(this->location, surrounding_free_locations);
     if (surrounding_free_locations.size() > 0) {
         if (this->is_energy_dependent) {
-            this->_do_spend_energy(ENERGY_COST.at("to move"));
+            this->_do_spend_energy(_parent_ecosystem->settings_json["constants"]["ENERGY_COST"]["to move"]);
             if (!this->is_alive)
                 return;
         }
@@ -531,8 +553,8 @@ void Organism::_do_hunt() {
     
     if (this->is_energy_dependent) {
         if (this->_has_enough_energy_to("hunt")) {
-            float energy_cost = ENERGY_COST.at("to have the capability of hunting");
-            this->_do_spend_energy(energy_cost);
+            this->_do_spend_energy(
+                _parent_ecosystem->settings_json["constants"]["ENERGY_COST"]["to have the capability of hunting"]);
         }
         if (!this->is_alive)
             return;
@@ -565,7 +587,8 @@ void Organism::_do_hunt() {
 void Organism::_do_procreate() {
     if (this->is_energy_dependent) {
         if (this->_has_enough_energy_to("procreate"))
-            this->_do_spend_energy(ENERGY_COST.at("to have the capability of procreating"));
+            this->_do_spend_energy(
+                _parent_ecosystem->settings_json["constants"]["ENERGY_COST"]["to have the capability of procreating"]);
         if (!this->is_alive)
             return;  // may have died because of starvation
     }
@@ -585,7 +608,7 @@ void Organism::_do_procreate() {
     Organism* baby = new Organism(baby_location, this->_parent_ecosystem, this->species, baby_energy_reserve);
     this->_parent_ecosystem->addOrganism(baby);
     if (this->is_energy_dependent)
-        this->_do_spend_energy(ENERGY_COST.at("to procreate"));
+        this->_do_spend_energy(_parent_ecosystem->settings_json["constants"]["ENERGY_COST"]["to procreate"]);
 }
 
 /** @brief Increase age 1 unit
