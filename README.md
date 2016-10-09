@@ -6,7 +6,7 @@
 
 Note: By the moment it is very simple. Only three kind of organisms are considered: predator, prey and grass. 
 
-![](https://raw.githubusercontent.com/EliosMolina/ecosystem/master/ecosystem.gif)
+![](https://raw.githubusercontent.com/EliosMolina/ecosystem/master/ecosystem_terrain.gif)
 
 v0.3 is implemented in C++, so it is much faster than v0.2, which was implemented in Python.
 
