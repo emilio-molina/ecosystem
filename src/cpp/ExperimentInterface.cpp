@@ -168,6 +168,12 @@ Ecosystem* ExperimentInterface::getEcosystemPointer() {
     return _ecosystem;
 }
 
+/** @brief Get a copy of _ecosystem.settings_json
+     */
+json* ExperimentInterface::getSettings_json_ptr() {
+    return _ecosystem->getSettings_json_ptr();
+}
+
 /** @brief Make ecosystem evolve one time slice
  */
 void ExperimentInterface::evolve() {

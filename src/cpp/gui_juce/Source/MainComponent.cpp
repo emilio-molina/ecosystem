@@ -24,8 +24,8 @@ MainContentComponent::MainContentComponent()
     // Create tabs and add components to each tab
     _tabbedComponent = new TabbedComponent(TabbedButtonBar::TabsAtTop);
     _tabbedComponent->addTab("Experiment", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), _experiment_component, true);
-    _tabbedComponent->addTab("View", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), _map_component, true);
-    _tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.7f, 0.777f, 0.517f, 1.0f), _settings_component, true);
+    //_tabbedComponent->addTab("View", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), _map_component, true);
+    //_tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.7f, 0.777f, 0.517f, 1.0f), _settings_component, true);
     addAndMakeVisible(_tabbedComponent);
     startTimer(100);  // call timer callback every 100ms
     running = false;
@@ -82,6 +82,17 @@ void MainContentComponent::timerCallback() {  // evolve ecosystem
  */
 void MainContentComponent::loadEcosystemInterface(ExperimentInterface* ei) {
     experiment_interface = ei;
+    //_tabbedComponent->addTab("View", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), _map_component, true);
+    //_tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.7f, 0.777f, 0.517f, 1.0f), _settings_component, true);
+    StringArray tab_names = _tabbedComponent->getTabNames();
+    if (!tab_names.contains("View"))
+    {
+        _tabbedComponent->addTab("View", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), _map_component, true);
+    }
+    if (!tab_names.contains("Settings"))
+    {
+        _tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.7f, 0.777f, 0.517f, 1.0f), _settings_component, true);
+    }
     _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups().back());
     _map_component->setRunningTime(experiment_interface->getRunningTime());
     experiment_has_changed = true;

@@ -9,6 +9,13 @@
 //#include <stdio.h>
 #include "SettingsComponent.h"
 
+ValueTree createTree (const String& desc)
+{
+    ValueTree t ("Item");
+    t.setProperty ("name", desc, nullptr);
+    return t;
+}
+
 static ValueTree createRandomTree (int& counter, int depth)
 {
     ValueTree t = createTree ("Item " + String (counter++));
@@ -17,14 +24,6 @@ static ValueTree createRandomTree (int& counter, int depth)
         for (int i = 1 + Random::getSystemRandom().nextInt (7); --i >= 0;)
             t.addChild (createRandomTree (counter, depth + 1), -1, nullptr);
     
-    return t;
-}
-
-
-ValueTree createTree (const String& desc)
-{
-    ValueTree t ("Item");
-    t.setProperty ("name", desc, nullptr);
     return t;
 }
 
@@ -53,6 +52,25 @@ static void addChildrenFromMap (ValueTree &vt, map<int, int> source_map) {
 }
 
 static ValueTree createRootValueTree()
+{
+    ValueTree vt = createTree ("Settings");
+    return vt;
+}
+
+static ValueTree createRootValueTree(json* settings_json_ptr)
+    {
+    ValueTree vt = createTree ("Settings");
+    json root = *settings_json_ptr;
+
+    for (json::iterator it = root.begin(); it != root.end(); ++it) {
+        std::cout << it.key() << " : " << it.value() << "\n\n\n\n";
+        
+    }
+    
+    return vt;
+}
+/*
+static ValueTree createRootValueTree(json* settings_json_ptr)
 {
     PLANT = "P";
     HERBIVORE = "H";
@@ -135,7 +153,7 @@ static ValueTree createRootValueTree()
     organisms_t.setOpen( false );
     constraints_t.setOpen( false );
     costs_t.setOpen( false );
-    */
+    /
     
     vt.addChild (biotope_settings_t, -1, nullptr);
     vt.addChild (organisms_t, -1, nullptr);
@@ -144,6 +162,8 @@ static ValueTree createRootValueTree()
         
     return vt;
 }
+*/
+
 
 class ValueTreeItem  : public TreeViewItem,
 private ValueTree::Listener
@@ -230,8 +250,9 @@ private:
  *
  * @param[in] parent_component Parent component of this one
  */
-SettingsComponent::SettingsComponent(MainContentComponent* parent_component) {
-    this->parent_component = parent_component;
+SettingsComponent::SettingsComponent(MainContentComponent* _parent_component) {
+    parent_component = _parent_component;
+    //settings_json = parent_component->experiment_interface->getSettings_json_ptr();
     setOpaque (true);
     addAndMakeVisible(_tv);
     _tv.setDefaultOpenness (true);
@@ -268,10 +289,12 @@ SettingsComponent::~SettingsComponent() {};
 void SettingsComponent::changeSelectedItem(ValueTreeItem* selectedItem) {
     this->selectedItem = selectedItem;
     std::cout << selectedItem->getUniqueName() << std::endl;
+    focusGained(focusChangedDirectly);
 }
 
 void SettingsComponent::focusGained (FocusChangeType cause) {
-    _tv.setRootItem (rootItem = new ValueTreeItem (createRootValueTree(), this));
+    json* settings_json_ptr = parent_component->experiment_interface->getSettings_json_ptr();
+    _tv.setRootItem (rootItem = new ValueTreeItem (createRootValueTree(settings_json_ptr), this));
     cout << "Focus gained";
 }
 

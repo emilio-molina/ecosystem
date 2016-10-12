@@ -17,8 +17,6 @@
 namespace bf=boost::filesystem;
 using json = nlohmann::json;
 
-ValueTree createTree (const String& desc);
-
 class ValueTreeItem;
 
 /** @brief Component for experiment tab
@@ -28,6 +26,7 @@ public:
     /** @brief Pointer to parent MainContentComponent
      */
     MainContentComponent* parent_component;
+    // json settings_json;
     
     // Public methods (documentation in SettingsComponent.cpp)
     SettingsComponent(MainContentComponent* parent_component);

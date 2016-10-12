@@ -112,8 +112,9 @@ Ecosystem::Ecosystem() {
 *
 * @param[in] settings_json JSON data with ecosystem screenshot
 */
-Ecosystem::Ecosystem(json settings_json) {
+Ecosystem::Ecosystem(json settings_json_) {
 
+    settings_json = settings_json_;
     // load json data
     PLANT = settings_json["constants"]["PLANT"];
     HERBIVORE = settings_json["constants"]["HERBIVORE"];
@@ -138,6 +139,15 @@ Ecosystem::Ecosystem(json settings_json) {
     string str_random = settings_json["state"]["random_eng"];
     srandom.str(str_random);
     srandom >> eng;
+}
+
+/** @brief get the settings whithin a JSON variable
+ *
+ * @param[in] settings_json JSON data with ecosystem screenshot
+ */
+json* Ecosystem::getSettings_json_ptr() {
+    json* sjp = new json(settings_json);
+    return sjp;
 }
 
 /** @brief Add organism to ecosystem
