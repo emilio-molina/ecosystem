@@ -2,9 +2,13 @@
 
 <JUCERPROJECT id="PEdoYV" name="gui_juce" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.gui_juce" includeBinaryInAppConfig="1"
-              jucerVersion="4.2.3">
+              jucerVersion="4.2.4">
   <MAINGROUP id="g4NTly" name="gui_juce">
     <GROUP id="{E5B8CE86-4278-2FD0-C4D2-5EF0BCDE89FB}" name="Source">
+      <FILE id="NPfGRG" name="SettingsComponent.cpp" compile="1" resource="0"
+            file="Source/SettingsComponent.cpp"/>
+      <FILE id="vZTmxC" name="SettingsComponent.h" compile="0" resource="0"
+            file="Source/SettingsComponent.h"/>
       <FILE id="kJjgaJ" name="json.hpp" compile="0" resource="0" file="../json.hpp"/>
       <FILE id="DEA4wD" name="ExperimentInterface.cpp" compile="1" resource="0"
             file="../ExperimentInterface.cpp"/>
