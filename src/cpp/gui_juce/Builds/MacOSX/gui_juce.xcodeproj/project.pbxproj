@@ -2671,7 +2671,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_LDFLAGS = "-lboost_filesystem -lboost_system -lboost_iostreams";
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.gui_juce;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.guijuce;
 				SDKROOT_ppc = macosx10.5; }; name = Debug; };
 		B4D315231E72A18E7D0EDB99 = {isa = XCBuildConfiguration; buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
