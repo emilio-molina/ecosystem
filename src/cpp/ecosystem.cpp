@@ -112,9 +112,6 @@ Ecosystem::Ecosystem() {
     set_default_settings();
     //Ecosystem(default_settings);
     settings_json = default_settings;
-    this->_initial_num_plants = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][PLANT];
-    this->_initial_num_herbivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][HERBIVORE];
-    this->_initial_num_carnivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][CARNIVORE];
     this->biotope_size_x = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_x"];
     this->biotope_size_y = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_y"];
     this->_initializeBiotope();
@@ -134,9 +131,6 @@ Ecosystem::Ecosystem() {
 Ecosystem::Ecosystem(json settings_json_) {
 
     settings_json = settings_json_;
-    this->_initial_num_plants = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][PLANT];
-    this->_initial_num_herbivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][HERBIVORE];
-    this->_initial_num_carnivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][CARNIVORE];
     this->biotope_size_x = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_x"];
     this->biotope_size_y = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_y"];
     this->_initializeBiotope();

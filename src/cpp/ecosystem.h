@@ -98,18 +98,6 @@ private:
     */
     vector<Organism*> _dead_organisms;
 
-    /** @brief Initial number of plants in ecosystem
-    */
-    int _initial_num_plants;
-
-    /** @brief Initial number of herbivores in ecosystem
-    */
-    int _initial_num_herbivores;
-
-    /** @brief Initial number of carnivores in ecosystem
-    */
-    int _initial_num_carnivores;
-
     // Private methods (documentation in ecosystem.cpp)
     void _initializeBiotope();
     void _initializeOrganisms();
