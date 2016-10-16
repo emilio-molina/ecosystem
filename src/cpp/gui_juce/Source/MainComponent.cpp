@@ -12,6 +12,15 @@ namespace bf=boost::filesystem;
 using json = nlohmann::json;
 
 
+MainTabbedComponent::MainTabbedComponent (TabbedButtonBar::Orientation orientation, SettingsComponent* SC) : TabbedComponent(orientation), _settings_component(SC) { }
+
+void MainTabbedComponent::currentTabChanged (int newCurrentTabIndex, const String &newCurrentTabName)
+{
+    if (newCurrentTabName == "Settings") {
+        _settings_component->updateTree();
+    }
+}
+
 /** @brief MainContentComponent constructor
  *
  */
@@ -22,10 +31,8 @@ MainContentComponent::MainContentComponent()
     _map_component = new MapComponent(this);
     _settings_component = new SettingsComponent(this);
     // Create tabs and add components to each tab
-    _tabbedComponent = new TabbedComponent(TabbedButtonBar::TabsAtTop);
+    _tabbedComponent = new MainTabbedComponent(TabbedButtonBar::TabsAtTop, _settings_component);
     _tabbedComponent->addTab("Experiment", Colour::fromFloatRGBA(0.8f, 0.677f, 0.617f, 1.0f), _experiment_component, true);
-    //_tabbedComponent->addTab("View", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), _map_component, true);
-    //_tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.7f, 0.777f, 0.517f, 1.0f), _settings_component, true);
     addAndMakeVisible(_tabbedComponent);
     startTimer(100);  // call timer callback every 100ms
     running = false;

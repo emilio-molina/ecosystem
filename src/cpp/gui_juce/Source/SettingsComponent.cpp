@@ -57,17 +57,51 @@ static ValueTree createRootValueTree()
     return vt;
 }
 
+
+static ValueTree createBranchFromJSON(String root_name, json info_json)
+{
+    ValueTree vt = createTree (root_name);
+    for (json::iterator it = info_json.begin(); it != info_json.end(); ++it) {
+        if (it.value().size() > 1) {
+            String child_tree_name = String (it.key());
+            ValueTree child_tree = createBranchFromJSON( child_tree_name, it.value() );
+            vt.addChild(child_tree, -1, nullptr);
+        }
+        else {
+            String child_tree_name = String( it.key() ) + ": " + it.value().get<String>();
+            ValueTree child_tree = createTree (child_tree_name);
+            vt.addChild(child_tree, -1, nullptr);
+        }
+        
+    }
+    return vt;
+}
+
 static ValueTree createRootValueTree(json* settings_json_ptr)
-    {
+{
+    ValueTree vt = createTree ("Settings (from createRootValueTree)");
+    return vt;
+    /*
     ValueTree vt = createTree ("Settings");
     json root = *settings_json_ptr;
 
+    root["pr"] = "hello!";
+    
+    root["pr2"] = {"d", "e"};
+        
     for (json::iterator it = root.begin(); it != root.end(); ++it) {
-        std::cout << it.key() << " : " << it.value() << "\n\n\n\n";
+        //ValueTree childTree = createTree (String (it.key()) + ": " + String (it.value()) );
+        if (it.value().size() < 2) {
+            String child_tree_name = String( it.key() ) + ": " + it.value().get<String>();
+            std::cout << child_tree_name << "\n\n\n\n";
+            std::cout << it.value() << "\n\n\n\n";
+        }
         
     }
     
     return vt;
+    */
+    //return createBranchFromJSON("Settings", *settings_json_ptr);
 }
 /*
 static ValueTree createRootValueTree(json* settings_json_ptr)
@@ -292,7 +326,7 @@ void SettingsComponent::changeSelectedItem(ValueTreeItem* selectedItem) {
     focusGained(focusChangedDirectly);
 }
 
-void SettingsComponent::focusGained (FocusChangeType cause) {
+void SettingsComponent::updateTree() {
     json* settings_json_ptr = parent_component->experiment_interface->getSettings_json_ptr();
     _tv.setRootItem (rootItem = new ValueTreeItem (createRootValueTree(settings_json_ptr), this));
     cout << "Focus gained";

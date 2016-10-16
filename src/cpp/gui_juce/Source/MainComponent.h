@@ -21,6 +21,15 @@ class ExperimentComponent;
 class ExperimentInterface;
 class SettingsComponent;
 
+class MainTabbedComponent : public TabbedComponent
+{
+public:
+    MainTabbedComponent(TabbedButtonBar::Orientation orientation, SettingsComponent* SC);
+    void currentTabChanged (int newCurrentTabIndex, const String &newCurrentTabName);
+private:
+    SettingsComponent* _settings_component;
+};
+
 //==============================================================================
 /*
     Main component of the application
@@ -62,7 +71,7 @@ private:
     SettingsComponent* _settings_component;
     
     //---
-    ScopedPointer<TabbedComponent> _tabbedComponent;
+    ScopedPointer<MainTabbedComponent> _tabbedComponent;
     void timerCallback();
 
     
