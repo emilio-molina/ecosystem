@@ -24,6 +24,7 @@ namespace fs = boost::filesystem;
 using namespace std;
 using json = nlohmann::json;
 
+extern vector<string> SPECIES;
 extern string PLANT;      // typically "P"
 extern string HERBIVORE;  // typically "H"
 extern string CARNIVORE;  // typically "C"

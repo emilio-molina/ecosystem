@@ -9,6 +9,9 @@ using json = nlohmann::json;
 
 default_random_engine eng((random_device())());
 
+json default_settings;
+
+vector<string> SPECIES;
 string PLANT;
 string HERBIVORE;
 string CARNIVORE;
@@ -21,6 +24,81 @@ map<string, int> MAX_LIFESPAN;
 map<string, float> PROCREATION_PROBABILITY;
 float INITIAL_ENERGY_RESERVE;
 
+void set_default_settings()
+{
+    PLANT = "P";
+    HERBIVORE = "H";
+    CARNIVORE = "C";
+    
+    SPECIES = {PLANT, HERBIVORE, CARNIVORE};
+    
+    ENERGY_COST = {
+        {"to have the capability of moving", 0.5f},
+        {"to move", 5.0f},
+        {"to have the capability of hunting", 1.0f},
+        {"to hunt", 10.0f},
+        {"to have the capability of procreating", 0.0f},
+        {"to procreate", 10.0f},
+    };
+    
+    MINIMUM_ENERGY_REQUIRED_TO = {
+        {"move", 100.0f},
+        {"hunt", 100.0f},
+        {"procreate", 100.0f},
+    };
+    
+    PHOTOSYNTHESIS_CAPACITY = {
+        {PLANT, 10.0f},
+        {HERBIVORE, 0.0f},
+        {CARNIVORE, 0.0f}
+    };
+    
+    // Definition of gens grouped by species
+    MAX_LIFESPAN = {
+        {PLANT, 30},
+        {HERBIVORE, 50},
+        {CARNIVORE, 100}
+    };
+    
+    PROCREATION_PROBABILITY = {
+        {PLANT, 0.7f},
+        {HERBIVORE, 0.2f},
+        {CARNIVORE, 0.05f}
+    };
+    
+    INITIAL_NUM_OF_ORGANISMS = {
+        {PLANT, 30},
+        {HERBIVORE, 30},
+        {CARNIVORE, 30}
+    };
+    
+    BIOTOPE_SETTINGS = {
+        {"size_x", 200},
+        {"size_y", 200}
+    };
+    
+    INITIAL_ENERGY_RESERVE = 30000.0f;
+
+    
+    default_settings["constants"]["SPECIES"] = SPECIES;
+    default_settings["constants"]["PLANT"] = PLANT;
+    default_settings["constants"]["HERBIVORE"] = HERBIVORE;
+    default_settings["constants"]["CARNIVORE"] = CARNIVORE;
+    default_settings["constants"]["ENERGY_COST"] = ENERGY_COST;
+    default_settings["constants"]["MINIMUM_ENERGY_REQUIRED_TO"] = MINIMUM_ENERGY_REQUIRED_TO;
+    default_settings["constants"]["PHOTOSYNTHESIS_CAPACITY"] = PHOTOSYNTHESIS_CAPACITY;
+    default_settings["constants"]["INITIAL_NUM_OF_ORGANISMS"] = INITIAL_NUM_OF_ORGANISMS;
+    default_settings["constants"]["MAX_LIFESPAN"] = MAX_LIFESPAN;
+    default_settings["constants"]["PROCREATION_PROBABILITY"] = PROCREATION_PROBABILITY;
+    default_settings["constants"]["INITIAL_ENERGY_RESERVE"] = INITIAL_ENERGY_RESERVE;
+    default_settings["constants"]["BIOTOPE_SETTINGS"] = BIOTOPE_SETTINGS;
+    default_settings["state"]["time"] = 0;
+    
+    ostringstream str_random;
+    str_random << eng;
+    default_settings["state"]["random_eng"] = str_random.str();
+
+}
 /*********************************************************
  * Ecosystem implementation
  */
@@ -30,70 +108,10 @@ float INITIAL_ENERGY_RESERVE;
 * It reads experiments settings from constants, initialize biotope and create organisms.
 */
 Ecosystem::Ecosystem() {
-    PLANT = "P";
-    HERBIVORE = "H";
-    CARNIVORE = "C";
-
-    map<string, float> ENERGY_COST = {
-        {"to have the capability of moving", 0.5f},
-        {"to move", 5.0f},
-        {"to have the capability of hunting", 1.0f},
-        {"to hunt", 10.0f},
-        {"to have the capability of procreating", 0.0f},
-        {"to procreate", 10.0f},
-    };
-
-    MINIMUM_ENERGY_REQUIRED_TO = {
-        {"move", 100.0f},
-        {"hunt", 100.0f},
-        {"procreate", 100.0f},
-    };
-
-    PHOTOSYNTHESIS_CAPACITY = {
-        {PLANT, 10.0f},
-        {HERBIVORE, 0.0f},
-        {CARNIVORE, 0.0f}
-    };
-
-    // Definition of gens grouped by species
-    MAX_LIFESPAN = {
-        {PLANT, 30},
-        {HERBIVORE, 50},
-        {CARNIVORE, 100}
-    };
-
-    PROCREATION_PROBABILITY = {
-        {PLANT, 0.7f},
-        {HERBIVORE, 0.2f},
-        {CARNIVORE, 0.05f}
-    };
-
-    INITIAL_NUM_OF_ORGANISMS = {
-        {PLANT, 30},
-        {HERBIVORE, 30},
-        {CARNIVORE, 30}
-    };
-
-    BIOTOPE_SETTINGS = {
-        {"size_x", 200},
-        {"size_y", 200}
-    };
-
-    INITIAL_ENERGY_RESERVE = 30000.0f;
     
-    settings_json["constants"]["PLANT"] = PLANT;
-    settings_json["constants"]["HERBIVORE"] = HERBIVORE;
-    settings_json["constants"]["CARNIVORE"] = CARNIVORE;
-    settings_json["constants"]["ENERGY_COST"] = ENERGY_COST;
-    settings_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"] = MINIMUM_ENERGY_REQUIRED_TO;
-    settings_json["constants"]["PHOTOSYNTHESIS_CAPACITY"] = PHOTOSYNTHESIS_CAPACITY;
-    settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"] = INITIAL_NUM_OF_ORGANISMS;
-    settings_json["constants"]["MAX_LIFESPAN"] = MAX_LIFESPAN;
-    settings_json["constants"]["PROCREATION_PROBABILITY"] = PROCREATION_PROBABILITY;
-    settings_json["constants"]["INITIAL_ENERGY_RESERVE"] = INITIAL_ENERGY_RESERVE;
-    settings_json["constants"]["BIOTOPE_SETTINGS"] = BIOTOPE_SETTINGS;
-    settings_json["state"]["time"] = 0;
-
+    set_default_settings();
+    //Ecosystem(default_settings);
+    settings_json = default_settings;
     this->_initial_num_plants = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][PLANT];
     this->_initial_num_herbivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][HERBIVORE];
     this->_initial_num_carnivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][CARNIVORE];
@@ -102,10 +120,11 @@ Ecosystem::Ecosystem() {
     this->_initializeBiotope();
     this->_initializeOrganisms(settings_json);
     this->time = settings_json["state"]["time"];
-    
-    ostringstream str_random;
-    str_random << eng;
-    settings_json["state"]["random_eng"] = str_random.str();
+    istringstream srandom;
+    string str_random = settings_json["state"]["random_eng"];
+    srandom.str(str_random);
+    srandom >> eng;
+
 }
 
 /** @brief Ecosystem constructor using a JSON
@@ -115,18 +134,6 @@ Ecosystem::Ecosystem() {
 Ecosystem::Ecosystem(json settings_json_) {
 
     settings_json = settings_json_;
-    // load json data
-    PLANT = settings_json["constants"]["PLANT"];
-    HERBIVORE = settings_json["constants"]["HERBIVORE"];
-    CARNIVORE = settings_json["constants"]["CARNIVORE"];
-    ENERGY_COST = settings_json["constants"]["ENERGY_COST"].get<map<string, float>>();
-    MINIMUM_ENERGY_REQUIRED_TO = settings_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"].get<map<string, float>>();
-    PHOTOSYNTHESIS_CAPACITY = settings_json["constants"]["PHOTOSYNTHESIS_CAPACITY"].get<map<string, float>>();
-    INITIAL_NUM_OF_ORGANISMS = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"].get<map<string, int>>();
-    MAX_LIFESPAN = settings_json["constants"]["MAX_LIFESPAN"].get<map<string, int>>();
-    PROCREATION_PROBABILITY = settings_json["constants"]["PROCREATION_PROBABILITY"].get<map<string, float>>();
-    INITIAL_ENERGY_RESERVE = settings_json["constants"]["INITIAL_ENERGY_RESERVE"];
-
     this->_initial_num_plants = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][PLANT];
     this->_initial_num_herbivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][HERBIVORE];
     this->_initial_num_carnivores = settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][CARNIVORE];
