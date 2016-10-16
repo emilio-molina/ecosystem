@@ -416,8 +416,9 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string
 
     // Genes:
     this->species = species;
-    this->photosynthesis_capacity = PHOTOSYNTHESIS_CAPACITY.at(species);
-    uniform_int_distribution<int> distribution(0, MAX_LIFESPAN.at(this->species) - 1);
+    this->photosynthesis_capacity = float(parent_ecosystem->settings_json["constants"]["PHOTOSYNTHESIS_CAPACITY"][species]);
+    int MAX_LIFESPAN = int(parent_ecosystem->settings_json["constants"]["MAX_LIFESPAN"][species]);
+    uniform_int_distribution<int> distribution(0, MAX_LIFESPAN - 1);
     this->death_age = distribution(eng);
 
     // State:
@@ -467,8 +468,8 @@ void Organism::_do_photosynthesis() {
 * @param[in] action Action to be performed (e.g. "move", "hunt", ...)
 */
 bool Organism::_has_enough_energy_to(const string &action) {
-    bool _has_enough_energy = this->energy_reserve > MINIMUM_ENERGY_REQUIRED_TO.at(action);
-    return _has_enough_energy;
+    float MINIMUM_ENERGY_REQUIRED = float(_parent_ecosystem->settings_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"][action]);
+    return energy_reserve > MINIMUM_ENERGY_REQUIRED;
 }
 
 
@@ -594,14 +595,15 @@ void Organism::_do_procreate() {
     }
     uniform_real_distribution<float> fdis(0, 1.0);
     float random_value = fdis(eng);
-    if (random_value >= PROCREATION_PROBABILITY.at(this->species))  // do not procreate
+    float PROCREATION_PROBABILITY = float(_parent_ecosystem->settings_json["constants"]["PROCREATION_PROBABILITY"][species]);
+    if (random_value >= PROCREATION_PROBABILITY)  // do not procreate
         return;
-
+    
     vector<tuple<int, int>> free_locs;
     this->_parent_ecosystem->getSurroundingFreeLocations(this->location, free_locs);
     if (free_locs.size() == 0)
         return;
-
+    
     tuple<int, int> baby_location = free_locs[0];
     float baby_energy_reserve = this->energy_reserve / 2.0f;
     this->energy_reserve = this->energy_reserve - baby_energy_reserve;
