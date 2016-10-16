@@ -24,19 +24,19 @@ namespace fs = boost::filesystem;
 using namespace std;
 using json = nlohmann::json;
 
-extern vector<string> SPECIES;
+extern vector<string> _SPECIES;
 extern string PLANT;      // typically "P"
 extern string HERBIVORE;  // typically "H"
 extern string CARNIVORE;  // typically "C"
 
-extern map<string, int> BIOTOPE_SETTINGS;
-extern map<string, float> ENERGY_COST;
-extern map<string, float> MINIMUM_ENERGY_REQUIRED_TO;
-extern map<string, float> PHOTOSYNTHESIS_CAPACITY;
-extern map<string, int> INITIAL_NUM_OF_ORGANISMS;
-extern map<string, int> MAX_LIFESPAN;
-extern map<string, float> PROCREATION_PROBABILITY;
-extern float INITIAL_ENERGY_RESERVE;
+extern map<string, int> _BIOTOPE_SETTINGS;
+extern map<string, float> _ENERGY_COST;
+extern map<string, float> _MINIMUM_ENERGY_REQUIRED_TO;
+extern map<string, float> _PHOTOSYNTHESIS_CAPACITY;
+extern map<string, int> _INITIAL_NUM_OF_ORGANISMS;
+extern map<string, int> _MAX_LIFESPAN;
+extern map<string, float> _PROCREATION_PROBABILITY;
+extern float _INITIAL_ENERGY_RESERVE;
 
 
 //************ HEADERS

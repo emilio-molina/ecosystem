@@ -11,18 +11,18 @@ default_random_engine eng((random_device())());
 
 json default_settings;
 
-vector<string> SPECIES;
+vector<string> _SPECIES;
 string PLANT;
 string HERBIVORE;
 string CARNIVORE;
-map<string, int> BIOTOPE_SETTINGS;
-map<string, float> ENERGY_COST;
-map<string, float> MINIMUM_ENERGY_REQUIRED_TO;
-map<string, float> PHOTOSYNTHESIS_CAPACITY;
-map<string, int> INITIAL_NUM_OF_ORGANISMS;
-map<string, int> MAX_LIFESPAN;
-map<string, float> PROCREATION_PROBABILITY;
-float INITIAL_ENERGY_RESERVE;
+map<string, int> _BIOTOPE_SETTINGS;
+map<string, float> _ENERGY_COST;
+map<string, float> _MINIMUM_ENERGY_REQUIRED_TO;
+map<string, float> _PHOTOSYNTHESIS_CAPACITY;
+map<string, int> _INITIAL_NUM_OF_ORGANISMS;
+map<string, int> _MAX_LIFESPAN;
+map<string, float> _PROCREATION_PROBABILITY;
+float _INITIAL_ENERGY_RESERVE;
 
 void set_default_settings()
 {
@@ -30,9 +30,9 @@ void set_default_settings()
     HERBIVORE = "H";
     CARNIVORE = "C";
     
-    SPECIES = {PLANT, HERBIVORE, CARNIVORE};
+    _SPECIES = {PLANT, HERBIVORE, CARNIVORE};
     
-    ENERGY_COST = {
+    _ENERGY_COST = {
         {"to have the capability of moving", 0.5f},
         {"to move", 5.0f},
         {"to have the capability of hunting", 1.0f},
@@ -41,57 +41,57 @@ void set_default_settings()
         {"to procreate", 10.0f},
     };
     
-    MINIMUM_ENERGY_REQUIRED_TO = {
+    _MINIMUM_ENERGY_REQUIRED_TO = {
         {"move", 100.0f},
         {"hunt", 100.0f},
         {"procreate", 100.0f},
     };
     
-    PHOTOSYNTHESIS_CAPACITY = {
+    _PHOTOSYNTHESIS_CAPACITY = {
         {PLANT, 10.0f},
         {HERBIVORE, 0.0f},
         {CARNIVORE, 0.0f}
     };
     
     // Definition of gens grouped by species
-    MAX_LIFESPAN = {
+    _MAX_LIFESPAN = {
         {PLANT, 30},
         {HERBIVORE, 50},
         {CARNIVORE, 100}
     };
     
-    PROCREATION_PROBABILITY = {
+    _PROCREATION_PROBABILITY = {
         {PLANT, 0.7f},
         {HERBIVORE, 0.2f},
         {CARNIVORE, 0.05f}
     };
     
-    INITIAL_NUM_OF_ORGANISMS = {
+    _INITIAL_NUM_OF_ORGANISMS = {
         {PLANT, 30},
         {HERBIVORE, 30},
         {CARNIVORE, 30}
     };
     
-    BIOTOPE_SETTINGS = {
+    _BIOTOPE_SETTINGS = {
         {"size_x", 200},
         {"size_y", 200}
     };
     
-    INITIAL_ENERGY_RESERVE = 30000.0f;
+    _INITIAL_ENERGY_RESERVE = 30000.0f;
 
     
-    default_settings["constants"]["SPECIES"] = SPECIES;
+    default_settings["constants"]["SPECIES"] = _SPECIES;
     default_settings["constants"]["PLANT"] = PLANT;
     default_settings["constants"]["HERBIVORE"] = HERBIVORE;
     default_settings["constants"]["CARNIVORE"] = CARNIVORE;
-    default_settings["constants"]["ENERGY_COST"] = ENERGY_COST;
-    default_settings["constants"]["MINIMUM_ENERGY_REQUIRED_TO"] = MINIMUM_ENERGY_REQUIRED_TO;
-    default_settings["constants"]["PHOTOSYNTHESIS_CAPACITY"] = PHOTOSYNTHESIS_CAPACITY;
-    default_settings["constants"]["INITIAL_NUM_OF_ORGANISMS"] = INITIAL_NUM_OF_ORGANISMS;
-    default_settings["constants"]["MAX_LIFESPAN"] = MAX_LIFESPAN;
-    default_settings["constants"]["PROCREATION_PROBABILITY"] = PROCREATION_PROBABILITY;
-    default_settings["constants"]["INITIAL_ENERGY_RESERVE"] = INITIAL_ENERGY_RESERVE;
-    default_settings["constants"]["BIOTOPE_SETTINGS"] = BIOTOPE_SETTINGS;
+    default_settings["constants"]["ENERGY_COST"] = _ENERGY_COST;
+    default_settings["constants"]["MINIMUM_ENERGY_REQUIRED_TO"] = _MINIMUM_ENERGY_REQUIRED_TO;
+    default_settings["constants"]["PHOTOSYNTHESIS_CAPACITY"] = _PHOTOSYNTHESIS_CAPACITY;
+    default_settings["constants"]["INITIAL_NUM_OF_ORGANISMS"] = _INITIAL_NUM_OF_ORGANISMS;
+    default_settings["constants"]["MAX_LIFESPAN"] = _MAX_LIFESPAN;
+    default_settings["constants"]["PROCREATION_PROBABILITY"] = _PROCREATION_PROBABILITY;
+    default_settings["constants"]["INITIAL_ENERGY_RESERVE"] = _INITIAL_ENERGY_RESERVE;
+    default_settings["constants"]["BIOTOPE_SETTINGS"] = _BIOTOPE_SETTINGS;
     default_settings["state"]["time"] = 0;
     
     ostringstream str_random;
