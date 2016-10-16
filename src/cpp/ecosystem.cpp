@@ -300,22 +300,15 @@ void Ecosystem::_initializeBiotope() {
 * It is separately done for (1) plants, (2) herbivores and (3) carnivores.
 */
 void Ecosystem::_initializeOrganisms() {
-    // Create and add plants
-    for (int i = 0; i < this->_initial_num_plants; i++) {
-        tuple<int, int> rand_location = this->_getRandomFreeLocation();
-        this->addOrganism(new Organism(rand_location, this, PLANT, INITIAL_ENERGY_RESERVE));
-    }
-
-    // Create and add herbivores
-    for (int i = 0; i < this->_initial_num_herbivores; i++) {
-        tuple<int, int> rand_location = this->_getRandomFreeLocation();
-        this->addOrganism(new Organism(rand_location, this, HERBIVORE, INITIAL_ENERGY_RESERVE));
-    }
-
-    // Create and add carnivores
-    for (int i = 0; i < this->_initial_num_carnivores; i++) {
-        tuple<int, int> rand_location = this->_getRandomFreeLocation();
-        this->addOrganism(new Organism(rand_location, this, CARNIVORE, INITIAL_ENERGY_RESERVE));
+    // Create and add organisms
+    for (string SPECIES : settings_json["constants"]["SPECIES"])
+    {
+        int      NUMBER_OF_ORGANISMS = int(settings_json["constants"]["INITIAL_NUM_OF_ORGANISMS"][SPECIES]);
+        float INITIAL_ENERGY_RESERVE = int(settings_json["constants"]["INITIAL_ENERGY_RESERVE"]);
+        for (int i = 0; i < NUMBER_OF_ORGANISMS; i++) {
+            tuple<int, int> rand_location = this->_getRandomFreeLocation();
+            this->addOrganism(new Organism(rand_location, this, SPECIES, INITIAL_ENERGY_RESERVE));
+        }
     }
 }
 
@@ -371,17 +364,7 @@ void Ecosystem::_deleteDeadOrganisms() {
 */
 void Ecosystem::serialize(json& data_json) {
     // ecosystem data
-    data_json["constants"]["PLANT"] = PLANT;
-    data_json["constants"]["HERBIVORE"] = HERBIVORE;
-    data_json["constants"]["CARNIVORE"] = CARNIVORE;
-    data_json["constants"]["ENERGY_COST"] = ENERGY_COST;
-    data_json["constants"]["MINIMUM_ENERGY_REQUIRED_TO"] = MINIMUM_ENERGY_REQUIRED_TO;
-    data_json["constants"]["PHOTOSYNTHESIS_CAPACITY"] = PHOTOSYNTHESIS_CAPACITY;
-    data_json["constants"]["INITIAL_NUM_OF_ORGANISMS"] = INITIAL_NUM_OF_ORGANISMS;
-    data_json["constants"]["MAX_LIFESPAN"] = MAX_LIFESPAN;
-    data_json["constants"]["PROCREATION_PROBABILITY"] = PROCREATION_PROBABILITY;
-    data_json["constants"]["INITIAL_ENERGY_RESERVE"] = INITIAL_ENERGY_RESERVE;
-    data_json["constants"]["BIOTOPE_SETTINGS"] = BIOTOPE_SETTINGS;
+    data_json["constants"] = settings_json["constants"];
     data_json["state"]["time"] = this->time;
     ostringstream str_random;
     str_random << eng;
