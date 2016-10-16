@@ -148,12 +148,12 @@ static ValueTree createRootValueTree(json* settings_json_ptr)
     organisms_t.addChild(   procreation_probability_t,      -1, nullptr);
     organisms_t.addChild(   initial_num_of_organisms_t,     -1, nullptr);
     
-    /*   ¿Cómo se hace esto? Así da error:
-    biotope_settings_t.setOpen( false );
-    organisms_t.setOpen( false );
-    constraints_t.setOpen( false );
-    costs_t.setOpen( false );
-    /
+    //   ¿Cómo se hace esto? Así da error:
+    //biotope_settings_t.setOpen( false );
+    //organisms_t.setOpen( false );
+    //constraints_t.setOpen( false );
+    //costs_t.setOpen( false );
+    //
     
     vt.addChild (biotope_settings_t, -1, nullptr);
     vt.addChild (organisms_t, -1, nullptr);
@@ -169,8 +169,8 @@ class ValueTreeItem  : public TreeViewItem,
 private ValueTree::Listener
 {
 public:
-    ValueTreeItem (const ValueTree& v, SettingsComponent* parent_ec)
-    : tree (v), parent_ec (parent_ec)
+    ValueTreeItem (const ValueTree& v, SettingsComponent* parent_component)
+    : tree (v), parent_component (parent_component)
     {
         tree.addListener (this);
     }
@@ -209,14 +209,14 @@ public:
     
 private:
     ValueTree tree;
-    SettingsComponent* parent_ec;
+    SettingsComponent* parent_component;
     
     void refreshSubItems()
     {
         clearSubItems();
         
         for (int i = 0; i < tree.getNumChildren(); ++i)
-            addSubItem (new ValueTreeItem (tree.getChild (i), parent_ec));
+            addSubItem (new ValueTreeItem (tree.getChild (i), parent_component));
     }
     
     void valueTreePropertyChanged (ValueTree&, const Identifier&) override
@@ -224,7 +224,7 @@ private:
         repaintItem();
     }
     void itemClicked (const MouseEvent & 	e) override {
-        parent_ec->changeSelectedItem(this);
+        parent_component->changeSelectedItem(this);
     }
     void valueTreeChildAdded (ValueTree& parentTree, ValueTree&) override         { treeChildrenChanged (parentTree); }
     void valueTreeChildRemoved (ValueTree& parentTree, ValueTree&, int) override  { treeChildrenChanged (parentTree); }
