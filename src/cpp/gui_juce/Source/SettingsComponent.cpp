@@ -6,6 +6,7 @@
 //
 //
 
+#include <typeinfo>
 //#include <stdio.h>
 #include "SettingsComponent.h"
 
@@ -15,7 +16,7 @@ ValueTree createTree (const String& desc)
     t.setProperty ("name", desc, nullptr);
     return t;
 }
-
+/*
 static ValueTree createRandomTree (int& counter, int depth)
 {
     ValueTree t = createTree ("Item " + String (counter++));
@@ -50,153 +51,26 @@ static void addChildrenFromMap (ValueTree &vt, map<int, int> source_map) {
         cout << item.first << ": " << String (item.second) << "\n";
     }
 }
-
-static ValueTree createRootValueTree()
-{
-    ValueTree vt = createTree ("Settings");
-    return vt;
-}
-
-
-static ValueTree createBranchFromJSON(String root_name, json info_json)
+*/
+static ValueTree createTreeFromJSON(String root_name, json* info_json)
 {
     ValueTree vt = createTree (root_name);
-    for (json::iterator it = info_json.begin(); it != info_json.end(); ++it) {
+    for (json::iterator it = info_json->begin(); it != info_json->end(); ++it) {
         if (it.value().size() > 1) {
-            String child_tree_name = String (it.key());
-            ValueTree child_tree = createBranchFromJSON( child_tree_name, it.value() );
+            String child_tree_name = String ("it.key()");
+            ValueTree child_tree = createTreeFromJSON( child_tree_name, &it.value() );
             vt.addChild(child_tree, -1, nullptr);
         }
         else {
-            String child_tree_name = String( it.key() ) + ": " + it.value().get<String>();
-            ValueTree child_tree = createTree (child_tree_name);
+            stringstream item_name;
+            item_name << "it.key()" << ": " << it.value();
+            ValueTree child_tree = createTree (item_name.str());
             vt.addChild(child_tree, -1, nullptr);
         }
         
     }
     return vt;
 }
-
-static ValueTree createRootValueTree(json* settings_json_ptr)
-{
-    ValueTree vt = createTree ("Settings (from createRootValueTree)");
-    return vt;
-    /*
-    ValueTree vt = createTree ("Settings");
-    json root = *settings_json_ptr;
-
-    root["pr"] = "hello!";
-    
-    root["pr2"] = {"d", "e"};
-        
-    for (json::iterator it = root.begin(); it != root.end(); ++it) {
-        //ValueTree childTree = createTree (String (it.key()) + ": " + String (it.value()) );
-        if (it.value().size() < 2) {
-            String child_tree_name = String( it.key() ) + ": " + it.value().get<String>();
-            std::cout << child_tree_name << "\n\n\n\n";
-            std::cout << it.value() << "\n\n\n\n";
-        }
-        
-    }
-    
-    return vt;
-    */
-    //return createBranchFromJSON("Settings", *settings_json_ptr);
-}
-/*
-static ValueTree createRootValueTree(json* settings_json_ptr)
-{
-    PLANT = "P";
-    HERBIVORE = "H";
-    CARNIVORE = "C";
-
-    ENERGY_COST = {
-        {"to have the capability of moving", 0.5f},
-        {"to move", 5.0f},
-        {"to have the capability of hunting", 1.0f},
-        {"to hunt", 10.0f},
-        {"to have the capability of procreating", 0.0f},
-        {"to procreate", 10.0f},
-    };
-    
-    MINIMUM_ENERGY_REQUIRED_TO = {
-        {"move", 100.0f},
-        {"hunt", 100.0f},
-        {"procreate", 100.0f},
-    };
-    
-    PHOTOSYNTHESIS_CAPACITY = {
-        {PLANT, 10.0f},
-        {HERBIVORE, 0.0f},
-        {CARNIVORE, 0.0f}
-    };
-    
-    // Definition of gens grouped by species
-    MAX_LIFESPAN = {
-        {PLANT, 30},
-        {HERBIVORE, 50},
-        {CARNIVORE, 100}
-    };
-    
-    PROCREATION_PROBABILITY = {
-        {PLANT, 0.7f},
-        {HERBIVORE, 0.2f},
-        {CARNIVORE, 0.05f}
-    };
-    
-    INITIAL_NUM_OF_ORGANISMS = {
-        {PLANT, 30},
-        {HERBIVORE, 30},
-        {CARNIVORE, 30}
-    };
-    
-    BIOTOPE_SETTINGS = {
-        {"size_x", 200},
-        {"size_y", 200}
-    };
-
-    ValueTree energy_costs_t = createTree("Energy costs");
-    ValueTree minimum_energy_required_to_t = createTree("Minimum energy required to");
-    ValueTree photosynthesis_capacity_t = createTree("Photosynthesis capacity");
-    ValueTree max_lifespan_t = createTree("Max lifespan");
-    ValueTree procreation_probability_t = createTree("Procreation probability");
-    ValueTree initial_num_of_organisms_t = createTree("Initial number of organisms");
-    ValueTree biotope_settings_t = createTree("Biotope settings");
-    ValueTree organisms_t = createTree ("Organisms settings");
-    ValueTree constraints_t = createTree ("Constraints");
-    ValueTree costs_t = createTree ("Costs");
-    ValueTree vt = createTree ("Settings");
-    
-    addChildrenFromMap (energy_costs_t, ENERGY_COST);
-    addChildrenFromMap (minimum_energy_required_to_t, MINIMUM_ENERGY_REQUIRED_TO);
-    addChildrenFromMap (photosynthesis_capacity_t, PHOTOSYNTHESIS_CAPACITY);
-    addChildrenFromMap (max_lifespan_t, MAX_LIFESPAN);
-    addChildrenFromMap (procreation_probability_t, PROCREATION_PROBABILITY);
-    addChildrenFromMap (initial_num_of_organisms_t, INITIAL_NUM_OF_ORGANISMS);
-    addChildrenFromMap (biotope_settings_t, BIOTOPE_SETTINGS);
- 
-    costs_t.addChild(       energy_costs_t,                 -1, nullptr);
-    constraints_t.addChild( minimum_energy_required_to_t,   -1, nullptr);
-    organisms_t.addChild(   photosynthesis_capacity_t,      -1, nullptr);
-    organisms_t.addChild(   max_lifespan_t,                 -1, nullptr);
-    organisms_t.addChild(   procreation_probability_t,      -1, nullptr);
-    organisms_t.addChild(   initial_num_of_organisms_t,     -1, nullptr);
-    
-    //   ¿Cómo se hace esto? Así da error:
-    //biotope_settings_t.setOpen( false );
-    //organisms_t.setOpen( false );
-    //constraints_t.setOpen( false );
-    //costs_t.setOpen( false );
-    //
-    
-    vt.addChild (biotope_settings_t, -1, nullptr);
-    vt.addChild (organisms_t, -1, nullptr);
-    vt.addChild (constraints_t, -1, nullptr);
-    vt.addChild (costs_t, -1, nullptr);
-        
-    return vt;
-}
-*/
 
 
 class ValueTreeItem  : public TreeViewItem,
@@ -286,12 +160,12 @@ private:
  */
 SettingsComponent::SettingsComponent(MainContentComponent* _parent_component) {
     parent_component = _parent_component;
-    //settings_json = parent_component->experiment_interface->getSettings_json_ptr();
+    if (parent_component == nullptr)
     setOpaque (true);
     addAndMakeVisible(_tv);
     _tv.setDefaultOpenness (true);
     _tv.setMultiSelectEnabled (true);
-    _tv.setRootItem (rootItem = new ValueTreeItem (createRootValueTree(), this));
+    _tv.setRootItem (rootItem = new ValueTreeItem (createTree("Settings"), this));
     _tv.setColour (TreeView::backgroundColourId, Colours::white);
 }
 
@@ -328,7 +202,7 @@ void SettingsComponent::changeSelectedItem(ValueTreeItem* selectedItem) {
 
 void SettingsComponent::updateTree() {
     json* settings_json_ptr = parent_component->experiment_interface->getSettings_json_ptr();
-    _tv.setRootItem (rootItem = new ValueTreeItem (createRootValueTree(settings_json_ptr), this));
+    _tv.setRootItem (rootItem = new ValueTreeItem (createTreeFromJSON("Settings", settings_json_ptr), this));
     cout << "Focus gained";
 }
 
