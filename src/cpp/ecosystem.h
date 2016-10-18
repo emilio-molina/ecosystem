@@ -26,7 +26,8 @@ using json = nlohmann::json;
 
 extern vector<string> _SPECIES;
 extern string PLANT;      // typically "P"
-extern string HERBIVORE;  // typically "H"
+extern string HERBIVORE1;  // typically "H"
+extern string HERBIVORE2;  // typically "H"
 extern string CARNIVORE;  // typically "C"
 
 extern map<string, int> _BIOTOPE_SETTINGS;
