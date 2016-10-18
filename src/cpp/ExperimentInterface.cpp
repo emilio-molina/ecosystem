@@ -212,7 +212,7 @@ void ExperimentInterface::saveEcosystem() {
     stringstream data_uncompressed;
     stringstream data_compressed;
     data_uncompressed << data_json;
-    compressData(data_uncompressed,data_compressed);
+    compressData(data_uncompressed, data_compressed);
     //data_compressed << data_json;
 
     // export data

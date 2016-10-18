@@ -34,9 +34,9 @@ void set_default_settings()
     
     _ENERGY_COST = {
         {"to have the capability of moving", 0.5f},
-        {"to move", 5.0f},
-        {"to have the capability of hunting", 1.0f},
-        {"to hunt", 10.0f},
+        {"to move", 2.0f},
+        {"to have the capability of hunting", 0.0f},
+        {"to hunt", 1.0f},
         {"to have the capability of procreating", 0.0f},
         {"to procreate", 10.0f},
     };
@@ -62,7 +62,7 @@ void set_default_settings()
     
     _PROCREATION_PROBABILITY = {
         {PLANT, 0.7f},
-        {HERBIVORE, 0.2f},
+        {HERBIVORE, 0.1f},
         {CARNIVORE, 0.05f}
     };
     
@@ -115,7 +115,7 @@ Ecosystem::Ecosystem() {
     this->biotope_size_x = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_x"];
     this->biotope_size_y = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_y"];
     this->_initializeBiotope();
-    this->_initializeOrganisms(settings_json);
+    this->_initializeOrganisms();
     this->time = settings_json["state"]["time"];
     istringstream srandom;
     string str_random = settings_json["state"]["random_eng"];
@@ -128,13 +128,14 @@ Ecosystem::Ecosystem() {
 *
 * @param[in] settings_json JSON data with ecosystem screenshot
 */
-Ecosystem::Ecosystem(json settings_json_) {
+Ecosystem::Ecosystem(json data_json) {
 
-    settings_json = settings_json_;
+    settings_json["constants"] = data_json["constants"];
+    settings_json["state"] = data_json["state"];
     this->biotope_size_x = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_x"];
     this->biotope_size_y = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_y"];
     this->_initializeBiotope();
-    this->_initializeOrganisms(settings_json);
+    this->_initializeOrganisms(data_json);
     this->time = settings_json["state"]["time"];
     istringstream srandom;
     string str_random = settings_json["state"]["random_eng"];

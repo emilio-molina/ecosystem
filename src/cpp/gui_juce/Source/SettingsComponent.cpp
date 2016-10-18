@@ -57,13 +57,17 @@ static ValueTree createTreeFromJSON(String root_name, json* info_json)
     ValueTree vt = createTree (root_name);
     for (json::iterator it = info_json->begin(); it != info_json->end(); ++it) {
         if (it.value().size() > 1) {
-            String child_tree_name = String ("it.key()");
+            stringstream item_name;
+            item_name << "big " << &it << ": " << it.value();
+            //String child_tree_name = String ("it.key()");
+            String child_tree_name = item_name.str();
             ValueTree child_tree = createTreeFromJSON( child_tree_name, &it.value() );
             vt.addChild(child_tree, -1, nullptr);
         }
         else {
             stringstream item_name;
-            item_name << "it.key()" << ": " << it.value();
+            //item_name << "it.key()" << ": " << it.value();
+            item_name << &it << ": " << it.value();
             ValueTree child_tree = createTree (item_name.str());
             vt.addChild(child_tree, -1, nullptr);
         }
@@ -197,7 +201,6 @@ SettingsComponent::~SettingsComponent() {};
 void SettingsComponent::changeSelectedItem(ValueTreeItem* selectedItem) {
     this->selectedItem = selectedItem;
     std::cout << selectedItem->getUniqueName() << std::endl;
-    focusGained(focusChangedDirectly);
 }
 
 void SettingsComponent::updateTree() {
