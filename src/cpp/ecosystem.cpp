@@ -81,9 +81,6 @@ void set_default_settings()
 
     
     default_settings["constants"]["SPECIES"] = _SPECIES;
-    default_settings["constants"]["PLANT"] = PLANT;
-    default_settings["constants"]["HERBIVORE"] = HERBIVORE;
-    default_settings["constants"]["CARNIVORE"] = CARNIVORE;
     default_settings["constants"]["ENERGY_COST"] = _ENERGY_COST;
     default_settings["constants"]["MINIMUM_ENERGY_REQUIRED_TO"] = _MINIMUM_ENERGY_REQUIRED_TO;
     default_settings["constants"]["PHOTOSYNTHESIS_CAPACITY"] = _PHOTOSYNTHESIS_CAPACITY;

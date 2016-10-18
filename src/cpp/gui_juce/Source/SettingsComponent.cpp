@@ -58,20 +58,21 @@ static ValueTree createTreeFromJSON(String root_name, json* info_json)
     for (json::iterator it = info_json->begin(); it != info_json->end(); ++it) {
         if (it.value().size() > 1) {
             stringstream item_name;
-            item_name << "big " << &it << ": " << it.value();
-            //String child_tree_name = String ("it.key()");
-            String child_tree_name = item_name.str();
-            ValueTree child_tree = createTreeFromJSON( child_tree_name, &it.value() );
+            item_name << it.key() << ":";
+            ValueTree child_tree = createTreeFromJSON(item_name.str(), &it.value() );
             vt.addChild(child_tree, -1, nullptr);
         }
         else {
             stringstream item_name;
-            //item_name << "it.key()" << ": " << it.value();
-            item_name << &it << ": " << it.value();
+            try {
+                item_name << it.key() << ": " << it.value();
+            }
+            catch(std::domain_error) {
+                item_name << it.value();
+            }            
             ValueTree child_tree = createTree (item_name.str());
             vt.addChild(child_tree, -1, nullptr);
         }
-        
     }
     return vt;
 }
