@@ -28,7 +28,8 @@ extern vector<string> _SPECIES;
 extern string PLANT;      // typically "P"
 extern string HERBIVORE1;  // typically "H"
 extern string HERBIVORE2;  // typically "H"
-extern string CARNIVORE;  // typically "C"
+extern string CARNIVORE1;  // typically "C"
+extern string CARNIVORE2;  // typically "C"
 
 extern map<string, int> _BIOTOPE_SETTINGS;
 extern map<string, float> _ENERGY_COST;

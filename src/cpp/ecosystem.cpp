@@ -15,7 +15,8 @@ vector<string> _SPECIES;
 string PLANT;
 string HERBIVORE1;
 string HERBIVORE2;
-string CARNIVORE;
+string CARNIVORE1;
+string CARNIVORE2;
 map<string, int> _BIOTOPE_SETTINGS;
 map<string, float> _ENERGY_COST;
 map<string, float> _MINIMUM_ENERGY_REQUIRED_TO;
@@ -30,9 +31,10 @@ void set_default_settings()
     PLANT = "P";
     HERBIVORE1 = "H1";
     HERBIVORE2 = "H2";
-    CARNIVORE = "C";
+    CARNIVORE1 = "C1";
+    CARNIVORE2 = "C2";
     
-    _SPECIES = {PLANT, HERBIVORE1, HERBIVORE2, CARNIVORE};
+    _SPECIES = {PLANT, HERBIVORE1, HERBIVORE2, CARNIVORE1, CARNIVORE2};
     
     _ENERGY_COST = {
         {"to have the capability of moving", 0.5f},
@@ -53,7 +55,8 @@ void set_default_settings()
         {PLANT, 10.0f},
         {HERBIVORE1, 0.0f},
         {HERBIVORE2, 0.0f},
-        {CARNIVORE, 0.0f}
+        {CARNIVORE1, 0.0f},
+        {CARNIVORE2, 0.0f}
     };
     
     // Definition of gens grouped by species
@@ -61,21 +64,24 @@ void set_default_settings()
         {PLANT, 30},
         {HERBIVORE1, 50},
         {HERBIVORE2, 50},
-        {CARNIVORE, 100}
+        {CARNIVORE1, 100},
+        {CARNIVORE2, 100}
     };
     
     _PROCREATION_PROBABILITY = {
         {PLANT, 0.7f},
         {HERBIVORE1, 0.2f},
         {HERBIVORE2, 0.2f},
-        {CARNIVORE, 0.05f}
+        {CARNIVORE1, 0.05f},
+        {CARNIVORE2, 0.05f}
     };
     
     _INITIAL_NUM_OF_ORGANISMS = {
         {PLANT, 30},
         {HERBIVORE1, 30},
         {HERBIVORE2, 30},
-        {CARNIVORE, 30}
+        {CARNIVORE1, 30},
+        {CARNIVORE2, 30}
     };
     
     _BIOTOPE_SETTINGS = {
@@ -527,7 +533,11 @@ void Organism::_do_move() {
 */
 bool Organism::_is_eatable(Organism* prey) {
     bool _is_eatable = false;
-    if ((this->species == CARNIVORE) && ((prey->species == HERBIVORE1) || (prey->species == HERBIVORE2)))
+    //if ((this->species == CARNIVORE) && ((prey->species == HERBIVORE1) || (prey->species == HERBIVORE2)))
+    //    _is_eatable = true;
+    if ((this->species == CARNIVORE1) && (prey->species == HERBIVORE1))
+        _is_eatable = true;
+    if ((this->species == CARNIVORE2) && (prey->species == HERBIVORE2))
         _is_eatable = true;
     if (((this->species == HERBIVORE1) || (this->species == HERBIVORE2)) && (prey->species == PLANT))
         _is_eatable = true;
