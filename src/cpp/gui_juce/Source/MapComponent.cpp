@@ -74,6 +74,16 @@ void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<in
             };
             v1 = v2;
         }
+        if (ORGANISM_TYPE == "C3") {
+            Vertex v2 =
+            {
+                {x, y, 1.0f},
+                { 0.5f, 0.5f, 0.5f},
+                { 0.0f, 0.5f, 1.0f, 1.0f },  // light blue
+                { 0.5f, 0.5f,}
+            };
+            v1 = v2;
+        }
         indices.add(vertex_counter);
         vertices.add(v1);
         vertex_counter += 1;

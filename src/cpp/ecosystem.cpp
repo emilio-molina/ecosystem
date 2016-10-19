@@ -17,6 +17,7 @@ string HERBIVORE1;
 string HERBIVORE2;
 string CARNIVORE1;
 string CARNIVORE2;
+string CARNIVORE3;
 map<string, int> _BIOTOPE_SETTINGS;
 map<string, float> _ENERGY_COST;
 map<string, float> _MINIMUM_ENERGY_REQUIRED_TO;
@@ -33,16 +34,17 @@ void set_default_settings()
     HERBIVORE2 = "H2";
     CARNIVORE1 = "C1";
     CARNIVORE2 = "C2";
+    CARNIVORE3 = "C3";
     
-    _SPECIES = {PLANT, HERBIVORE1, HERBIVORE2, CARNIVORE1, CARNIVORE2};
+    _SPECIES = {PLANT, HERBIVORE1, HERBIVORE2, CARNIVORE1, CARNIVORE2, CARNIVORE3};
     
     _ENERGY_COST = {
-        {"to have the capability of moving", 0.5f},
-        {"to move", 2.0f},
-        {"to have the capability of hunting", 1.0f},
-        {"to hunt", 1.0f},
-        {"to have the capability of procreating", 0.0f},
-        {"to procreate", 10.0f},
+        {"to have the capability of moving", 0.0f},
+        {"to move", 4.0f},
+        {"to have the capability of hunting", 0.0f},
+        {"to hunt", 0.0f},
+        {"to have the capability of procreating", 0.002f},
+        {"to procreate", 5.0f},
     };
     
     _MINIMUM_ENERGY_REQUIRED_TO = {
@@ -56,7 +58,8 @@ void set_default_settings()
         {HERBIVORE1, 0.0f},
         {HERBIVORE2, 0.0f},
         {CARNIVORE1, 0.0f},
-        {CARNIVORE2, 0.0f}
+        {CARNIVORE2, 0.0f},
+        {CARNIVORE3, 0.0f}
     };
     
     // Definition of gens grouped by species
@@ -65,7 +68,8 @@ void set_default_settings()
         {HERBIVORE1, 50},
         {HERBIVORE2, 50},
         {CARNIVORE1, 100},
-        {CARNIVORE2, 100}
+        {CARNIVORE2, 100},
+        {CARNIVORE3, 100}
     };
     
     _PROCREATION_PROBABILITY = {
@@ -73,15 +77,17 @@ void set_default_settings()
         {HERBIVORE1, 0.2f},
         {HERBIVORE2, 0.2f},
         {CARNIVORE1, 0.05f},
-        {CARNIVORE2, 0.05f}
+        {CARNIVORE2, 0.05f},
+        {CARNIVORE3, 0.05f}
     };
     
     _INITIAL_NUM_OF_ORGANISMS = {
-        {PLANT, 30},
+        {PLANT, 300},
         {HERBIVORE1, 30},
         {HERBIVORE2, 30},
         {CARNIVORE1, 30},
-        {CARNIVORE2, 30}
+        {CARNIVORE2, 30},
+        {CARNIVORE3, 30}
     };
     
     _BIOTOPE_SETTINGS = {
@@ -500,7 +506,7 @@ void Organism::_do_spend_energy(float amount_of_energy) {
 * 5. notify ecosystem through ecosystem->updateOrganismLocation(this)
 */
 void Organism::_do_move() {
-    if (this->species==PLANT)
+    if ((this->species==PLANT) || (this->species==CARNIVORE3))
         return;
 
     // If it is energy dependent
@@ -538,6 +544,8 @@ bool Organism::_is_eatable(Organism* prey) {
     if ((this->species == CARNIVORE1) && (prey->species == HERBIVORE1))
         _is_eatable = true;
     if ((this->species == CARNIVORE2) && (prey->species == HERBIVORE2))
+        _is_eatable = true;
+    if ((this->species == CARNIVORE3) && ((prey->species == CARNIVORE1) || (prey->species == HERBIVORE1) || (prey->species == HERBIVORE2)))
         _is_eatable = true;
     if (((this->species == HERBIVORE1) || (this->species == HERBIVORE2)) && (prey->species == PLANT))
         _is_eatable = true;
