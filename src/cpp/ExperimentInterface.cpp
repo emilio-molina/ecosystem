@@ -168,6 +168,12 @@ Ecosystem* ExperimentInterface::getEcosystemPointer() {
     return _ecosystem;
 }
 
+/** @brief Get a copy of _ecosystem.settings_json
+     */
+json* ExperimentInterface::getSettings_json_ptr() {
+    return _ecosystem->getSettings_json_ptr();
+}
+
 /** @brief Make ecosystem evolve one time slice
  */
 void ExperimentInterface::evolve() {
@@ -206,8 +212,7 @@ void ExperimentInterface::saveEcosystem() {
     stringstream data_uncompressed;
     stringstream data_compressed;
     data_uncompressed << data_json;
-    compressData(data_uncompressed,data_compressed);
-    //data_compressed << data_json;
+    compressData(data_uncompressed, data_compressed);
 
     // export data
     ofstream f_data;
@@ -282,7 +287,6 @@ void ExperimentInterface::loadEcosystem(int time_slice) {
     stringstream decompressed;
     compressed << f_data_json.rdbuf();
     decompressData(compressed, decompressed);
-    //decompressed << f_data_json.rdbuf();
     json data_json;
     decompressed >> data_json;
     f_data_json.close();

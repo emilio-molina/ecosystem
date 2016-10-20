@@ -34,7 +34,7 @@ void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<in
             };
             v1 = v2;
         }
-        if (ORGANISM_TYPE == "H") {
+        if (ORGANISM_TYPE == "H1") {
             Vertex v2 =
             {
                 {x, y, 1.0f},
@@ -44,12 +44,42 @@ void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<in
             };
             v1 = v2;
         }
-        if (ORGANISM_TYPE == "C") {
+        if (ORGANISM_TYPE == "H2") {
+            Vertex v2 =
+            {
+                {x, y, 1.0f},
+                { 0.5f, 0.5f, 0.5f},
+                { 0.2f, 0.2f, 1.0f, 1.0f },  // blue
+                { 0.5f, 0.5f,}
+            };
+            v1 = v2;
+        }
+        if (ORGANISM_TYPE == "C1") {
             Vertex v2 =
             {
                 {x, y, 1.0f},
                 { 0.5f, 0.5f, 0.5f},
                 { 1.0f, 0.0f, 0.0f, 1.0f },  // red
+                { 0.5f, 0.5f,}
+            };
+            v1 = v2;
+        }
+        if (ORGANISM_TYPE == "C2") {
+            Vertex v2 =
+            {
+                {x, y, 1.0f},
+                { 0.5f, 0.5f, 0.5f},
+                { 1.0f, 0.5f, 0.0f, 1.0f },  // orange
+                { 0.5f, 0.5f,}
+            };
+            v1 = v2;
+        }
+        if (ORGANISM_TYPE == "C3") {
+            Vertex v2 =
+            {
+                {x, y, 1.0f},
+                { 0.5f, 0.5f, 0.5f},
+                { 0.0f, 0.5f, 1.0f, 1.0f },  // light blue
                 { 0.5f, 0.5f,}
             };
             v1 = v2;

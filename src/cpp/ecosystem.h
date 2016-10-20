@@ -24,18 +24,22 @@ namespace fs = boost::filesystem;
 using namespace std;
 using json = nlohmann::json;
 
+extern vector<string> _SPECIES;
 extern string PLANT;      // typically "P"
-extern string HERBIVORE;  // typically "H"
-extern string CARNIVORE;  // typically "C"
+extern string HERBIVORE1;  // typically "H"
+extern string HERBIVORE2;  // typically "H"
+extern string CARNIVORE1;  // typically "C"
+extern string CARNIVORE2;  // typically "C"
+extern string CARNIVORE3;  // typically "C"
 
-extern map<string, int> BIOTOPE_SETTINGS;
-extern map<string, float> ENERGY_COST;
-extern map<string, float> MINIMUM_ENERGY_REQUIRED_TO;
-extern map<string, float> PHOTOSYNTHESIS_CAPACITY;
-extern map<string, int> INITIAL_NUM_OF_ORGANISMS;
-extern map<string, int> MAX_LIFESPAN;
-extern map<string, float> PROCREATION_PROBABILITY;
-extern float INITIAL_ENERGY_RESERVE;
+extern map<string, int> _BIOTOPE_SETTINGS;
+extern map<string, float> _ENERGY_COST;
+extern map<string, float> _MINIMUM_ENERGY_REQUIRED_TO;
+extern map<string, float> _PHOTOSYNTHESIS_CAPACITY;
+extern map<string, int> _INITIAL_NUM_OF_ORGANISMS;
+extern map<string, int> _MAX_LIFESPAN;
+extern map<string, float> _PROCREATION_PROBABILITY;
+extern float _INITIAL_ENERGY_RESERVE;
 
 
 //************ HEADERS
@@ -50,6 +54,11 @@ class Organism;
 class Ecosystem {
 public:
     // Public attributes
+    
+    /** @brief All settings stored in the attribute settings_json:
+     */
+    json settings_json;
+    
     /** @brief Current time
     */
     int time;
@@ -77,7 +86,8 @@ public:
 
     // Public methods (documentation in ecosystem.cpp)
     Ecosystem();
-    Ecosystem(json data_json);
+    Ecosystem(json data_json_);
+    json* getSettings_json_ptr();
     void addOrganism(Organism* organism);
     void removeOrganism(Organism* organism);
     void updateOrganismLocation(Organism* organism);
@@ -90,18 +100,6 @@ private:
     /** @brief Vector of dead organisms to be freed
     */
     vector<Organism*> _dead_organisms;
-
-    /** @brief Initial number of plants in ecosystem
-    */
-    int _initial_num_plants;
-
-    /** @brief Initial number of herbivores in ecosystem
-    */
-    int _initial_num_herbivores;
-
-    /** @brief Initial number of carnivores in ecosystem
-    */
-    int _initial_num_carnivores;
 
     // Private methods (documentation in ecosystem.cpp)
     void _initializeBiotope();

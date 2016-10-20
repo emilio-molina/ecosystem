@@ -36,6 +36,7 @@ public:
     void unlockEcosystem();
     void saveEcosystem();
     void loadEcosystem(int time_slice);
+    json* getSettings_json_ptr();
     string getExperimentFolder();
     int getRunningTime();
     string getExperimentSize();
