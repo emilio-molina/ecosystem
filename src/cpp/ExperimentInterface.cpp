@@ -213,7 +213,6 @@ void ExperimentInterface::saveEcosystem() {
     stringstream data_compressed;
     data_uncompressed << data_json;
     compressData(data_uncompressed, data_compressed);
-    //data_compressed << data_json;
 
     // export data
     ofstream f_data;
@@ -288,7 +287,6 @@ void ExperimentInterface::loadEcosystem(int time_slice) {
     stringstream decompressed;
     compressed << f_data_json.rdbuf();
     decompressData(compressed, decompressed);
-    //decompressed << f_data_json.rdbuf();
     json data_json;
     decompressed >> data_json;
     f_data_json.close();

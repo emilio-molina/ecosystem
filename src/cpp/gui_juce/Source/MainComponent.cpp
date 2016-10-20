@@ -89,8 +89,6 @@ void MainContentComponent::timerCallback() {  // evolve ecosystem
  */
 void MainContentComponent::loadEcosystemInterface(ExperimentInterface* ei) {
     experiment_interface = ei;
-    //_tabbedComponent->addTab("View", Colour::fromFloatRGBA(0.0f, 0.077f, 0.217f, 1.0f), _map_component, true);
-    //_tabbedComponent->addTab("Settings", Colour::fromFloatRGBA(0.7f, 0.777f, 0.517f, 1.0f), _settings_component, true);
     StringArray tab_names = _tabbedComponent->getTabNames();
     if (!tab_names.contains("View"))
     {

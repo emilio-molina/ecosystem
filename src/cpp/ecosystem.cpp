@@ -125,7 +125,6 @@ void set_default_settings()
 Ecosystem::Ecosystem() {
     
     set_default_settings();
-    //Ecosystem(default_settings);
     settings_json = default_settings;
     this->biotope_size_x = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_x"];
     this->biotope_size_y = settings_json["constants"]["BIOTOPE_SETTINGS"]["size_y"];

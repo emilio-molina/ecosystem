@@ -7,7 +7,6 @@
 //
 
 #include <typeinfo>
-//#include <stdio.h>
 #include "SettingsComponent.h"
 
 ValueTree createTree (const String& desc)
@@ -16,42 +15,7 @@ ValueTree createTree (const String& desc)
     t.setProperty ("name", desc, nullptr);
     return t;
 }
-/*
-static ValueTree createRandomTree (int& counter, int depth)
-{
-    ValueTree t = createTree ("Item " + String (counter++));
-    
-    if (depth < 3)
-        for (int i = 1 + Random::getSystemRandom().nextInt (7); --i >= 0;)
-            t.addChild (createRandomTree (counter, depth + 1), -1, nullptr);
-    
-    return t;
-}
 
-static void addChildrenFromMap (ValueTree &vt, map<string, float> source_map) {
-    for (auto item : source_map) {
-        ValueTree childrenTree = createTree (item.first + ": " + String (item.second));
-        vt.addChild(childrenTree, -1, nullptr);
-        cout << item.first + ": " + String (item.second);
-    }
-}
-
-static void addChildrenFromMap (ValueTree &vt, map<string, int> source_map) {
-    for (auto item : source_map) {
-        ValueTree childrenTree = createTree (item.first + ": " + String (item.second));
-        vt.addChild(childrenTree, -1, nullptr);
-        cout << item.first + ": " + String (item.second);
-    }
-}
-
-static void addChildrenFromMap (ValueTree &vt, map<int, int> source_map) {
-    for (auto item : source_map) {
-        ValueTree childrenTree = createTree (String (item.first) + ": " + String (item.second));
-        vt.addChild(childrenTree, -1, nullptr);
-        cout << item.first << ": " << String (item.second) << "\n";
-    }
-}
-*/
 static ValueTree createTreeFromJSON(String root_name, json* info_json)
 {
     ValueTree vt = createTree (root_name);
