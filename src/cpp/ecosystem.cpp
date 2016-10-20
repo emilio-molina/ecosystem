@@ -544,7 +544,7 @@ bool Organism::_is_eatable(Organism* prey) {
         _is_eatable = true;
     if ((this->species == CARNIVORE2) && (prey->species == HERBIVORE2))
         _is_eatable = true;
-    if ((this->species == CARNIVORE3) && ((prey->species == CARNIVORE1) || (prey->species == HERBIVORE1) || (prey->species == HERBIVORE2)))
+    if ((this->species == CARNIVORE3) && ((prey->species == HERBIVORE1) || (prey->species == HERBIVORE2)))
         _is_eatable = true;
     if (((this->species == HERBIVORE1) || (this->species == HERBIVORE2)) && (prey->species == PLANT))
         _is_eatable = true;
