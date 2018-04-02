@@ -38,7 +38,7 @@ MainContentComponent::MainContentComponent()
     running = false;
     experiment_interface = nullptr;
     experiment_has_changed = false;
-    _backupCounter = 0;
+    backupCounter = 0;
 }
 
 /** @brief MainContentComponent destructor
@@ -77,9 +77,9 @@ void MainContentComponent::resized()
  */
 void MainContentComponent::timerCallback() {  // evolve ecosystem
     if (this->running) {
-        if (_backupCounter == 0)
+        if (backupCounter == 0)
             experiment_interface->saveEcosystem();
-        _backupCounter = (_backupCounter + 1) % 10;
+        backupCounter = (backupCounter + 1) % 10;
         experiment_interface->evolve();
         experiment_has_changed = true;
         _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups().back());

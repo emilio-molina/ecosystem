@@ -303,6 +303,7 @@ void MapComponent::buttonClicked (Button* b) {
         ei->loadEcosystem(_timeHistory);
         parent_component->experiment_has_changed = true;
         setRunningTime(ei->getRunningTime());
+        parent_component->backupCounter = ei->getRunningTime();
     }
 }
 
@@ -328,7 +329,7 @@ void MapComponent::_toggleAutoForward() {
  * @param[in] max_time Value of maximum time
  */
 void MapComponent::setMaxTime(int max_time) {
-    _timeSlider.setRange(0, max(1, max_time - 1), 10);
+    _timeSlider.setRange(0, max(1, max_time), 10);
     _max_time = max_time;
 }
 
@@ -351,7 +352,7 @@ void MapComponent::_increaseTimeHistory(int n) {
         _timeHistory = 0;
     if (_timeHistory > _max_time)
         _timeHistory = _max_time;
-    _timeSlider.setValue(_timeHistory);
+    _timeSlider.setValue(_timeHistory - 1);
     parent_component->experiment_has_changed = true;
 }
 

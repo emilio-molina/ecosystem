@@ -49,7 +49,7 @@ public:
     /** @brief True if ecosystem is running
      */
     bool running;
-    
+    int backupCounter;
     // Public methods (documentation in MainComponent.cpp)
     MainContentComponent();
     ~MainContentComponent();
@@ -57,7 +57,6 @@ public:
     void resized();
     void loadEcosystemInterface(ExperimentInterface* ei);
 private:
-    int _backupCounter;
     /** @brief Pointer to MapComponent (where ecosystem is rendered)
      */
     MapComponent* _map_component;
