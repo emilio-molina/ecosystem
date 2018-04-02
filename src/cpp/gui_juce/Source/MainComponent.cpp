@@ -47,6 +47,9 @@ MainContentComponent::MainContentComponent()
 MainContentComponent::~MainContentComponent()
 {
     delete experiment_interface;
+    delete _settings_component;
+    delete _map_component;
+    delete _experiment_component;
 }
 
 /** @brief Override method to paint JUCE component

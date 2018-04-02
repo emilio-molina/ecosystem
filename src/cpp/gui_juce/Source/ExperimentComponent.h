@@ -16,7 +16,7 @@ using json = nlohmann::json;
 
 /** @brief Component for experiment tab
  */
-class ExperimentComponent : public Component, public ButtonListener {
+class ExperimentComponent : public Component, public Button::Listener {
 public:
     /** @brief Pointer to parent MainContentComponent
      */

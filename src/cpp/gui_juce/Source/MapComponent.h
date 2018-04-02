@@ -55,7 +55,7 @@ void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<in
 /** @brief Component able to render ecosystem using OpenGL
  *
  */
-class MapComponent   : public OpenGLAppComponent, public KeyListener, public SliderListener, public ButtonListener, private Timer
+class MapComponent   : public OpenGLAppComponent, public KeyListener, public Slider::Listener, public Button::Listener, private Timer
 {
 public:
     /** @brief Pointer to parent MainContentComponent

@@ -117,7 +117,7 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     addAndMakeVisible(_ecosystemInfoLabel);
     _ecosystemInfoLabel.setText("", juce::NotificationType::dontSendNotification);
     _ecosystemInfoLabel.setColour(Label::textColourId, Colours::white);
-    _timeSlider.setRange(0, 0, 10);
+    _timeSlider.setRange(0, 1, 10);
     _timeSlider.setVelocityBasedMode(true);
     _timeSlider.addListener(this);
     _timeSlider.setEnabled(false);
@@ -152,7 +152,7 @@ Matrix3D<float> MapComponent::getViewMatrix() const
 {
     Matrix3D<float> viewMatrix (Vector3D<float> (0.0f, -0.25f, -2.5f));
     Matrix3D<float> rotationMatrix
-    = viewMatrix.rotated (Vector3D<float> (-0.5f, 0.0f, 0.0f));
+    = viewMatrix.rotation (Vector3D<float> (-0.5f, 0.0f, 0.0f));
     
     return rotationMatrix * viewMatrix;
 }
@@ -328,7 +328,7 @@ void MapComponent::_toggleAutoForward() {
  * @param[in] max_time Value of maximum time
  */
 void MapComponent::setMaxTime(int max_time) {
-    _timeSlider.setRange(0, max_time - 1, 10);
+    _timeSlider.setRange(0, max(1, max_time - 1), 10);
     _max_time = max_time;
 }
 

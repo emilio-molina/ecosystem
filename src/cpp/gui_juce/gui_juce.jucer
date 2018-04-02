@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="PEdoYV" name="gui_juce" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.gui_juce" includeBinaryInAppConfig="1"
-              jucerVersion="4.2.4">
+              jucerVersion="5.3.0" headerPath="/usr/local/Cellar/boost/1.64.0_1/include/&#10;../../..">
   <MAINGROUP id="g4NTly" name="gui_juce">
     <GROUP id="{E5B8CE86-4278-2FD0-C4D2-5EF0BCDE89FB}" name="Source">
       <FILE id="NPfGRG" name="SettingsComponent.cpp" compile="1" resource="0"
@@ -33,9 +33,11 @@
     <XCODE_MAC targetFolder="Builds/MacOSX" extraLinkerFlags="" externalLibraries="boost_filesystem&#10;boost_system&#10;boost_iostreams">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="gui_juce"
-                       headerPath="../&#10;/usr/local/Cellar/boost/1.57.0/include" libraryPath="/usr/local/Cellar/boost/1.57.0/lib/"/>
+                       headerPath="../&#10;/usr/local/Cellar/boost/1.57.0/include&#10;/usr/local/Cellar/boost/1.63.0/include&#10;/usr/local/Cellar/boost/1.64.0_1/include"
+                       libraryPath="/usr/local/Cellar/boost/1.57.0/lib/&#10;/usr/local/Cellar/boost/1.63.0/lib&#10;/usr/local/Cellar/boost/1.64.0_1/lib"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="gui_juce"
-                       headerPath="../&#10;/usr/local/Cellar/boost/1.57.0/include" libraryPath="/usr/local/Cellar/boost/1.57.0/lib/"/>
+                       headerPath="../&#10;/usr/local/Cellar/boost/1.57.0/include&#10;/usr/local/Cellar/boost/1.63.0/include&#10;/usr/local/Cellar/boost/1.64.0_1/include"
+                       libraryPath="/usr/local/Cellar/boost/1.57.0/lib/&#10;/usr/local/Cellar/boost/1.63.0/lib&#10;/usr/local/Cellar/boost/1.64.0_1/lib"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../../JUCE/modules"/>

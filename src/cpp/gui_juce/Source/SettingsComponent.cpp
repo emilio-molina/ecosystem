@@ -51,8 +51,7 @@ public:
     {
         tree.addListener (this);
     }
-    
-    
+
     String getUniqueName() const override
     {
         return tree["name"].toString();
