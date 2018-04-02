@@ -150,10 +150,11 @@ Matrix3D<float> MapComponent::getProjectionMatrix() const
 
 Matrix3D<float> MapComponent::getViewMatrix() const
 {
-    Matrix3D<float> viewMatrix (Vector3D<float> (0.0f, -0.25f, -2.5f));
+    //Matrix3D<float> viewMatrix (Vector3D<float> (0.0f, -0.25f, -2.5f));
+    Matrix3D<float> viewMatrix (Vector3D<float> (0.0f, 0.0f, -3.0f));
     Matrix3D<float> rotationMatrix
-    = viewMatrix.rotation (Vector3D<float> (-0.5f, 0.0f, 0.0f));
-    
+    //= viewMatrix.rotation (Vector3D<float> (-0.5f, 0.0f, 0.0f));
+    = viewMatrix.rotation (Vector3D<float> (-0.0f, 0.0f, 0.0f));
     return rotationMatrix * viewMatrix;
 }
 
