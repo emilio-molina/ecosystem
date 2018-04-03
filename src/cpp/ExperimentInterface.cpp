@@ -178,6 +178,8 @@ json* ExperimentInterface::getSettings_json_ptr() {
  */
 void ExperimentInterface::evolve() {
     _ecosystem->evolve();
+    if (getRunningTime() % getBackupPeriod() == 0)
+        saveEcosystem();
 }
 
 /** @brief Lock ecosystem to avoid concurrency conflicts
@@ -328,4 +330,10 @@ int ExperimentInterface::getRunningTime() {
         return 0;
     else
         return _ecosystem->time;
+}
+
+/** @brief Get backup period
+ */
+int ExperimentInterface::getBackupPeriod() {
+    return (*getSettings_json_ptr())["constants"]["BACKUP_PERIOD"];
 }

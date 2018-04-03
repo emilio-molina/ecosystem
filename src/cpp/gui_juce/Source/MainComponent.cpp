@@ -99,8 +99,6 @@ void MainContentComponent::resized()
  */
 void MainContentComponent::timerCallback() {  // evolve ecosystem
     if (this->running) {
-        if (experiment_interface->getRunningTime() % 10 == 0)
-            experiment_interface->saveEcosystem();
         experiment_interface->evolve();
         experiment_has_changed = true;
         _map_component->setMaxTime(experiment_interface->getTimesHavingCompleteBackups().back());

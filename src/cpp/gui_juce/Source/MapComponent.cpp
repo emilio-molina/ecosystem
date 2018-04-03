@@ -117,7 +117,7 @@ MapComponent::MapComponent(MainContentComponent* parent_component)
     addAndMakeVisible(_ecosystemInfoLabel);
     _ecosystemInfoLabel.setText("", juce::NotificationType::dontSendNotification);
     _ecosystemInfoLabel.setColour(Label::textColourId, Colours::white);
-    _timeSlider.setRange(0, 1, 10);
+    _timeSlider.setRange(0, 1, 1);
     _timeSlider.setVelocityBasedMode(true);
     _timeSlider.addListener(this);
     _timeSlider.setEnabled(false);
@@ -162,12 +162,13 @@ Matrix3D<float> MapComponent::getViewMatrix() const
 /** @brief Override callback to control ecosystem with keyboard
  */
 bool MapComponent::keyPressed(const KeyPress &key, Component *originatingComponent) {
+    ExperimentInterface* ei = parent_component->experiment_interface;
     if (key == KeyPress::rightKey) {
-        _increaseTimeHistory(10);
+        _increaseTimeHistory(ei->getBackupPeriod());
     }
     
     if (key == KeyPress::leftKey) {
-        _increaseTimeHistory(-10);
+        _increaseTimeHistory(-1 * ei->getBackupPeriod());
         
     }
     
@@ -313,7 +314,8 @@ void MapComponent::buttonClicked (Button* b) {
 /** @brief Timer callback for history-view mode with auto-forward
  */
 void MapComponent::timerCallback() {
-    _increaseTimeHistory(10);
+    ExperimentInterface* ei = parent_component->experiment_interface;
+    _increaseTimeHistory(ei->getBackupPeriod());
 }
 
 /** @brief Toggle auto-forward function
@@ -322,7 +324,7 @@ void MapComponent::_toggleAutoForward() {
     _autoForward = !_autoForward;
     _autoForwardToggle.setToggleState(_autoForward, NotificationType::dontSendNotification);
     if (_autoForward)
-        startTimer(250);
+        startTimer(100);
     else
         stopTimer();
 }
@@ -332,7 +334,10 @@ void MapComponent::_toggleAutoForward() {
  * @param[in] max_time Value of maximum time
  */
 void MapComponent::setMaxTime(int max_time) {
-    _timeSlider.setRange(0, max(1, max_time), 10);
+    ExperimentInterface* ei = parent_component->experiment_interface;
+    _timeSlider.setRange(0,
+                         max(1, max_time),
+                         ei->getBackupPeriod());
     _max_time = max_time;
 }
 
@@ -351,11 +356,8 @@ void MapComponent::setRunningTime(int time) {
  */
 void MapComponent::_increaseTimeHistory(int n) {
     _timeHistory += n;
-    if (_timeHistory < 0)
-        _timeHistory = 0;
-    if (_timeHistory > _max_time)
-        _timeHistory = _max_time;
-    _timeSlider.setValue(_timeHistory - 1);
+    _timeHistory = min(max(_timeHistory, 0), _max_time);
+    _timeSlider.setValue(_timeHistory);
     parent_component->experiment_has_changed = true;
 }
 

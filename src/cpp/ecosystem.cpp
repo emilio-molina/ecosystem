@@ -91,8 +91,8 @@ void set_default_settings()
     };
     
     _BIOTOPE_SETTINGS = {
-        {"size_x", 50},
-        {"size_y", 50}
+        {"size_x", 200},
+        {"size_y", 200}
     };
     
     _INITIAL_ENERGY_RESERVE = 30000.0f;
@@ -108,10 +108,11 @@ void set_default_settings()
     default_settings["constants"]["INITIAL_ENERGY_RESERVE"] = _INITIAL_ENERGY_RESERVE;
     default_settings["constants"]["BIOTOPE_SETTINGS"] = _BIOTOPE_SETTINGS;
     default_settings["state"]["time"] = 0;
+    default_settings["constants"]["BACKUP_PERIOD"] = 5;
     
     ostringstream str_random;
     str_random << eng;
-    default_settings["state"]["random_eng"] = str_random.str();
+    default_settings["state"]["RANDOM_ENG"] = str_random.str();
 
 }
 /*********************************************************
@@ -132,7 +133,7 @@ Ecosystem::Ecosystem() {
     this->_initializeOrganisms();
     this->time = settings_json["state"]["time"];
     istringstream srandom;
-    string str_random = settings_json["state"]["random_eng"];
+    string str_random = settings_json["state"]["RANDOM_ENG"];
     srandom.str(str_random);
     srandom >> eng;
 
@@ -152,7 +153,7 @@ Ecosystem::Ecosystem(json data_json) {
     this->_initializeOrganisms(data_json);
     this->time = settings_json["state"]["time"];
     istringstream srandom;
-    string str_random = settings_json["state"]["random_eng"];
+    string str_random = settings_json["state"]["RANDOM_ENG"];
     srandom.str(str_random);
     srandom >> eng;
 }
@@ -377,7 +378,7 @@ void Ecosystem::serialize(json& data_json) {
     data_json["state"]["time"] = this->time;
     ostringstream str_random;
     str_random << eng;
-    data_json["state"]["random_eng"] = str_random.str();
+    data_json["state"]["RANDOM_ENG"] = str_random.str();
 
     // living organisms data
     for (auto x:this->biotope) {
