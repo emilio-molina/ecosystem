@@ -38,10 +38,10 @@ By default, JUCE is searched in `../../../../../JUCE` relative path. For example
 
 The core of the system does not depend on JUCE. Instead, the only dependency used is `boost` (http://www.boost.org/). In Mac OSx it can be installed with brew: `brew install boost`, which install the library in `/usr/local/Cellar/boost/1.57.0`. Therefore, to compile the program run:
 
-`g++ main.cpp ecosystem.cpp --std=c++11 -I/usr/local/Cellar/boost/1.57.0/include -L/usr/local/Cellar/boost/1.57.0/lib -lboost_system -lboost_filesystem -lboost_iostreams -o ecosystem`
+`g++ *.cpp -O3 --std=c++11 -I/usr/local/Cellar/boost/1.63.0/include -L/usr/local/Cellar/boost/1.63.0/lib -lboost_system -lboost_filesystem -lboost_iostreams -o ecosystem`
 
 In Linux, boost might be installed already in your system, so try:
 
-`g++ main.cpp ecosystem.cpp --std=c++11 -lboost_system -lboost_filesystem -lboost_iostreams -o ecosystem`
+`g++ *.cpp --std=c++11 -lboost_system -lboost_filesystem -lboost_iostreams -o ecosystem`
 
 Then you can run `./ecosystem`. By the moment, our `main.cpp` is too simple, so you can not access to the data of this ecosystem, but it is a good starting point to keep developing a proper `main.cpp` for a CLI ecosystem. In the future, this main will be extended with more functionalities to be fully usable.
