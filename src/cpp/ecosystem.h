@@ -140,6 +140,11 @@ public:
     */
     float energy_reserve;
 
+    /** @brief Initial energy reserve of the organism.
+     *
+     */
+    float initial_energy_reserve;
+
     /** @brief Age of organism
     */
     int age;

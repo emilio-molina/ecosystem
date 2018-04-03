@@ -5,6 +5,51 @@
 
 #include "MapComponent.h"
 
+Colour organismToColour(Organism* o) {
+    string ORGANISM_TYPE = o->species;
+    float r = 0.0f;
+    float g = 0.0f;
+    float b = 0.0f;
+    float a = 1.0f;
+    if (ORGANISM_TYPE == "P") {
+        // green
+        r = 0.0f;
+        g = 1.0f;
+        b = 0.0f;
+    } else if (ORGANISM_TYPE == "H1") {
+        // grey
+        r = 0.5f;
+        g = 0.5f;
+        b = 0.5f;
+    } else if (ORGANISM_TYPE == "H2") {
+        // blue
+        r = 0.2f;
+        g = 0.2f;
+        b = 1.0f;
+    } else if (ORGANISM_TYPE == "C1") {
+        // red
+        r = 1.0f;
+        g = 0.0f;
+        b = 0.0f;
+    } else if (ORGANISM_TYPE == "C2") {
+        // orange
+        r = 1.0f;
+        g = 0.5f;
+        b = 0.0f;
+    } else if (ORGANISM_TYPE == "C3") {
+        // light blue
+        r = 0.0f;
+        g = 0.5f;
+        b = 1.0f;
+    }
+    float energy_ratio = (float)o->energy_reserve / o->initial_energy_reserve;
+    float age_ratio = 1.0f - (float)o->age / o->death_age;
+    r *= 0.75 * energy_ratio * age_ratio;
+    g *= 0.75 * energy_ratio * age_ratio;
+    b *= 0.75 * energy_ratio * age_ratio;
+    return Colour::fromFloatRGBA(r, g, b, a);
+}
+
 /** @brief Read ecosystem object and generate a OpenGL formatted list of vertices
  *
  * @param[in] ecosystem Pointer to input ecosystem object
@@ -24,66 +69,18 @@ void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<in
         string ORGANISM_TYPE = o.second->species;
         float x = 2 * (float)get<0>(position) / (float)x_size - 1.0f;
         float y = 2 * (float)get<1>(position) / (float)y_size - 1.0f;
-        if (ORGANISM_TYPE == "P") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},  // x, y, z coordinates
-                { 0.5f, 0.5f, 0.5f},
-                { 0.0f, 1.0f, 0.0f, 1.0f },  // green
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        if (ORGANISM_TYPE == "H1") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},
-                { 0.5f, 0.5f, 0.5f},
-                { 0.5f, 0.5f, 0.5f, 1.0f },  // grey
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        if (ORGANISM_TYPE == "H2") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},
-                { 0.5f, 0.5f, 0.5f},
-                { 0.2f, 0.2f, 1.0f, 1.0f },  // blue
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        if (ORGANISM_TYPE == "C1") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},
-                { 0.5f, 0.5f, 0.5f},
-                { 1.0f, 0.0f, 0.0f, 1.0f },  // red
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        if (ORGANISM_TYPE == "C2") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},
-                { 0.5f, 0.5f, 0.5f},
-                { 1.0f, 0.5f, 0.0f, 1.0f },  // orange
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
-        if (ORGANISM_TYPE == "C3") {
-            Vertex v2 =
-            {
-                {x, y, 1.0f},
-                { 0.5f, 0.5f, 0.5f},
-                { 0.0f, 0.5f, 1.0f, 1.0f },  // light blue
-                { 0.5f, 0.5f,}
-            };
-            v1 = v2;
-        }
+        Colour color_o = organismToColour(o.second);
+        Vertex v2 =
+        {
+            {x, y, 1.0f},  // x, y, z coordinates
+            { 0.5f, 0.5f, 0.5f},
+            { color_o.getFloatRed(),
+                color_o.getFloatGreen(),
+                color_o.getFloatBlue(),
+                color_o.getFloatAlpha()},
+            { 0.5f, 0.5f,}
+        };
+        v1 = v2;
         indices.add(vertex_counter);
         vertices.add(v1);
         vertex_counter += 1;

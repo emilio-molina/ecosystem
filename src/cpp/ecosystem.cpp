@@ -336,6 +336,7 @@ void Ecosystem::_initializeOrganisms(json& data_json) {
             float energy_reserve = data_json["organisms"]["energy_reserve"][i];
             Organism* o = new Organism(location, this, species, energy_reserve);
             // Set genes and state
+            o->initial_energy_reserve = data_json["organisms"]["initial_energy_reserve"][i];
             o->age = data_json["organisms"]["age"][i];
             o->death_age = data_json["organisms"]["death_age"][i];
             o->is_energy_dependent = data_json["organisms"]["is_energy_dependent"][i];
@@ -388,6 +389,7 @@ void Ecosystem::serialize(json& data_json) {
         data_json["organisms"]["species"].push_back(organism->species);
         data_json["organisms"]["age"].push_back(organism->age);
         data_json["organisms"]["death_age"].push_back(organism->death_age);
+        data_json["organisms"]["initial_energy_reserve"].push_back(organism->initial_energy_reserve);
         data_json["organisms"]["energy_reserve"].push_back(organism->energy_reserve);
         data_json["organisms"]["is_energy_dependent"].push_back(organism->is_energy_dependent);
     }
@@ -399,6 +401,7 @@ void Ecosystem::serialize(json& data_json) {
         data_json["dead_organisms"]["age"].push_back(organism->age);
         data_json["dead_organisms"]["death_age"].push_back(organism->death_age);
         data_json["dead_organisms"]["cause_of_death"].push_back(organism->cause_of_death);
+        data_json["organisms"]["initial_energy_reserve"].push_back(organism->initial_energy_reserve);
         data_json["organisms"]["energy_reserve"].push_back(organism->energy_reserve);
         data_json["dead_organisms"]["is_energy_dependent"].push_back(organism->is_energy_dependent);
     }
@@ -433,6 +436,7 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string
 
     // State:
     this->energy_reserve = energy_reserve;
+    this->initial_energy_reserve = energy_reserve;
     this->is_alive = true;
     this->age = 0;
     this->cause_of_death = "";
