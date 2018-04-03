@@ -24,7 +24,8 @@ class SettingsComponent;
 class MainTabbedComponent : public TabbedComponent
 {
 public:
-    MainTabbedComponent(TabbedButtonBar::Orientation orientation, SettingsComponent* SC);
+    MainTabbedComponent(TabbedButtonBar::Orientation orientation);
+    void setSettingsComponentPointer(SettingsComponent* settings_component);
     void currentTabChanged (int newCurrentTabIndex, const String &newCurrentTabName);
 private:
     SettingsComponent* _settings_component;
@@ -49,7 +50,6 @@ public:
     /** @brief True if ecosystem is running
      */
     bool running;
-    int backupCounter;
     // Public methods (documentation in MainComponent.cpp)
     MainContentComponent();
     ~MainContentComponent();

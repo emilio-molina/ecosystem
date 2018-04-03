@@ -194,6 +194,7 @@ void MapComponent::render()
     if ((ei != nullptr) && parent_component->experiment_has_changed) {
         if (_historyView) {
             string experimentFolder = ei->getExperimentFolder();
+            // Load time slot _timeHistory into einterface to render it
             ExperimentInterface* einterface = new ExperimentInterface(experimentFolder, false);
             einterface->loadEcosystem(_timeHistory);
             Ecosystem* ecosystem = einterface->getEcosystemPointer();
@@ -288,6 +289,8 @@ void MapComponent::buttonClicked (Button* b) {
     
     if (b == &_historyToggle) {
         bool enable = _historyToggle.getToggleState();
+        if (_autoForward)
+            _toggleAutoForward();
         _timeSlider.setEnabled(enable);
         _autoForwardToggle.setEnabled(enable);
         _loadButton.setEnabled(enable);
@@ -304,7 +307,6 @@ void MapComponent::buttonClicked (Button* b) {
         ei->loadEcosystem(_timeHistory);
         parent_component->experiment_has_changed = true;
         setRunningTime(ei->getRunningTime());
-        parent_component->backupCounter = ei->getRunningTime();
     }
 }
 

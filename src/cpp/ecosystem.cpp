@@ -91,8 +91,8 @@ void set_default_settings()
     };
     
     _BIOTOPE_SETTINGS = {
-        {"size_x", 200},
-        {"size_y", 200}
+        {"size_x", 50},
+        {"size_y", 50}
     };
     
     _INITIAL_ENERGY_RESERVE = 30000.0f;
