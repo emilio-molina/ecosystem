@@ -44,9 +44,7 @@ Colour organismToColour(Organism* o) {
     }
     float energy_ratio = (float)o->energy_reserve / o->initial_energy_reserve;
     float age_ratio = 1.0f - (float)o->age / o->death_age;
-    r *= 0.75 * energy_ratio * age_ratio;
-    g *= 0.75 * energy_ratio * age_ratio;
-    b *= 0.75 * energy_ratio * age_ratio;
+    a = 0.5 * energy_ratio * age_ratio;
     return Colour::fromFloatRGBA(r, g, b, a);
 }
 
@@ -208,7 +206,7 @@ void MapComponent::render()
         parent_component->experiment_has_changed = false;
     }
     auxRender2();
-    glPointSize(4.0);
+    glPointSize(5.0);
     glDrawElements (GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);  // Draw points
     //glDrawElements (GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  // Draw triangles
     auxRender3();
