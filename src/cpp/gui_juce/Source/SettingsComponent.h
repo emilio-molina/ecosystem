@@ -19,6 +19,8 @@ using json = nlohmann::json;
 class ValueTreeItem;
 
 /** @brief Component for experiment tab
+ *
+ * @ingroup GUI
  */
 class SettingsComponent : public Component {
 public:

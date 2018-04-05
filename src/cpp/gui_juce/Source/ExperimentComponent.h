@@ -1,6 +1,10 @@
 /** @file ExperimentComponent.h
  * @brief Header of ExperimentComponent
  *
+ *  @defgroup gui GUI
+ *  These classes dependent on JUCE.
+ *
+ *
  */
 
 #ifndef EXPERIMENTCOMPONENT_H_INCLUDED
