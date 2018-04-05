@@ -26,6 +26,7 @@ map<string, float> _PHOTOSYNTHESIS_CAPACITY;
 map<string, int> _INITIAL_NUM_OF_ORGANISMS;
 map<string, int> _MAX_LIFESPAN;
 map<string, float> _PROCREATION_PROBABILITY;
+map<string, vector<string>> _FOOD_WEB;
 float _INITIAL_ENERGY_RESERVE;
 
 /** @brief Set default settings for experiment
@@ -103,6 +104,15 @@ void set_default_settings()
         {"size_y", 200}
     };
     
+    _FOOD_WEB = {
+        {PLANT, {}},
+        {HERBIVORE1, {PLANT}},
+        {HERBIVORE2, {PLANT}},
+        {CARNIVORE1, {HERBIVORE1, HERBIVORE2}},
+        {CARNIVORE2, {HERBIVORE1, HERBIVORE2}},
+        {CARNIVORE3, {HERBIVORE1, HERBIVORE2}}
+    };
+
     _INITIAL_ENERGY_RESERVE = 30000.0f;
 
     
@@ -115,6 +125,7 @@ void set_default_settings()
     default_settings["constants"]["PROCREATION_PROBABILITY"] = _PROCREATION_PROBABILITY;
     default_settings["constants"]["INITIAL_ENERGY_RESERVE"] = _INITIAL_ENERGY_RESERVE;
     default_settings["constants"]["BIOTOPE_SETTINGS"] = _BIOTOPE_SETTINGS;
+    default_settings["constants"]["FOOD_WEB"] = _FOOD_WEB;
     default_settings["state"]["time"] = 0;
     default_settings["constants"]["BACKUP_PERIOD"] = 5;
     
@@ -552,18 +563,9 @@ void Organism::_do_move() {
 * @param[in] prey Pointer to prey to be eaten
 */
 bool Organism::_is_eatable(Organism* prey) {
-    bool _is_eatable = false;
-    //if ((this->species == CARNIVORE) && ((prey->species == HERBIVORE1) || (prey->species == HERBIVORE2)))
-    //    _is_eatable = true;
-    if ((this->species == CARNIVORE1) && (prey->species == HERBIVORE1))
-        _is_eatable = true;
-    if ((this->species == CARNIVORE2) && (prey->species == HERBIVORE2))
-        _is_eatable = true;
-    if ((this->species == CARNIVORE3) && ((prey->species == HERBIVORE1) || (prey->species == HERBIVORE2)))
-        _is_eatable = true;
-    if (((this->species == HERBIVORE1) || (this->species == HERBIVORE2)) && (prey->species == PLANT))
-        _is_eatable = true;
-    return _is_eatable;
+    vector<string> food_web = default_settings["constants"]["FOOD_WEB"][this->species];
+    // Check if prey->species in list of species this organism can eat
+    return (find(food_web.begin(), food_web.end(), prey->species) != food_web.end());
 }
 
 /** @brief Do hunt
