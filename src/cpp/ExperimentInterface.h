@@ -1,6 +1,7 @@
 /** @file ExperimentInterface.h
  * @brief Header of ExperimentInterface
  *
+ * @ingroup core
  */
 
 #ifndef EXPERIMENTINTERFACE_H_INCLUDED
@@ -24,7 +25,11 @@ template <typename T>
 std::string to_string_with_precision(const T a_value, const int n);
 
 
-/** @brief Class to easily interact with experiment folder
+/** @brief Class to easily interact with disk
+ *
+ * It makes the disk usage transparent for the disk
+ *
+ * @ingroup
  */
 class ExperimentInterface {
 public:

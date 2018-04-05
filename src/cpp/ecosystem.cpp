@@ -1,6 +1,7 @@
 /** @file ecosystem.cpp
  * @brief Implementation of ecosystem
  *
+ * @ingroup core
  */
 #include "ecosystem.h"
 
@@ -28,6 +29,13 @@ map<string, float> _PROCREATION_PROBABILITY;
 map<string, vector<string>> _FOOD_WEB;
 float _INITIAL_ENERGY_RESERVE;
 
+/** @brief Set default settings for experiment
+ *
+ * This function specifies the default settings for the experiment
+ *
+ * @todo Decide definitive way of managing experiment settings
+ * @ingroup core
+ */
 void set_default_settings()
 {
     PLANT = "P";
@@ -132,7 +140,7 @@ void set_default_settings()
 
 /** @brief Ecosystem constructor
 * 
-* It reads experiments settings from constants, initialize biotope and create organisms.
+* Initialize biotope and create organisms according to default settings.
 */
 Ecosystem::Ecosystem() {
     
@@ -151,6 +159,8 @@ Ecosystem::Ecosystem() {
 }
 
 /** @brief Ecosystem constructor using a JSON
+*
+* Initialize biotope and create organisms according to external JSON.
 *
 * @param[in] settings_json JSON data with ecosystem screenshot
 */

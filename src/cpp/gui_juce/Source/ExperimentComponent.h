@@ -1,6 +1,7 @@
 /** @file ExperimentComponent.h
  * @brief Header of ExperimentComponent
  *
+ * @ingroup gui
  */
 
 #ifndef EXPERIMENTCOMPONENT_H_INCLUDED

@@ -1,10 +1,9 @@
-//
-//  SettingsComponent.h
-//  gui_juce
-//
-//  Created by Juan Luis Salas García on 12/9/16.
-//
-//
+/** @file SettingsComponent.h
+ * @brief Header of SettingsComponent class
+ *
+ * @ingroup gui
+ */
+
 
 #ifndef SettingsComponent_h
 #define SettingsComponent_h
@@ -19,6 +18,8 @@ using json = nlohmann::json;
 class ValueTreeItem;
 
 /** @brief Component for experiment tab
+ *
+ * @ingroup GUI
  */
 class SettingsComponent : public Component {
 public:

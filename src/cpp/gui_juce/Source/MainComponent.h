@@ -1,10 +1,8 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-  ==============================================================================
-*/
+/** @file MainComponent.h
+ * @brief Header of main of GUI (based on JUCE library)
+ *
+ * @ingroup gui
+ */
 
 #ifndef MAINCOMPONENT_H_INCLUDED
 #define MAINCOMPONENT_H_INCLUDED
@@ -21,6 +19,15 @@ class ExperimentComponent;
 class ExperimentInterface;
 class SettingsComponent;
 
+/** @brief Custom TabbedComponent
+ *
+ * Custom TabbedComponent which contains a pointer to _settings_component for
+ * updating the tree of settings before displaying it.
+ *
+ * @ingroup gui
+ * @todo Decide if the updating of the tree should be done in a different place
+ *
+ */
 class MainTabbedComponent : public TabbedComponent
 {
 public:
@@ -31,10 +38,12 @@ private:
     SettingsComponent* _settings_component;
 };
 
-//==============================================================================
-/*
-    Main component of the application
-*/
+/** @brief Main container for GUI
+ *
+ * It contains a MainTabbedComponent for displaying tabs
+ *
+ * @ingroup gui
+ */
 class MainContentComponent   : public Component,
                                private Timer
 {
