@@ -1,9 +1,10 @@
-PROJECT_NAME       = Ecosystem
-PROJECT_NUMBER     = 0.1
-OUTPUT_DIRECTORY   = doxygen
-EXTRACT_ALL        = YES
-EXTRACT_PRIVATE    = YES
-INPUT              = ../src/cpp_version ../src/cpp_version/gui_juce/Source
-FILE_PATTERNS      = *.cpp *.h
-RECURSIVE          = NO
+PROJECT_NAME           = Ecosystem
+PROJECT_NUMBER         = 0.4_dev
+OUTPUT_DIRECTORY       = doxygen
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+INPUT                  = ../README.md ../src/cpp ../src/cpp/gui_juce/Source
+USE_MDFILE_AS_MAINPAGE = ../README.md
+FILE_PATTERNS          = *.cpp *.h
+RECURSIVE              = NO
 

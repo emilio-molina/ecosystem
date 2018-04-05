@@ -1,6 +1,7 @@
 /** @file ExperimentComponent.cpp
  * @brief Implementation of ExperimentComponent
  *
+ * @ingroup gui
  */
 
 #include "ExperimentComponent.h"

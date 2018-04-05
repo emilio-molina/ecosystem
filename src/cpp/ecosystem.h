@@ -1,6 +1,11 @@
 /** @file ecosystem.h
  * @brief Header of ecosystem
  *
+ * @ingroup core
+ * @defgroup core CORE
+ *  These classes are JUCE indepedent.
+ *
+ *
  */
 
 #ifndef ECOSYSTEM_H_INCLUDED
@@ -49,7 +54,7 @@ class Organism;
 /** @brief Class defining the environment where ecosystem can develop
 *
 * This is the class used in the main() function of the program.
-*
+* @ingroup core
 */
 class Ecosystem {
 public:
@@ -114,6 +119,7 @@ private:
 /** @brief Class defining organism
 *
 * A lot of objects of this class are usually used in ecosystem
+* @ingroup core
 */
 class Organism {
 public:

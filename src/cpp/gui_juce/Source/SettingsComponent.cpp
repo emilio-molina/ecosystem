@@ -1,10 +1,9 @@
-//
-//  SettingsComponent.cpp
-//  gui_juce
-//
-//  Created by Juan Luis Salas García on 12/9/16.
-//
-//
+/** @file SettingsComponent.cpp
+ * @brief Definition of SettingsComponent class
+ *
+ * @ingroup gui
+ */
+
 
 #include <typeinfo>
 #include "SettingsComponent.h"
