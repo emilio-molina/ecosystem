@@ -1,6 +1,7 @@
 /** @file MainComponent.cpp
  * @brief Main of GUI (based on JUCE library)
  *
+ * @ingroup gui
  *
  */
 

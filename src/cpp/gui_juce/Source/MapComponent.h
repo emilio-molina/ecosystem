@@ -1,6 +1,7 @@
 /** @file MapComponent.h
  * @brief Header of MapComponent
  *
+ * @ingroup gui
  */
 
 #ifndef MapComponent_H_INCLUDED
@@ -15,7 +16,10 @@ namespace bf=boost::filesystem;
 using json = nlohmann::json;
 
 
-
+/** @brief Define uniform parameters for OpenGL rendering
+ *
+ * @ingroup gui
+ */
 struct Uniforms
 {
     Uniforms (OpenGLContext& openGLContext, OpenGLShaderProgram& shaderProgram)
@@ -39,6 +43,8 @@ private:
 };
 
 /** @brief Struct storing information about one OpenGL vertex
+ *
+ * @ingroup gui
  */
 struct Vertex
 {
@@ -54,6 +60,7 @@ void ecosystemToVertices(Ecosystem* ecosystem, Array<Vertex> &vertices, Array<in
 
 /** @brief Component able to render ecosystem using OpenGL
  *
+ * @ingroup gui
  */
 class MapComponent   : public OpenGLAppComponent, public KeyListener, public Slider::Listener, public Button::Listener, private Timer
 {

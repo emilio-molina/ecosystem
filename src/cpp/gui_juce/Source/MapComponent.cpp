@@ -1,6 +1,8 @@
 /** @file MapComponent.cpp
  * @brief Implementation of MapComponent
  *
+ * @ingroup gui
+ *
  */
 
 #include "MapComponent.h"

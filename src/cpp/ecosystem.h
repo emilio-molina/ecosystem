@@ -1,7 +1,7 @@
 /** @file ecosystem.h
  * @brief Header of ecosystem
  *
- *
+ * @ingroup core
  * @defgroup core CORE
  *  These classes are JUCE indepedent.
  *

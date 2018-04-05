@@ -1,7 +1,7 @@
 /** @file ecosystem.cpp
  * @brief Implementation of ecosystem
  *
- *
+ * @ingroup core
  */
 #include "ecosystem.h"
 

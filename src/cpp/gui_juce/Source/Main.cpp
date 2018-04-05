@@ -1,3 +1,11 @@
+/** @file Main.cpp
+ * @brief JUCE main for GUI
+ *
+ * @defgroup gui GUI
+ *  These classes are JUCE depedent.
+ * @ingroup gui
+ */
+
 /*
   ==============================================================================
 
