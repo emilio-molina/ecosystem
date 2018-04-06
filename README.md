@@ -4,7 +4,7 @@
 
 *authors: Juan Luis Salas & Emilio Molina*
 
-![](https://raw.githubusercontent.com/EliosMolina/ecosystem/documentation_fix46/doc/images/ecosystem_0.4_dev.gif)
+![](https://raw.githubusercontent.com/EliosMolina/ecosystem/master/doc/images/ecosystem_0.4_dev.gif)
 
 Since version v0.3, the simulator is implemented in C++, so it is much faster than v0.2, which was implemented in Python.
 
