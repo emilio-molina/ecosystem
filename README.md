@@ -15,12 +15,14 @@
 
 # How to compile a command-line version of ecosystem?
 
-The only dependency used is `boost` (http://www.boost.org/). In Mac OSx it can be installed with brew: `brew install boost`, which install the library in `/usr/local/Cellar/boost/1.63.0` (version can vary). Therefore, to compile the program run:
+The only dependency used is `boost` (http://www.boost.org/). In Mac OSx it can be installed with brew: `brew install boost`.
 
-`g++ *.cpp -O3 --std=c++11 -I/usr/local/Cellar/boost/1.63.0/include -L/usr/local/Cellar/boost/1.63.0/lib -lboost_system -lboost_filesystem -lboost_iostreams -o ecosystem`
+You can generate a Xcode project with cmake:
 
-In Linux, boost might be installed already in your system, so try:
+```
+$ mkdir build
+$ cd build
+$ cmake -G Xcode ..  # in linux $ cmake ..; make
+```
 
-`g++ *.cpp --std=c++11 -lboost_system -lboost_filesystem -lboost_iostreams -o ecosystem`
-
-Then you can run `./ecosystem`.
+It will create a Xcode project. Binaries will be placed in ./bin directory.
