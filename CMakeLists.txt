@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.0)
 
 # Definitions
 set(PROJECT_NAME_STR ecosystem)
