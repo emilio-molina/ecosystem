@@ -70,6 +70,27 @@ string getThousandsFolder(int time_slice) {
 }
 
 
+/** @brief Get path of file containing ecosystem data
+ *
+ * @param[in] dst_path Path of destination folder
+ * @param[in] time_slice Time slice for which ecosystem data will be get
+ *
+ * @returns Path of file
+ */
+string getEcosystemGenericPath(fs::path dst_path, int time_slice, string file_extension) {
+    string thousands_folder_name = getThousandsFolder(time_slice);
+    fs::path thousands_abs_path = (dst_path / fs::path(thousands_folder_name));
+    if (!fs::is_directory(thousands_abs_path))
+        fs::create_directories(thousands_abs_path);
+    ostringstream dst_file_name;
+    dst_file_name << "bk_"<< time_slice << file_extension;
+    fs::path dst_file = (thousands_abs_path /
+                         fs::path(dst_file_name.str()));
+    return dst_file.string();
+}
+
+
+
 /** @brief Get path of JSON containing ecosystem data
  *
  * @param[in] dst_path Path of destination folder
@@ -78,17 +99,20 @@ string getThousandsFolder(int time_slice) {
  * @returns Path of JSON file
  */
 string getEcosystemJSONPath(fs::path dst_path, int time_slice) {
-    string thousands_folder_name = getThousandsFolder(time_slice);
-    fs::path thousands_abs_path = (dst_path / fs::path(thousands_folder_name));
-    if (!fs::is_directory(thousands_abs_path))
-        fs::create_directories(thousands_abs_path);
-    ostringstream dst_file_name;
-    dst_file_name << "bk_"<< time_slice << ".zjson";
-    fs::path dst_file = (thousands_abs_path /
-                         fs::path(dst_file_name.str()));
-    return dst_file.string();
+    return getEcosystemGenericPath(dst_path, time_slice, ".zjson");
 }
 
+
+/** @brief Get path of TGA containing ecosystem data
+ *
+ * @param[in] dst_path Path of destination folder
+ * @param[in] time_slice Time slice for which ecosystem data will be get
+ *
+ * @returns Path of TGA file
+ */
+string getEcosystemTGAPath(fs::path dst_path, int time_slice) {
+    return getEcosystemGenericPath(dst_path, time_slice, ".tga");
+}
 
 /** @brief Return true if experiment initial settings already exist
  *
@@ -219,6 +243,78 @@ void ExperimentInterface::saveEcosystem() {
     f_data << data_compressed.rdbuf();
     f_data.close();
 }
+
+
+TGAColor organismToColour(Organism* o) {
+    string ORGANISM_TYPE = o->species;
+    float r = 0.0f;
+    float g = 0.0f;
+    float b = 0.0f;
+    float a = 1.0f;
+    if (ORGANISM_TYPE == "P") {
+        // green
+        r = 0.0f;
+        g = 1.0f;
+        b = 0.0f;
+    } else if (ORGANISM_TYPE == "H1") {
+        // grey
+        r = 0.5f;
+        g = 0.5f;
+        b = 0.5f;
+    } else if (ORGANISM_TYPE == "H2") {
+        // blue
+        r = 0.2f;
+        g = 0.2f;
+        b = 1.0f;
+    } else if (ORGANISM_TYPE == "C1") {
+        // red
+        r = 1.0f;
+        g = 0.0f;
+        b = 0.0f;
+    } else if (ORGANISM_TYPE == "C2") {
+        // orange
+        r = 1.0f;
+        g = 0.5f;
+        b = 0.0f;
+    } else if (ORGANISM_TYPE == "C3") {
+        // light blue
+        r = 0.0f;
+        g = 0.5f;
+        b = 1.0f;
+    }
+    float energy_ratio = (float)o->energy_reserve / o->initial_energy_reserve;
+    float age_ratio = 1.0f - (float)o->age / o->death_age;
+    a = 0.5 * energy_ratio * age_ratio;
+    r *= a;
+    g *= a;
+    b *= a;
+    return TGAColor(
+        (unsigned char)(r * 255),
+        (unsigned char)(g * 255),
+        (unsigned char)(b * 255));
+}
+
+
+/** @brief Draw current time slice to TGA image into disk
+ */
+void ExperimentInterface::drawEcosystem() {
+    // get file name
+    int curr_time = _ecosystem->time;
+    string dst_file = getEcosystemTGAPath(_dst_path, curr_time);
+    TGAImage frame(_ecosystem->biotope_size_x,
+                   _ecosystem->biotope_size_y,
+                   TGAImage::RGB);
+    for (auto o:_ecosystem->biotope) {
+        tuple<int, int> position = o.first;
+        string ORGANISM_TYPE = o.second->species;
+        int x = get<0>(position);
+        int y = get<1>(position);
+        TGAColor color_o = organismToColour(o.second);
+        frame.set(x, y, color_o);
+    }
+    frame.write_tga_file(dst_file.c_str());
+}
+
 
 /* @brief Get experiment size in MBs in format e.g. "321.16MB"
  *

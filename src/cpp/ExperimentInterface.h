@@ -9,6 +9,7 @@
 
 #include <mutex>
 #include "ecosystem.h"
+#include "tgaimage.hpp"
 #include <boost/filesystem.hpp>
 
 using namespace std;
@@ -18,9 +19,12 @@ using namespace std;
 void decompressData(stringstream &compressed, stringstream &decompressed);
 void compressData(stringstream &decompressed, stringstream &compressed);
 bool experimentAlreadyExists(string experiment_folder);
+string getEcosystemGenericPath(fs::path dst_path, int time_slice);
+string getEcosystemTGAPath(fs::path dst_path, int time_slice);
 string getEcosystemJSONPath(fs::path dst_path, int time_slice);
 string getThousandsFolder(int time_slice);
 fs::path stringToPath(string path_str);
+TGAColor organismToColour(Organism* o);
 template <typename T>
 std::string to_string_with_precision(const T a_value, const int n);
 
@@ -40,6 +44,7 @@ public:
     bool tryLockEcosystem();
     void unlockEcosystem();
     void saveEcosystem();
+    void drawEcosystem();
     void loadEcosystem(int time_slice);
     json* getSettings_json_ptr();
     string getExperimentFolder();

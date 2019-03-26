@@ -29,6 +29,7 @@ int main(int argc, char* argv[]) {
         cout << "    num free locs: " << num_free_locs << endl;
         cout << "    sum previous numbers: " << num_organisms + num_free_locs << endl;
         cout << "\r\e[A\e[A\e[A\e[A";
+        ei->drawEcosystem();
         if (ei->getRunningTime() % 10 == 0) {
             ei->saveEcosystem();
         }
