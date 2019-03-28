@@ -12,6 +12,7 @@
 #include <iterator>
 #include <fstream>
 #include <sstream>
+#include <cstdio>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/copy.hpp>
@@ -83,7 +84,9 @@ string getEcosystemGenericPath(fs::path dst_path, int time_slice, string file_ex
     if (!fs::is_directory(thousands_abs_path))
         fs::create_directories(thousands_abs_path);
     ostringstream dst_file_name;
-    dst_file_name << "bk_"<< time_slice << file_extension;
+    char time_slice_formatted[9];
+    sprintf(time_slice_formatted, "%08d", time_slice);
+    dst_file_name << "bk_"<< time_slice_formatted << file_extension;
     fs::path dst_file = (thousands_abs_path /
                          fs::path(dst_file_name.str()));
     return dst_file.string();

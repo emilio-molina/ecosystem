@@ -82,9 +82,9 @@ void set_default_settings()
     };
     
     _PROCREATION_PROBABILITY = {
-        {PLANT, 0.7f},
-        {HERBIVORE1, 0.2f},
-        {HERBIVORE2, 0.2f},
+        {PLANT, 0.15f},
+        {HERBIVORE1, 0.07f},
+        {HERBIVORE2, 0.07f},
         {CARNIVORE1, 0.05f},
         {CARNIVORE2, 0.05f},
         {CARNIVORE3, 0.05f}
