@@ -31,8 +31,6 @@ int main(int argc, char* argv[]) {
             exit(1);
         }
     }
-    if (!experimentAlreadyExists(dst_dir))
-        new_experiment = true;
     ExperimentInterface* ei = new ExperimentInterface(dst_dir, new_experiment);
     while (true) {
         auto num_organisms = ei->getEcosystemPointer()->biotope.size();

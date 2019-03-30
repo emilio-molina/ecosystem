@@ -99,15 +99,6 @@ string getEcosystemTGAPath(fs::path dst_path, int time_slice) {
     return getEcosystemGenericPath(dst_path, time_slice, ".tga");
 }
 
-/** @brief Return true if experiment initial settings already exist
- *
- */
-bool experimentAlreadyExists(string experiment_folder) {
-    fs::path dst_path = stringToPath(experiment_folder);
-    return fs::exists(getEcosystemJSONPath(dst_path, 0));
-}
-
-
 
 /** @brief Convert float / double to string with n digits of precision
  *
@@ -158,13 +149,16 @@ void decompressData(stringstream &compressed, stringstream &decompressed)
 ExperimentInterface::ExperimentInterface(string experiment_folder,
                                          bool overwrite) {
     _setExperimentFolder(experiment_folder);
+    vector<int> timesHavingCompleteBackups = getTimesHavingCompleteBackups();
+    if (timesHavingCompleteBackups.size() == 0)
+        overwrite = true;
     _ecosystem = new Ecosystem();
     if (overwrite) {
         _cleanFolder();
 	drawEcosystem();
         saveEcosystem();  // _ecosystem->time is 0, so we save initial settings
     } else {
-        loadEcosystem(getTimesHavingCompleteBackups().back());
+        loadEcosystem(timesHavingCompleteBackups.back());
     }
 }
 
