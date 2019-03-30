@@ -300,7 +300,7 @@ void Ecosystem::getSurroundingOrganisms(tuple<int, int> center, vector<Organism*
 void Ecosystem::evolve() {
     this->_deleteDeadOrganisms();
 
-    // Create a vector of current organisms (to avoid new borns acting)
+    // Create a vector of current organisms (needed because biotope is a map)
     vector<Organism*> organisms_to_act(this->biotope.size(), nullptr);
     int i = 0;
     for (auto x:this->biotope) {
