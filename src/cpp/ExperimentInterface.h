@@ -49,6 +49,7 @@ public:
     json* getSettings_json_ptr();
     string getExperimentFolder();
     int getRunningTime();
+    int getDrawingPeriod();
     int getBackupPeriod();
     string getExperimentSize();
     vector<int> getTimesHavingCompleteBackups();

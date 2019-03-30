@@ -127,7 +127,8 @@ void set_default_settings()
     default_settings["constants"]["BIOTOPE_SETTINGS"] = _BIOTOPE_SETTINGS;
     default_settings["constants"]["FOOD_WEB"] = _FOOD_WEB;
     default_settings["state"]["time"] = 0;
-    default_settings["constants"]["BACKUP_PERIOD"] = 5;
+    default_settings["constants"]["BACKUP_PERIOD"] = 50;
+    default_settings["constants"]["DRAWING_PERIOD"] = 1;
     
     ostringstream str_random;
     str_random << eng;

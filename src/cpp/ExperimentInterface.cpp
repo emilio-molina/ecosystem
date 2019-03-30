@@ -204,6 +204,8 @@ void ExperimentInterface::evolve() {
     _ecosystem->evolve();
     if (getRunningTime() % getBackupPeriod() == 0)
         saveEcosystem();
+    if (getRunningTime() % getDrawingPeriod() == 0)
+        drawEcosystem();
 }
 
 /** @brief Lock ecosystem to avoid concurrency conflicts
@@ -426,6 +428,12 @@ int ExperimentInterface::getRunningTime() {
         return 0;
     else
         return _ecosystem->time;
+}
+
+/** @brief Get drawing period
+ */
+int ExperimentInterface::getDrawingPeriod() {
+    return (*getSettings_json_ptr())["constants"]["DRAWING_PERIOD"];
 }
 
 /** @brief Get backup period
