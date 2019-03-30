@@ -26,3 +26,8 @@ $ cmake -G Xcode ..  # in linux $ cmake ..; make
 ```
 
 It will create a Xcode project. Binaries will be placed in ./bin directory.
+
+# How to create a video with the images generated
+```
+ffmpeg -y -i bk_%08d.tga -c:v huffyuv test.avi
+```

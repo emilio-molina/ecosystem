@@ -24,7 +24,7 @@ map<string, float> _ENERGY_COST;
 map<string, float> _MINIMUM_ENERGY_REQUIRED_TO;
 map<string, float> _PHOTOSYNTHESIS_CAPACITY;
 map<string, int> _INITIAL_NUM_OF_ORGANISMS;
-map<string, int> _MAX_LIFESPAN;
+map<string, vector<string>> _DEATH_AGE;
 map<string, float> _PROCREATION_PROBABILITY;
 map<string, vector<string>> _FOOD_WEB;
 float _INITIAL_ENERGY_RESERVE;
@@ -72,13 +72,13 @@ void set_default_settings()
     };
     
     // Definition of gens grouped by species
-    _MAX_LIFESPAN = {
-        {PLANT, 30},
-        {HERBIVORE1, 50},
-        {HERBIVORE2, 50},
-        {CARNIVORE1, 100},
-        {CARNIVORE2, 100},
-        {CARNIVORE3, 100}
+    _DEATH_AGE = {
+        {PLANT, {"uniform_int", "0", "30"}},
+        {HERBIVORE1, {"uniform_int", "0", "50"}},
+        {HERBIVORE2, {"uniform_int", "0", "50"}},
+        {CARNIVORE1, {"uniform_int", "0", "100"}},
+        {CARNIVORE2, {"uniform_int", "0", "100"}},
+        {CARNIVORE3, {"uniform_int", "0", "100"}}
     };
     
     _PROCREATION_PROBABILITY = {
@@ -121,7 +121,7 @@ void set_default_settings()
     default_settings["constants"]["MINIMUM_ENERGY_REQUIRED_TO"] = _MINIMUM_ENERGY_REQUIRED_TO;
     default_settings["constants"]["PHOTOSYNTHESIS_CAPACITY"] = _PHOTOSYNTHESIS_CAPACITY;
     default_settings["constants"]["INITIAL_NUM_OF_ORGANISMS"] = _INITIAL_NUM_OF_ORGANISMS;
-    default_settings["constants"]["MAX_LIFESPAN"] = _MAX_LIFESPAN;
+    default_settings["constants"]["DEATH_AGE"] = _DEATH_AGE;
     default_settings["constants"]["PROCREATION_PROBABILITY"] = _PROCREATION_PROBABILITY;
     default_settings["constants"]["INITIAL_ENERGY_RESERVE"] = _INITIAL_ENERGY_RESERVE;
     default_settings["constants"]["BIOTOPE_SETTINGS"] = _BIOTOPE_SETTINGS;
@@ -135,6 +135,21 @@ void set_default_settings()
     str_random << eng;
     default_settings["state"]["RANDOM_ENG"] = str_random.str();
 
+}
+
+float evaluateRandomFunction(vector<string> definition) {
+    string distributionName = definition[0];
+    string valStr1 = definition[1];
+    string valStr2 = definition[2];
+    if (distributionName == "uniform_int") {
+        int minVal = stoi(valStr1);
+        int maxVal = stoi(valStr2);
+        uniform_int_distribution<int> distribution(minVal, maxVal);
+        return (float)distribution(eng);
+    } else {
+        cout << "unknown distribution!" << endl;
+    }
+    return 0.0f;
 }
 /*********************************************************
  * Ecosystem implementation
@@ -453,9 +468,8 @@ Organism::Organism(tuple<int, int> location, Ecosystem* parent_ecosystem, string
     // Genes:
     this->species = species;
     this->photosynthesis_capacity = float(parent_ecosystem->settings_json["constants"]["PHOTOSYNTHESIS_CAPACITY"][species]);
-    int MAX_LIFESPAN = int(parent_ecosystem->settings_json["constants"]["MAX_LIFESPAN"][species]);
-    uniform_int_distribution<int> distribution(0, MAX_LIFESPAN - 1);
-    this->death_age = distribution(eng);
+    auto death_age_definition = parent_ecosystem->settings_json["constants"]["DEATH_AGE"][species].get<vector<string>>();
+    this->death_age = (int)evaluateRandomFunction(death_age_definition);
 
     // State:
     this->energy_reserve = energy_reserve;
