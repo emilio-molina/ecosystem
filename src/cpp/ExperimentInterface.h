@@ -50,6 +50,7 @@ public:
     string getExperimentFolder();
     int getRunningTime();
     int getDrawingPeriod();
+    int getDrawingZoomFactor();
     int getBackupPeriod();
     string getExperimentSize();
     vector<int> getTimesHavingCompleteBackups();

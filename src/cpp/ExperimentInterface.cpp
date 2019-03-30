@@ -57,20 +57,6 @@ fs::path stringToPath(string path_str) {
 }
 
 
-/** @brief Get name of thousands folder (e.g. 0_to_999) given a time value
- *
- * @param[in] time_slice Time value
- *
- * @return Name of thousands folder
- */
-string getThousandsFolder(int time_slice) {
-    int thousands = (time_slice / 1000) * 1000;
-    ostringstream thousands_folder;
-    thousands_folder << thousands << "_to_" << thousands + 999;
-    return thousands_folder.str();
-}
-
-
 /** @brief Get path of file containing ecosystem data
  *
  * @param[in] dst_path Path of destination folder
@@ -79,15 +65,11 @@ string getThousandsFolder(int time_slice) {
  * @returns Path of file
  */
 string getEcosystemGenericPath(fs::path dst_path, int time_slice, string file_extension) {
-    string thousands_folder_name = getThousandsFolder(time_slice);
-    fs::path thousands_abs_path = (dst_path / fs::path(thousands_folder_name));
-    if (!fs::is_directory(thousands_abs_path))
-        fs::create_directories(thousands_abs_path);
     ostringstream dst_file_name;
     char time_slice_formatted[9];
     sprintf(time_slice_formatted, "%08d", time_slice);
     dst_file_name << "bk_"<< time_slice_formatted << file_extension;
-    fs::path dst_file = (thousands_abs_path /
+    fs::path dst_file =  (dst_path /
                          fs::path(dst_file_name.str()));
     return dst_file.string();
 }
@@ -179,6 +161,7 @@ ExperimentInterface::ExperimentInterface(string experiment_folder,
     _ecosystem = new Ecosystem();
     if (overwrite) {
         _cleanFolder();
+	drawEcosystem();
         saveEcosystem();  // _ecosystem->time is 0, so we save initial settings
     } else {
         loadEcosystem(getTimesHavingCompleteBackups().back());
@@ -304,10 +287,11 @@ TGAColor organismToColour(Organism* o) {
  */
 void ExperimentInterface::drawEcosystem() {
     // get file name
+    int zoom_factor = getDrawingZoomFactor();
     int curr_time = _ecosystem->time;
     string dst_file = getEcosystemTGAPath(_dst_path, curr_time);
-    TGAImage frame(_ecosystem->biotope_size_x,
-                   _ecosystem->biotope_size_y,
+    TGAImage frame(_ecosystem->biotope_size_x * zoom_factor,
+                   _ecosystem->biotope_size_y * zoom_factor,
                    TGAImage::RGB);
     for (auto o:_ecosystem->biotope) {
         tuple<int, int> position = o.first;
@@ -315,7 +299,9 @@ void ExperimentInterface::drawEcosystem() {
         int x = get<0>(position);
         int y = get<1>(position);
         TGAColor color_o = organismToColour(o.second);
-        frame.set(x, y, color_o);
+	for (int fx=0; fx<zoom_factor; fx++)
+	    for (int fy=0; fy<zoom_factor; fy++)
+                frame.set(zoom_factor*x+fx, zoom_factor*y+fy, color_o);
     }
     frame.write_tga_file(dst_file.c_str());
 }
@@ -428,6 +414,12 @@ int ExperimentInterface::getRunningTime() {
         return 0;
     else
         return _ecosystem->time;
+}
+
+/** @brief Get backup period
+ */
+int ExperimentInterface::getDrawingZoomFactor() {
+    return (*getSettings_json_ptr())["constants"]["DRAWING_ZOOM_FACTOR"];
 }
 
 /** @brief Get drawing period
