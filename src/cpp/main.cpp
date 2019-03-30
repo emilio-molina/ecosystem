@@ -33,18 +33,23 @@ int main(int argc, char* argv[]) {
     }
     ExperimentInterface* ei = new ExperimentInterface(dst_dir, new_experiment);
     while (true) {
+        auto start = chrono::steady_clock::now();
         auto num_organisms = ei->getEcosystemPointer()->biotope.size();
         auto num_free_locs = ei->getEcosystemPointer()->biotope_free_locs.size();
         cout << "Time: " << ei->getRunningTime() << endl;
         cout << "    num organism: " << num_organisms << endl;
         cout << "    num free locs: " << num_free_locs << endl;
         cout << "    sum previous numbers: " << num_organisms + num_free_locs << endl;
-        cout << endl;
         if (save_and_exit == 1) {
             ei->saveEcosystem();
             return 0;
         }
         ei->evolve();
+        auto end = chrono::steady_clock::now();
+        cout << "Elapsed time: "
+		<< chrono::duration_cast<chrono::milliseconds>(end - start).count()
+		<< " ms" << endl;
+        cout << endl;
     }
     return 0;
 }

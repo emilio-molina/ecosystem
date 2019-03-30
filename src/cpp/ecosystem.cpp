@@ -100,8 +100,8 @@ void set_default_settings()
     };
     
     _BIOTOPE_SETTINGS = {
-        {"size_x", 200},
-        {"size_y", 200}
+        {"size_x", 600},
+        {"size_y", 600}
     };
     
     _FOOD_WEB = {
@@ -129,7 +129,7 @@ void set_default_settings()
     default_settings["state"]["time"] = 0;
     default_settings["constants"]["BACKUP_PERIOD"] = 50;
     default_settings["constants"]["DRAWING_PERIOD"] = 1;
-    default_settings["constants"]["DRAWING_ZOOM_FACTOR"] = 3;
+    default_settings["constants"]["DRAWING_ZOOM_FACTOR"] = 1;
     
     ostringstream str_random;
     str_random << eng;
