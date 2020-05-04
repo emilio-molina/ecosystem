@@ -1,6 +1,6 @@
 #include <iostream>
-#include "ecosystem.h"
-#include "ExperimentInterface.h"
+#include "ecosystem.hpp"
+#include "ExperimentInterface.hpp"
 #include <string>
 #include <signal.h>
 

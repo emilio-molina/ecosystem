@@ -1,4 +1,4 @@
-/** @file ecosystem.h
+/** @file ecosystem.hpp
  * @brief Header of ecosystem
  *
  * @ingroup core
@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef ECOSYSTEM_H_INCLUDED
-#define ECOSYSTEM_H_INCLUDED
+#ifndef ECOSYSTEM_HPP_INCLUDED
+#define ECOSYSTEM_HPP_INCLUDED
 #include <algorithm>
 #include <vector>
 #include <tuple>
@@ -194,4 +194,4 @@ private:
     void _do_die(const string &cause_of_death);
 };
 
-#endif  // ECOSYSTEM_H_INCLUDED
+#endif  // ECOSYSTEM_HPP_INCLUDED

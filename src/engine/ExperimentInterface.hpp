@@ -1,14 +1,14 @@
-/** @file ExperimentInterface.h
+/** @file ExperimentInterface.hpp
  * @brief Header of ExperimentInterface
  *
  * @ingroup core
  */
 
-#ifndef EXPERIMENTINTERFACE_H_INCLUDED
-#define EXPERIMENTINTERFACE_H_INCLUDED
+#ifndef EXPERIMENTINTERFACE_HPP_INCLUDED
+#define EXPERIMENTINTERFACE_HPP_INCLUDED
 
 #include <mutex>
-#include "ecosystem.h"
+#include "ecosystem.hpp"
 #include "tgaimage.hpp"
 #include <boost/filesystem.hpp>
 
@@ -66,4 +66,4 @@ private:
 
 
 
-#endif  // EXPERIMENTINTERFACE_H_INCLUDED
+#endif  // EXPERIMENTINTERFACE_HPP_INCLUDED

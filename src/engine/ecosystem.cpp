@@ -3,7 +3,7 @@
  *
  * @ingroup core
  */
-#include "ecosystem.h"
+#include "ecosystem.hpp"
 
 using namespace std;
 using json = nlohmann::json;

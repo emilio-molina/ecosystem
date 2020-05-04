@@ -5,7 +5,7 @@
  */
 
 
-#include "ExperimentInterface.h"
+#include "ExperimentInterface.hpp"
 #include <regex>
 #include <stdlib.h>
 #include <algorithm>
